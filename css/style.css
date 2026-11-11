@@ -120,7 +120,7 @@ body {
   border-radius: 9px;
   background: linear-gradient(135deg, color-mix(in srgb, var(--crate-accent) 85%, white), color-mix(in srgb, var(--crate-accent) 52%, #17191e) 58%, #17191e);
   box-shadow: 0 9px 20px #0009, inset 0 0 18px #ffffff22;
-  z-index: -1;
+  z-index: 0;
 }
 .crate-visual:after {
   content: "";
@@ -133,7 +133,7 @@ body {
   border-left: 1px solid #ffffff55;
   transform: skewY(-5deg);
   opacity: .9;
-  z-index: -1;
+  z-index: 0;
 }
 .crate-emblem {
   color: #fff;
@@ -141,6 +141,8 @@ body {
   line-height: 1;
   text-shadow: 0 2px 8px #000, 0 0 14px var(--crate-accent);
   transform: translateY(5px);
+  position: relative;
+  z-index: 1;
 }
 .crate-card[data-theme="mystere"], .selected-crate-showcase[data-theme="mystere"] { --crate-accent: #a58be0; }
 .crate-card[data-theme="royale"], .selected-crate-showcase[data-theme="royale"] { --crate-accent: #d8b45e; }
