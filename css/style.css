@@ -30,16 +30,16 @@
 
 /* Couleur d'accent de chaque caisse (cartes + caisse sélectionnée) */
 [data-theme="mystere"] {
-  --crate-accent: #a58be0;
+  --case-accent: #a58be0;
 }
 [data-theme="royale"] {
-  --crate-accent: #d8b45e;
+  --case-accent: #d8b45e;
 }
 [data-theme="tech"] {
-  --crate-accent: #4bc7d8;
+  --case-accent: #4bc7d8;
 }
 [data-theme="legendaire"] {
-  --crate-accent: #e47b58;
+  --case-accent: #e47b58;
 }
 
 /* ===== Base ===== */
@@ -167,10 +167,10 @@ body {
 }
 
 /* ===== Caisses ===== */
-.crate-card {
+.case-card {
   height: 100%;
   background: linear-gradient(145deg, #1a1d24, #121419);
-  border: 1px solid color-mix(in srgb, var(--crate-accent) 38%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--case-accent) 38%, var(--line));
   border-radius: 16px;
   padding: 18px;
   cursor: pointer;
@@ -178,35 +178,35 @@ body {
   position: relative;
   overflow: hidden;
 }
-.crate-card:before {
+.case-card:before {
   content: "";
   position: absolute;
   inset: 0;
   background: radial-gradient(
     circle at 50% 0,
-    color-mix(in srgb, var(--crate-accent) 22%, transparent),
+    color-mix(in srgb, var(--case-accent) 22%, transparent),
     transparent 68%
   );
   opacity: 0.75;
   pointer-events: none;
 }
-.crate-card > * {
+.case-card > * {
   position: relative;
 }
-.crate-card:hover {
+.case-card:hover {
   transform: translateY(-4px);
-  border-color: var(--crate-accent);
+  border-color: var(--case-accent);
   box-shadow: 0 10px 30px
-    color-mix(in srgb, var(--crate-accent) 12%, transparent);
+    color-mix(in srgb, var(--case-accent) 12%, transparent);
 }
-.crate-card.selected {
-  border-color: var(--crate-accent);
+.case-card.selected {
+  border-color: var(--case-accent);
   box-shadow:
-    0 0 0 1px var(--crate-accent) inset,
-    0 0 24px color-mix(in srgb, var(--crate-accent) 18%, transparent);
+    0 0 0 1px var(--case-accent) inset,
+    0 0 24px color-mix(in srgb, var(--case-accent) 18%, transparent);
 }
 
-.crate-visual {
+.case-visual {
   height: 150px;
   padding: 5px;
   margin-bottom: 16px;
@@ -218,11 +218,11 @@ body {
   border-radius: 12px;
   background: radial-gradient(
     circle at 50% 55%,
-    color-mix(in srgb, var(--crate-accent) 20%, #17191e),
+    color-mix(in srgb, var(--case-accent) 20%, #17191e),
     #111319 78%
   );
 }
-.crate-visual img {
+.case-visual img {
   position: relative;
   z-index: 1;
   display: block;
@@ -232,37 +232,37 @@ body {
   filter: drop-shadow(0 8px 12px #0009);
 }
 
-.selected-crate-showcase {
+.selected-case-showcase {
   display: flex;
   align-items: center;
   gap: 16px;
   min-height: 104px;
   padding: 12px 16px;
-  border: 1px solid color-mix(in srgb, var(--crate-accent) 48%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--case-accent) 48%, var(--line));
   border-radius: 14px;
   background: linear-gradient(
     105deg,
-    color-mix(in srgb, var(--crate-accent) 13%, var(--panel)),
+    color-mix(in srgb, var(--case-accent) 13%, var(--panel)),
     var(--panel) 72%
   );
-  box-shadow: inset 3px 0 var(--crate-accent);
+  box-shadow: inset 3px 0 var(--case-accent);
   transition:
     border-color 0.25s,
     background 0.25s;
 }
-.selected-crate-copy {
+.selected-case-copy {
   min-width: 0;
 }
-.crate-visual-large {
+.case-visual-large {
   width: 128px;
   height: 96px;
   flex: 0 0 128px;
   margin: 0;
   padding: 0;
 }
-.crate-status {
-  color: var(--crate-accent);
-  border: 1px solid color-mix(in srgb, var(--crate-accent) 50%, transparent);
+.case-status {
+  color: var(--case-accent);
+  border: 1px solid color-mix(in srgb, var(--case-accent) 50%, transparent);
   border-radius: 99px;
   padding: 6px 10px;
   font-size: 0.68rem;
@@ -272,14 +272,14 @@ body {
 }
 
 /* Caisse verrouillée */
-.hidden-crate {
+.hidden-case {
   border: 1px dashed #414650;
   background: #14161b;
   border-radius: 16px;
   padding: 18px;
   color: #777e89;
 }
-.crate-lock {
+.case-lock {
   width: 76px;
   height: 76px;
   flex: 0 0 76px;
@@ -464,19 +464,19 @@ body {
 
 /* ===== Mobile ===== */
 @media (max-width: 575px) {
-  .crate-visual {
+  .case-visual {
     height: 118px;
   }
-  .crate-visual-large {
+  .case-visual-large {
     width: 76px;
     height: 70px;
     flex-basis: 76px;
   }
-  .selected-crate-showcase {
+  .selected-case-showcase {
     gap: 10px;
     padding: 10px;
   }
-  .crate-status {
+  .case-status {
     display: none;
   }
   .roulette-window {
