@@ -6,10 +6,10 @@ const APP_SHELL = [
   "./css/style.css",
   "./js/main.js",
   "./assets/icons/icon.svg",
-  "./assets/crates/mystere.webp",
-  "./assets/crates/royale.webp",
-  "./assets/crates/tech.webp",
-  "./assets/crates/legendaire.webp",
+  "./assets/img/cases//mystere.webp",
+  "./assets/img/cases//royale.webp",
+  "./assets/img/cases//tech.webp",
+  "./assets/img/cases//legendaire.webp",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 ].map((path) => path.startsWith("http") ? path : new URL(path, BASE_URL).href);
