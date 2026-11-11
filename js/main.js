@@ -3,6 +3,7 @@ const crates = [
         id: "mystere",
         name: "Caisse Mystère",
         icon: "◈",
+        image: "assets/crates/mystere.png",
         description: "Un assortiment de surprises.",
         items: [
             {
@@ -46,6 +47,7 @@ const crates = [
         id: "royale",
         name: "Caisse Royale",
         icon: "♛",
+        image: "assets/crates/royale.png",
         description: "Des objets précieux et raffinés.",
         items: [
             {
@@ -89,6 +91,7 @@ const crates = [
         id: "tech",
         name: "Caisse Tech",
         icon: "⌘",
+        image: "assets/crates/tech.png",
         description: "Artefacts et curiosités futuristes.",
         items: [
             {
@@ -132,6 +135,7 @@ const crates = [
         id: "legendaire",
         name: "Caisse Légendaire",
         icon: "✦",
+        image: "assets/crates/legendaire.png",
         description: "Une sélection aux chances très rares.",
         items: [
             {
@@ -205,7 +209,7 @@ function renderCrates() {
             (
                 c,
             ) => `<div class="col-6 col-lg-3"><article class="crate-card ${c.id === selectedCrate.id ? "selected" : ""}" data-id="${c.id}" data-theme="${c.id}">
- <div class="crate-visual"><span class="crate-emblem">${c.icon}</span></div><div class="d-flex justify-content-between align-items-center gap-2 mb-2"><span class="fw-semibold">${c.name}</span><span class="tag">5 objets</span></div>
+ <div class="crate-visual"><img src="${c.image}" alt="Illustration ${c.name}" loading="lazy"></div><div class="d-flex justify-content-between align-items-center gap-2 mb-2"><span class="fw-semibold">${c.name}</span><span class="tag">5 objets</span></div>
  <div class="small subtle">${c.description}</div></article></div>`,
         )
         .join("");
@@ -221,7 +225,9 @@ function renderCrates() {
 function renderSelected() {
     $("selected-title").textContent = selectedCrate.name;
     $("selected-crate-showcase").dataset.theme = selectedCrate.id;
-    $("selected-crate-icon").textContent = selectedCrate.icon;
+    const selectedImage = $("selected-crate-image");
+    selectedImage.src = selectedCrate.image;
+    selectedImage.alt = `Illustration ${selectedCrate.name}`;
     $("selected-crate-name").textContent = selectedCrate.name;
     $("selected-crate-description").textContent = selectedCrate.description;
     $("result").classList.add("d-none");
