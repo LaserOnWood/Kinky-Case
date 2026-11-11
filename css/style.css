@@ -71,44 +71,114 @@ body {
 .crate-card {
   height: 100%;
   background: linear-gradient(145deg, #1a1d24, #121419);
-  border: 1px solid var(--line);
+  border: 1px solid color-mix(in srgb, var(--crate-accent) 38%, #292d37);
   border-radius: 16px;
   padding: 18px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.25s ease;
   position: relative;
   overflow: hidden;
 }
+.crate-card:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0, color-mix(in srgb, var(--crate-accent) 22%, transparent), transparent 68%);
+  opacity: .75;
+  pointer-events: none;
+}
 .crate-card:hover {
-  transform: translateY(-3px);
-  border-color: #65605a;
+  transform: translateY(-4px);
+  border-color: var(--crate-accent);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--crate-accent) 12%, transparent);
 }
 .crate-card.selected {
-  border-color: #b6a994;
-  box-shadow: 0 0 0 1px #b6a994 inset;
+  border-color: var(--crate-accent);
+  box-shadow: 0 0 0 1px var(--crate-accent) inset, 0 0 24px color-mix(in srgb, var(--crate-accent) 18%, transparent);
 }
-.crate-art {
+.crate-card > * { position: relative; }
+.crate-visual {
   height: 112px;
   border-radius: 12px;
-  background: radial-gradient(
-    circle at 50% 40%,
-    #4b463e 0,
-    #24262b 42%,
-    #17191e 75%
-  );
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--crate-accent) 42%, #22252d), #17191e 76%);
   display: grid;
   place-items: center;
-  font-size: 3.3rem;
   margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
-.crate-card:nth-child(2) .crate-art {
-  background: radial-gradient(circle, #48453d, #1b1d22 70%);
+.crate-visual:before {
+  content: "";
+  position: absolute;
+  width: 78px;
+  height: 66px;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%) skewY(-5deg);
+  border: 2px solid color-mix(in srgb, var(--crate-accent) 88%, white);
+  border-radius: 9px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--crate-accent) 85%, white), color-mix(in srgb, var(--crate-accent) 52%, #17191e) 58%, #17191e);
+  box-shadow: 0 9px 20px #0009, inset 0 0 18px #ffffff22;
+  z-index: -1;
 }
-.crate-card:nth-child(3) .crate-art {
-  background: radial-gradient(circle, #3b444a, #1a1d22 70%);
+.crate-visual:after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 66px;
+  top: 25px;
+  left: calc(50% + 25px);
+  background: color-mix(in srgb, var(--crate-accent) 75%, #111);
+  border-left: 1px solid #ffffff55;
+  transform: skewY(-5deg);
+  opacity: .9;
+  z-index: -1;
 }
-.crate-card:nth-child(4) .crate-art {
-  background: radial-gradient(circle, #494044, #1a1d22 70%);
+.crate-emblem {
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1;
+  text-shadow: 0 2px 8px #000, 0 0 14px var(--crate-accent);
+  transform: translateY(5px);
+}
+.crate-card[data-theme="mystere"], .selected-crate-showcase[data-theme="mystere"] { --crate-accent: #a58be0; }
+.crate-card[data-theme="royale"], .selected-crate-showcase[data-theme="royale"] { --crate-accent: #d8b45e; }
+.crate-card[data-theme="tech"], .selected-crate-showcase[data-theme="tech"] { --crate-accent: #4bc7d8; }
+.crate-card[data-theme="legendaire"], .selected-crate-showcase[data-theme="legendaire"] { --crate-accent: #e47b58; }
+.selected-crate-showcase {
+  --crate-accent: #a58be0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 104px;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--crate-accent) 48%, #292d37);
+  border-radius: 14px;
+  background: linear-gradient(105deg, color-mix(in srgb, var(--crate-accent) 13%, #15171d), #15171d 72%);
+  box-shadow: inset 3px 0 var(--crate-accent);
+  transition: border-color .25s, background .25s;
+}
+.crate-visual-large {
+  width: 88px;
+  height: 78px;
+  flex: 0 0 88px;
+  margin: 0;
+  background: radial-gradient(circle, color-mix(in srgb, var(--crate-accent) 35%, #17191e), #17191e 75%);
+}
+.crate-visual-large:before { width: 54px; height: 46px; top: 17px; }
+.crate-visual-large:after { width: 11px; height: 46px; top: 17px; left: calc(50% + 17px); }
+.crate-visual-large .crate-emblem { font-size: 1.45rem; transform: translateY(3px); }
+.selected-crate-copy { min-width: 0; }
+.crate-status {
+  color: var(--crate-accent);
+  border: 1px solid color-mix(in srgb, var(--crate-accent) 50%, transparent);
+  border-radius: 99px;
+  padding: 6px 10px;
+  font-size: .68rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 .tag {
   font-size: 0.68rem;
@@ -331,4 +401,37 @@ body {
     width: 104px;
     flex-basis: 104px;
   }
+}
+
+
+/* Roulette : cartes teintées selon leur rareté et révélation du gain */
+.reel-item {
+  border-color: color-mix(in srgb, var(--item-rarity, #667080) 45%, #303540);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--item-rarity, #667080) 12%, #1b1e25), #17191f 75%);
+  transition: border-color .3s, box-shadow .3s, transform .3s;
+}
+.reel-item.common { --item-rarity: #aeb7c4; }
+.reel-item.uncommon { --item-rarity: #79c88b; }
+.reel-item.rare { --item-rarity: #6ca9f5; }
+.reel-item.epic { --item-rarity: #bd8cf0; }
+.reel-item.legendary { --item-rarity: #f0c45f; }
+.reel-item.winner {
+  border-color: var(--item-rarity);
+  box-shadow: 0 0 0 1px var(--item-rarity), 0 0 28px color-mix(in srgb, var(--item-rarity) 42%, transparent);
+  transform: scale(1.035);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--item-rarity) 28%, #1b1e25), #17191f 78%);
+}
+#result .result-reveal {
+  border-color: var(--result-rarity) !important;
+  box-shadow: 0 0 28px color-mix(in srgb, var(--result-rarity) 17%, transparent);
+}
+#result.rarity-common { --result-rarity: #aeb7c4; }
+#result.rarity-uncommon { --result-rarity: #79c88b; }
+#result.rarity-rare { --result-rarity: #6ca9f5; }
+#result.rarity-epic { --result-rarity: #bd8cf0; }
+#result.rarity-legendary { --result-rarity: #f0c45f; }
+@media (max-width: 575px) {
+  .selected-crate-showcase { gap: 10px; padding: 10px; }
+  .crate-visual-large { width: 70px; flex-basis: 70px; }
+  .crate-status { display: none; }
 }
