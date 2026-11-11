@@ -446,3 +446,17 @@ body {
 .crate-visual-large { width: 128px; height: 96px; flex: 0 0 128px; padding: 0; }
 .crate-visual-large img { width: 100%; height: 100%; }
 @media (max-width: 575px) { .crate-visual { height: 118px; } .crate-visual-large { width: 76px; height: 70px; flex-basis: 76px; } }
+
+
+/* Résultat : révélation plus lisible et compteur de collection */
+#result .result-reveal {
+  animation: reward-pop .45s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes reward-pop {
+  0% { opacity: 0; transform: translateY(8px) scale(.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+#collection-summary { text-align: right; }
+@media (max-width: 575px) {
+  #collection-summary { max-width: 58%; }
+}
