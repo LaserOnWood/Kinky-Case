@@ -1,9 +1,9 @@
-const crates = [
+const cases = [
     {
         id: "mystere",
         name: "Caisse Mystère",
         icon: "◈",
-        image: "assets/crates/mystere.webp",
+        image: "assets/img/cases/mystere.png",
         description: "Un assortiment de surprises.",
         items: [
             {
@@ -47,7 +47,7 @@ const crates = [
         id: "royale",
         name: "Caisse Royale",
         icon: "♛",
-        image: "assets/crates/royale.webp",
+        image: "assets/img/cases/royale.png",
         description: "Des objets précieux et raffinés.",
         items: [
             {
@@ -91,7 +91,7 @@ const crates = [
         id: "tech",
         name: "Caisse Tech",
         icon: "⌘",
-        image: "assets/crates/tech.webp",
+        image: "assets/img/cases/tech.png",
         description: "Artefacts et curiosités futuristes.",
         items: [
             {
@@ -135,7 +135,7 @@ const crates = [
         id: "legendaire",
         name: "Caisse Légendaire",
         icon: "✦",
-        image: "assets/crates/legendaire.webp",
+        image: "assets/img/cases/legendaire.png",
         description: "Une sélection aux chances très rares.",
         items: [
             {
@@ -183,7 +183,7 @@ const rarityClass = {
     Épique: "epic",
     Légendaire: "legendary",
 };
-let selectedCrate = crates[0],
+let selectedCrate = cases[0],
     busy = false;
 function loadStoredJSON(key, fallback) {
     try {
@@ -196,7 +196,7 @@ function loadStoredJSON(key, fallback) {
 }
 function sanitizeInventory(raw) {
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
-    const validIds = new Set(crates.flatMap((crate) => crate.items.map((item) => item.id)));
+    const validIds = new Set(cases.flatMap((crate) => crate.items.map((item) => item.id)));
     const clean = {};
     for (const [storedId, count] of Object.entries(raw)) {
         // Preserve collections saved before the "sceptre" identifier was corrected.
@@ -219,9 +219,9 @@ function sanitizeInventory(raw) {
 function sanitizeHistory(raw) {
     if (!Array.isArray(raw)) return [];
     const itemByName = new Map(
-        crates.flatMap((crate) => crate.items.map((item) => [item.name, item])),
+        cases.flatMap((crate) => crate.items.map((item) => [item.name, item])),
     );
-    const crateNames = new Set(crates.map((crate) => crate.name));
+    const crateNames = new Set(cases.map((crate) => crate.name));
     return raw
         .filter((entry) =>
             entry &&
@@ -303,8 +303,8 @@ function chooseWeighted(items) {
     }
     return items[items.length - 1];
 }
-function renderCrates() {
-    $("crate-grid").innerHTML = crates
+function rendercases() {
+    $("crate-grid").innerHTML = cases
         .map(
             (
                 c,
@@ -316,8 +316,8 @@ function renderCrates() {
     document.querySelectorAll(".crate-card").forEach((el) =>
         el.addEventListener("click", () => {
             if (busy) return;
-            selectedCrate = crates.find((c) => c.id === el.dataset.id);
-            renderCrates();
+            selectedCrate = cases.find((c) => c.id === el.dataset.id);
+            rendercases();
             renderSelected();
         }),
     );
@@ -443,7 +443,7 @@ function renderCollection() {
     const entries = Object.entries(inventory).filter(
         ([, count]) => count > 0,
     );
-    const allItems = crates.flatMap((c) => c.items);
+    const allItems = cases.flatMap((c) => c.items);
     const totalCopies = entries.reduce((sum, [, count]) => sum + count, 0);
     $("nav-count").textContent = `(${entries.length}/${allItems.length})`;
     $("collection-summary").textContent =
@@ -528,7 +528,7 @@ $("reset-btn").addEventListener("click", () => {
         : "Réinitialisation annulée : impossible de sauvegarder la modification.";
     if (!saved) showToast("Réinitialisation impossible : vos données ont été conservées.");
 });
-renderCrates();
+rendercases();
 renderSelected();
 renderCollection();
 renderHistory();
