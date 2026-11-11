@@ -14,7 +14,7 @@ export const CASES = [
     {
         id: "mystere",
         name: "Caisse Mystère",
-        image: "assets/img/cases/mystere.png",
+        image: "./assets/img/cases/mystere.png",
         description: "Un assortiment de surprises.",
         items: [
             { id: "bois", name: "Relique de bois", icon: "🪵", rarity: "common", weight: 48 },
@@ -27,7 +27,7 @@ export const CASES = [
     {
         id: "royale",
         name: "Caisse Royale",
-        image: "assets/img/cases/royale.png",
+        image: "./assets/img/cases/royale.png",
         description: "Des objets précieux et raffinés.",
         items: [
             { id: "sceau", name: "Sceau royal", icon: "🔰", rarity: "common", weight: 45 },
@@ -40,7 +40,7 @@ export const CASES = [
     {
         id: "tech",
         name: "Caisse Tech",
-        image: "assets/img/cases/tech.png",
+        image: "./assets/img/cases/tech.png",
         description: "Artefacts et curiosités futuristes.",
         items: [
             { id: "circuit", name: "Circuit imprimé", icon: "▦", rarity: "common", weight: 48 },
@@ -53,7 +53,7 @@ export const CASES = [
     {
         id: "legendaire",
         name: "Caisse Légendaire",
-        image: "assets/img/cases/legendaire.png",
+        image: "./assets/img/cases/legendaire.png",
         description: "Une sélection aux chances très rares.",
         items: [
             { id: "pierre", name: "Pierre runique", icon: "🪨", rarity: "common", weight: 42 },
@@ -63,17 +63,17 @@ export const CASES = [
             { id: "relique", name: "Relique éternelle", icon: "🏺", rarity: "legendary", weight: 2 },
         ],
     },
-    {
-        id: "special",
-        name: "Caisse Spéciale",
-        image: "assets/img/cases/special.png",
-        description: "Une caisse contenant des objets uniques.",
-        items: [
-            { id: "arc", name: "Arc divin", icon: "🏹", rarity: "common", weight: 45 },
-            { id: "epee", name: "Épée sacrée", icon: "⚔️", rarity: "uncommon", weight: 30 },
-            { id: "bouclier", name: "Bouclier mythique", icon: "🛡️", rarity: "rare", weight: 17 },
-            { id: "anneau", name: "Anneau de puissance", icon: "💍", rarity: "epic", weight: 6 },
-            { id: "amulette", name: "Amulette de sagesse", icon: "📿", rarity: "legendary", weight: 2 },
-        ],
-    },
+    //{
+    //  id: "special",
+    //  name: "Caisse Spéciale",
+    //  image: "../assets/img/cases/special.png",
+    //  description: "Une caisse contenant des objets uniques.",
+    //  items: [
+    //      { id: "arc", name: "Arc divin", icon: "🏹", rarity: "common", weight: 45 },
+    //      { id: "epee", name: "Épée sacrée", icon: "⚔️", rarity: "uncommon", weight: 30 },
+    //      { id: "bouclier", name: "Bouclier mythique", icon: "🛡️", rarity: "rare", weight: 17 },
+    //      { id: "anneau", name: "Anneau de puissance", icon: "💍", rarity: "epic", weight: 6 },
+    //      { id: "amulette", name: "Amulette de sagesse", icon: "📿", rarity: "legendary", weight: 2 },
+    //  ],
+    //},
 ];

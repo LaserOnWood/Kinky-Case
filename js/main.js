@@ -157,13 +157,11 @@ function renderSelected() {
 }
 
 function renderOdds() {
-    const case = selectedcase;
-    const total = case.items.reduce((s, i) => s + i.weight, 0);
-    $("odds-title").textContent = case.name;
-    $("odds-body").innerHTML = case.items
-        .map(
-            (i) => `<tr class="${i.rarity}"><td>${i.icon} ${i.name}</td><td><span class="rarity m-0">${RARITIES[i.rarity].label}</span></td><td class="text-end">${percentFormat.format((i.weight / total) * 100)} %</td></tr>`,
-        )
+    const selected = selectedcase;
+    const total = selected.items.reduce((s, i) => s + i.weight, 0);
+    $("odds-title").textContent = selected.name;
+    $("odds-body").innerHTML = selected.items
+        .map((i) => `<tr class="${i.rarity}"><td>${i.icon} ${i.name}</td><td><span class="rarity m-0">${RARITIES[i.rarity].label}</span></td><td class="text-end">${percentFormat.format((i.weight / total) * 100)} %</td></tr>`)
         .join("");
 }
 
@@ -197,7 +195,7 @@ function renderHistory() {
     }
     history.slice(0, VISIBLE_HISTORY).forEach((entry) => {
         const item = ITEM_BY_ID.get(entry.itemId);
-        const case = CASE_BY_ID.get(entry.caseId);
+        const box = CASE_BY_ID.get(entry.caseId);
 
         const row = document.createElement("div");
         row.className = "history-row";
@@ -213,13 +211,11 @@ function renderHistory() {
         name.textContent = item.name;
         const meta = document.createElement("div");
         meta.className = "small subtle";
-        meta.textContent = `${case.name
-    } · ${ formatDate(entry.ts)
-} `;
+        meta.textContent = `${box.name} · ${formatDate(entry.ts)}`;
         details.append(name, meta);
 
         const rarity = document.createElement("span");
-        rarity.className = `rarity ${ item.rarity } `;
+        rarity.className = `rarity ${item.rarity} `;
         rarity.textContent = RARITIES[item.rarity].label;
 
         row.append(icon, details, rarity);
@@ -259,7 +255,7 @@ function opencase() {
     requestAnimationFrame(() =>
         requestAnimationFrame(() => {
             track.style.transition = "transform 6.1s cubic-bezier(.055,.72,.12,1)";
-            track.style.transform = `translateX(${ finalX }px)`;
+            track.style.transform = `translateX(${finalX}px)`;
         }),
     );
 
@@ -285,13 +281,13 @@ function opencase() {
             $("result-name").textContent = win.name;
             $("result-rarity").textContent = label;
             $("result-rarity").className = "rarity";
-            $("result").className = `mt - 4 ${ win.rarity } `;
+            $("result").className = `mt-4 ${win.rarity}`;
             $("result").querySelector(".text-center").classList.add("result-reveal");
 
             $("opening-hint").textContent = saved
                 ? "Récompense ajoutée à votre collection sur cet appareil."
                 : "Gain obtenu, mais sauvegarde impossible. Ne fermez pas cette page avant d'avoir réessayé.";
-            showToast(saved ? `${ win.name } ajouté à votre collection.` : `${ win.name } obtenu, mais non sauvegardé.`);
+            showToast(saved ? `${win.name} ajouté à votre collection.` : `${win.name} obtenu, mais non sauvegardé.`);
         } catch (error) {
             console.error("Une erreur est survenue à la fin de l'ouverture.", error);
             $("opening-hint").textContent =
