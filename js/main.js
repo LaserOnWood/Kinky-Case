@@ -185,15 +185,58 @@ const rarityClass = {
 };
 let selectedCrate = crates[0],
     busy = false;
-let inventory = JSON.parse(
-    localStorage.getItem("loot_inventory") || "{}",
-);
-let history = JSON.parse(localStorage.getItem("loot_history") || "[]");
+function loadStoredJSON(key, fallback) {
+    try {
+        const stored = localStorage.getItem(key);
+        return stored === null ? fallback : JSON.parse(stored);
+    } catch (error) {
+        console.error(`Impossible de lire ${key} depuis le stockage local.`, error);
+        return fallback;
+    }
+}
+let inventory = loadStoredJSON("loot_inventory", {});
+let history = loadStoredJSON("loot_history", []);
 const $ = (id) => document.getElementById(id);
-const save = () => {
-    localStorage.setItem("loot_inventory", JSON.stringify(inventory));
-    localStorage.setItem("loot_history", JSON.stringify(history));
-};
+
+function save() {
+    let previousInventory;
+    let previousHistory;
+    let snapshotComplete = false;
+
+    try {
+        previousInventory = localStorage.getItem("loot_inventory");
+        previousHistory = localStorage.getItem("loot_history");
+        snapshotComplete = true;
+
+        localStorage.setItem("loot_inventory", JSON.stringify(inventory));
+        localStorage.setItem("loot_history", JSON.stringify(history));
+        return true;
+    } catch (error) {
+        // If the second write fails, try to restore the previous pair of values.
+        if (snapshotComplete) {
+            try {
+                if (previousInventory === null) localStorage.removeItem("loot_inventory");
+                else localStorage.setItem("loot_inventory", previousInventory);
+
+                if (previousHistory === null) localStorage.removeItem("loot_history");
+                else localStorage.setItem("loot_history", previousHistory);
+            } catch (rollbackError) {
+                console.error("Impossible de restaurer les anciennes données locales.", rollbackError);
+            }
+        }
+        console.error("La collection et l'historique n'ont pas pu être sauvegardés.", error);
+        return false;
+    }
+}
+
+function showToast(message) {
+    const messageElement = $("toast-message");
+    if (messageElement) messageElement.textContent = message;
+
+    if (window.bootstrap?.Toast) {
+        window.bootstrap.Toast.getOrCreateInstance($("toast")).show();
+    }
+}
 function chooseWeighted(items) {
     const total = items.reduce((s, x) => s + x.weight, 0);
     let r = Math.random() * total;
@@ -246,16 +289,18 @@ function openCrate() {
     if (busy) return;
     busy = true;
     $("open-btn").disabled = true;
+    $("reset-btn").disabled = true;
     $("result").classList.add("d-none");
     // Le gain est tiré avant l'animation : l'animation ne fait que révéler ce résultat.
-    const win = chooseWeighted(selectedCrate.items);
+    const crateAtOpening = selectedCrate;
+    const win = chooseWeighted(crateAtOpening.items);
     const track = $("track"),
         windowEl = document.querySelector(".roulette-window");
     const sequence = Array.from(
         { length: 35 },
         (_, i) =>
-            selectedCrate.items[
-            Math.floor(Math.random() * selectedCrate.items.length)
+            crateAtOpening.items[
+            Math.floor(Math.random() * crateAtOpening.items.length)
             ],
     );
     sequence[29] = win;
@@ -279,42 +324,61 @@ function openCrate() {
             track.style.transform = `translateX(${finalX}px)`;
         }),
     );
+    let finished = false;
     const finish = () => {
-        track.removeEventListener("transitionend", finish);
-        const winningCard = track.children[targetIndex];
-        if (winningCard) winningCard.classList.add("winner", rarityClass[win.rarity]);
-        inventory[win.id] = (inventory[win.id] || 0) + 1;
-        history.unshift({
-            name: win.name,
-            icon: win.icon,
-            rarity: win.rarity,
-            crate: selectedCrate.name,
-            time: new Date().toLocaleString("fr-FR"),
-        });
-        history = history.slice(0, 30);
-        save();
-        renderCollection();
-        renderHistory();
-        $("result-icon").textContent = win.icon;
-        $("result-name").textContent = win.name;
-        $("result-rarity").textContent = win.rarity;
-        $("result-rarity").className = "rarity " + rarityClass[win.rarity];
-        $("result").className = "mt-4 rarity-" + rarityClass[win.rarity];
-        $("result").classList.remove("d-none");
-        $("result").querySelector(".text-center").classList.add("result-reveal");
-        $("opening-hint").textContent =
-            "Récompense ajoutée à la collection commune.";
-        $("open-btn").disabled = false;
-        busy = false;
-        $("toast-message").textContent =
-            `${win.name} ajouté à la collection.`;
-        bootstrap.Toast.getOrCreateInstance($("toast")).show();
+        // transitionend and the timeout fallback can race; award this opening once only.
+        if (finished) return;
+        finished = true;
+        track.removeEventListener("transitionend", onTransitionEnd);
+
+        try {
+            const winningCard = track.children[targetIndex];
+            if (winningCard) winningCard.classList.add("winner", rarityClass[win.rarity]);
+
+            inventory[win.id] = (inventory[win.id] || 0) + 1;
+            history.unshift({
+                name: win.name,
+                icon: win.icon,
+                rarity: win.rarity,
+                crate: crateAtOpening.name,
+                time: new Date().toLocaleString("fr-FR"),
+            });
+            history = history.slice(0, 30);
+
+            const saved = save();
+            renderCollection();
+            renderHistory();
+
+            $("result-icon").textContent = win.icon;
+            $("result-name").textContent = win.name;
+            $("result-rarity").textContent = win.rarity;
+            $("result-rarity").className = "rarity " + rarityClass[win.rarity];
+            $("result").className = "mt-4 rarity-" + rarityClass[win.rarity];
+            $("result").classList.remove("d-none");
+            $("result").querySelector(".text-center").classList.add("result-reveal");
+
+            $("opening-hint").textContent = saved
+                ? "Récompense ajoutée à la collection commune."
+                : "Gain obtenu, mais sauvegarde impossible. Ne fermez pas cette page avant d'avoir réessayé.";
+            showToast(saved
+                ? `${win.name} ajouté à la collection.`
+                : `${win.name} obtenu, mais non sauvegardé.`);
+        } catch (error) {
+            console.error("Une erreur est survenue à la fin de l'ouverture.", error);
+            $("opening-hint").textContent =
+                "Le gain a été attribué en mémoire, mais son affichage ou sa sauvegarde a rencontré une erreur.";
+        } finally {
+            $("open-btn").disabled = false;
+            $("reset-btn").disabled = false;
+            busy = false;
+        }
     };
-    track.addEventListener("transitionend", finish, { once: true });
+    const onTransitionEnd = (event) => {
+        if (event.target === track && event.propertyName === "transform") finish();
+    };
+    track.addEventListener("transitionend", onTransitionEnd);
     // Fallback if transitionend is not fired (e.g. reduced motion or browser edge case).
-    setTimeout(() => {
-        if (busy) finish();
-    }, 6500);
+    setTimeout(finish, 6500);
 }
 function renderCollection() {
     const entries = Object.entries(inventory).filter(
@@ -350,14 +414,30 @@ function renderHistory() {
 }
 $("open-btn").addEventListener("click", openCrate);
 $("reset-btn").addEventListener("click", () => {
+    // Also guard the handler itself: a disabled button is not the only protection.
+    if (busy) return;
     if (!confirm("Effacer la collection et l'historique de cette session ?"))
         return;
+
+    const previousInventory = inventory;
+    const previousHistory = history;
     inventory = {};
     history = [];
-    save();
+
+    const saved = save();
+    if (!saved) {
+        inventory = previousInventory;
+        history = previousHistory;
+    }
+
     renderCollection();
     renderHistory();
     renderSelected();
+
+    $("opening-hint").textContent = saved
+        ? "Collection et historique réinitialisés."
+        : "Réinitialisation annulée : impossible de sauvegarder la modification.";
+    if (!saved) showToast("Réinitialisation impossible : vos données ont été conservées.");
 });
 renderCrates();
 renderSelected();
