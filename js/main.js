@@ -204,8 +204,8 @@ function renderCrates() {
         .map(
             (
                 c,
-            ) => `<div class="col-6 col-lg-3"><article class="crate-card ${c.id === selectedCrate.id ? "selected" : ""}" data-id="${c.id}">
- <div class="crate-art">${c.icon}</div><div class="d-flex justify-content-between align-items-center gap-2 mb-2"><span class="fw-semibold">${c.name}</span><span class="tag">5 objets</span></div>
+            ) => `<div class="col-6 col-lg-3"><article class="crate-card ${c.id === selectedCrate.id ? "selected" : ""}" data-id="${c.id}" data-theme="${c.id}">
+ <div class="crate-visual"><span class="crate-emblem">${c.icon}</span></div><div class="d-flex justify-content-between align-items-center gap-2 mb-2"><span class="fw-semibold">${c.name}</span><span class="tag">5 objets</span></div>
  <div class="small subtle">${c.description}</div></article></div>`,
         )
         .join("");
@@ -220,7 +220,12 @@ function renderCrates() {
 }
 function renderSelected() {
     $("selected-title").textContent = selectedCrate.name;
+    $("selected-crate-showcase").dataset.theme = selectedCrate.id;
+    $("selected-crate-icon").textContent = selectedCrate.icon;
+    $("selected-crate-name").textContent = selectedCrate.name;
+    $("selected-crate-description").textContent = selectedCrate.description;
     $("result").classList.add("d-none");
+    $("result").className = "mt-4 d-none";
     $("opening-hint").textContent =
         "Le résultat est déterminé avant l'animation.";
     $("track").innerHTML = Array.from({ length: 11 }, (_, i) =>
@@ -264,12 +269,14 @@ function openCrate() {
     requestAnimationFrame(() =>
         requestAnimationFrame(() => {
             track.style.transition =
-                "transform 5.2s cubic-bezier(.08,.72,.12,1)";
+                "transform 6.1s cubic-bezier(.055,.72,.12,1)";
             track.style.transform = `translateX(${finalX}px)`;
         }),
     );
     const finish = () => {
         track.removeEventListener("transitionend", finish);
+        const winningCard = track.children[targetIndex];
+        if (winningCard) winningCard.classList.add("winner", rarityClass[win.rarity]);
         inventory[win.id] = (inventory[win.id] || 0) + 1;
         history.unshift({
             name: win.name,
@@ -286,7 +293,9 @@ function openCrate() {
         $("result-name").textContent = win.name;
         $("result-rarity").textContent = win.rarity;
         $("result-rarity").className = "rarity " + rarityClass[win.rarity];
+        $("result").className = "mt-4 rarity-" + rarityClass[win.rarity];
         $("result").classList.remove("d-none");
+        $("result").querySelector(".text-center").classList.add("result-reveal");
         $("opening-hint").textContent =
             "Récompense ajoutée à la collection commune.";
         $("open-btn").disabled = false;
@@ -299,7 +308,7 @@ function openCrate() {
     // Fallback if transitionend is not fired (e.g. reduced motion or browser edge case).
     setTimeout(() => {
         if (busy) finish();
-    }, 5600);
+    }, 6500);
 }
 function renderCollection() {
     const entries = Object.entries(inventory).filter(
