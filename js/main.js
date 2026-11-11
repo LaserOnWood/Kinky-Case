@@ -348,6 +348,8 @@ function openCrate() {
     $("open-btn").disabled = true;
     $("reset-btn").disabled = true;
     $("result").classList.add("d-none");
+    // Retire l'animation précédente pour qu'elle puisse se rejouer à chaque gain.
+    $("result").querySelector(".text-center").classList.remove("result-reveal");
     // Le gain est tiré avant l'animation : l'animation ne fait que révéler ce résultat.
     const crateAtOpening = selectedCrate;
     const win = chooseWeighted(crateAtOpening.items);
