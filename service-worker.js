@@ -9,8 +9,10 @@ const APP_SHELL = [
   "./assets/crates/mystere.webp",
   "./assets/crates/royale.webp",
   "./assets/crates/tech.webp",
-  "./assets/crates/legendaire.webp"
-].map((path) => new URL(path, BASE_URL).href);
+  "./assets/crates/legendaire.webp",
+  "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
+  "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+].map((path) => path.startsWith("http") ? path : new URL(path, BASE_URL).href);
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -36,7 +38,18 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
+  if (url.origin !== self.location.origin) {
+    // Bootstrap is served by jsDelivr; keep a copy for offline launches.
+    if (url.hostname === "cdn.jsdelivr.net") {
+      event.respondWith(
+        caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+          if (response.ok) caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
+          return response;
+        }))
+      );
+    }
+    return;
+  }
 
   if (request.mode === "navigate") {
     event.respondWith(
