@@ -1,12 +1,48 @@
+/* ===== Variables ===== */
 :root {
   --bg: #0d0e12;
   --panel: #15171d;
   --panel2: #1b1e26;
+  --surface: #22252d;
   --line: #292d37;
   --muted: #9298a5;
   --text: #f2f3f6;
   --accent: #c7b9a5;
 }
+
+/* Une seule source de vérité pour les raretés : chaque élément définit --rarity,
+   les composants (texte, bordure, halo) s'en servent. */
+.common {
+  --rarity: #aeb7c4;
+}
+.uncommon {
+  --rarity: #79c88b;
+}
+.rare {
+  --rarity: #6ca9f5;
+}
+.epic {
+  --rarity: #bd8cf0;
+}
+.legendary {
+  --rarity: #f0c45f;
+}
+
+/* Couleur d'accent de chaque caisse (cartes + caisse sélectionnée) */
+[data-theme="mystere"] {
+  --crate-accent: #a58be0;
+}
+[data-theme="royale"] {
+  --crate-accent: #d8b45e;
+}
+[data-theme="tech"] {
+  --crate-accent: #4bc7d8;
+}
+[data-theme="legendaire"] {
+  --crate-accent: #e47b58;
+}
+
+/* ===== Base ===== */
 * {
   box-sizing: border-box;
 }
@@ -22,6 +58,27 @@ body {
     sans-serif;
   min-height: 100vh;
 }
+.subtle {
+  color: var(--muted);
+}
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 650;
+  letter-spacing: -0.055em;
+}
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+/* ===== Navigation ===== */
 .navbar {
   background: rgba(13, 14, 18, 0.92);
   border-bottom: 1px solid var(--line);
@@ -49,138 +106,12 @@ body {
 .nav-link:hover {
   color: #fff !important;
 }
-.eyebrow {
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.hero-title {
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 650;
-  letter-spacing: -0.055em;
-}
-.subtle {
-  color: var(--muted);
-}
+
+/* ===== Panneaux, étiquettes, boutons ===== */
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 18px;
-}
-.crate-card {
-  height: 100%;
-  background: linear-gradient(145deg, #1a1d24, #121419);
-  border: 1px solid color-mix(in srgb, var(--crate-accent) 38%, #292d37);
-  border-radius: 16px;
-  padding: 18px;
-  cursor: pointer;
-  transition: 0.25s ease;
-  position: relative;
-  overflow: hidden;
-}
-.crate-card:before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 0, color-mix(in srgb, var(--crate-accent) 22%, transparent), transparent 68%);
-  opacity: .75;
-  pointer-events: none;
-}
-.crate-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--crate-accent);
-  box-shadow: 0 10px 30px color-mix(in srgb, var(--crate-accent) 12%, transparent);
-}
-.crate-card.selected {
-  border-color: var(--crate-accent);
-  box-shadow: 0 0 0 1px var(--crate-accent) inset, 0 0 24px color-mix(in srgb, var(--crate-accent) 18%, transparent);
-}
-.crate-card > * { position: relative; }
-.crate-visual {
-  height: 112px;
-  border-radius: 12px;
-  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--crate-accent) 42%, #22252d), #17191e 76%);
-  display: grid;
-  place-items: center;
-  margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.crate-visual:before {
-  content: "";
-  position: absolute;
-  width: 78px;
-  height: 66px;
-  top: 25px;
-  left: 50%;
-  transform: translateX(-50%) skewY(-5deg);
-  border: 2px solid color-mix(in srgb, var(--crate-accent) 88%, white);
-  border-radius: 9px;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--crate-accent) 85%, white), color-mix(in srgb, var(--crate-accent) 52%, #17191e) 58%, #17191e);
-  box-shadow: 0 9px 20px #0009, inset 0 0 18px #ffffff22;
-  z-index: 0;
-}
-.crate-visual:after {
-  content: "";
-  position: absolute;
-  width: 15px;
-  height: 66px;
-  top: 25px;
-  left: calc(50% + 25px);
-  background: color-mix(in srgb, var(--crate-accent) 75%, #111);
-  border-left: 1px solid #ffffff55;
-  transform: skewY(-5deg);
-  opacity: .9;
-  z-index: 0;
-}
-.crate-emblem {
-  color: #fff;
-  font-size: 2rem;
-  line-height: 1;
-  text-shadow: 0 2px 8px #000, 0 0 14px var(--crate-accent);
-  transform: translateY(5px);
-  position: relative;
-  z-index: 1;
-}
-.crate-card[data-theme="mystere"], .selected-crate-showcase[data-theme="mystere"] { --crate-accent: #a58be0; }
-.crate-card[data-theme="royale"], .selected-crate-showcase[data-theme="royale"] { --crate-accent: #d8b45e; }
-.crate-card[data-theme="tech"], .selected-crate-showcase[data-theme="tech"] { --crate-accent: #4bc7d8; }
-.crate-card[data-theme="legendaire"], .selected-crate-showcase[data-theme="legendaire"] { --crate-accent: #e47b58; }
-.selected-crate-showcase {
-  --crate-accent: #a58be0;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  min-height: 104px;
-  padding: 12px 16px;
-  border: 1px solid color-mix(in srgb, var(--crate-accent) 48%, #292d37);
-  border-radius: 14px;
-  background: linear-gradient(105deg, color-mix(in srgb, var(--crate-accent) 13%, #15171d), #15171d 72%);
-  box-shadow: inset 3px 0 var(--crate-accent);
-  transition: border-color .25s, background .25s;
-}
-.crate-visual-large {
-  width: 88px;
-  height: 78px;
-  flex: 0 0 88px;
-  margin: 0;
-  background: radial-gradient(circle, color-mix(in srgb, var(--crate-accent) 35%, #17191e), #17191e 75%);
-}
-.crate-visual-large:before { width: 54px; height: 46px; top: 17px; }
-.crate-visual-large:after { width: 11px; height: 46px; top: 17px; left: calc(50% + 17px); }
-.crate-visual-large .crate-emblem { font-size: 1.45rem; transform: translateY(3px); }
-.selected-crate-copy { min-width: 0; }
-.crate-status {
-  color: var(--crate-accent);
-  border: 1px solid color-mix(in srgb, var(--crate-accent) 50%, transparent);
-  border-radius: 99px;
-  padding: 6px 10px;
-  font-size: .68rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  white-space: nowrap;
 }
 .tag {
   font-size: 0.68rem;
@@ -219,6 +150,148 @@ body {
   background: var(--panel2);
   color: #fff;
 }
+.empty {
+  color: #777e89;
+  text-align: center;
+  padding: 26px 10px;
+  font-size: 0.9rem;
+}
+
+/* ===== Rareté (texte) ===== */
+.rarity {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 7px;
+  color: var(--rarity);
+}
+
+/* ===== Caisses ===== */
+.crate-card {
+  height: 100%;
+  background: linear-gradient(145deg, #1a1d24, #121419);
+  border: 1px solid color-mix(in srgb, var(--crate-accent) 38%, var(--line));
+  border-radius: 16px;
+  padding: 18px;
+  cursor: pointer;
+  transition: 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.crate-card:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 0,
+    color-mix(in srgb, var(--crate-accent) 22%, transparent),
+    transparent 68%
+  );
+  opacity: 0.75;
+  pointer-events: none;
+}
+.crate-card > * {
+  position: relative;
+}
+.crate-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--crate-accent);
+  box-shadow: 0 10px 30px
+    color-mix(in srgb, var(--crate-accent) 12%, transparent);
+}
+.crate-card.selected {
+  border-color: var(--crate-accent);
+  box-shadow:
+    0 0 0 1px var(--crate-accent) inset,
+    0 0 24px color-mix(in srgb, var(--crate-accent) 18%, transparent);
+}
+
+.crate-visual {
+  height: 150px;
+  padding: 5px;
+  margin-bottom: 16px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 12px;
+  background: radial-gradient(
+    circle at 50% 55%,
+    color-mix(in srgb, var(--crate-accent) 20%, #17191e),
+    #111319 78%
+  );
+}
+.crate-visual img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 12px #0009);
+}
+
+.selected-crate-showcase {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 104px;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--crate-accent) 48%, var(--line));
+  border-radius: 14px;
+  background: linear-gradient(
+    105deg,
+    color-mix(in srgb, var(--crate-accent) 13%, var(--panel)),
+    var(--panel) 72%
+  );
+  box-shadow: inset 3px 0 var(--crate-accent);
+  transition:
+    border-color 0.25s,
+    background 0.25s;
+}
+.selected-crate-copy {
+  min-width: 0;
+}
+.crate-visual-large {
+  width: 128px;
+  height: 96px;
+  flex: 0 0 128px;
+  margin: 0;
+  padding: 0;
+}
+.crate-status {
+  color: var(--crate-accent);
+  border: 1px solid color-mix(in srgb, var(--crate-accent) 50%, transparent);
+  border-radius: 99px;
+  padding: 6px 10px;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Caisse verrouillée */
+.hidden-crate {
+  border: 1px dashed #414650;
+  background: #14161b;
+  border-radius: 16px;
+  padding: 18px;
+  color: #777e89;
+}
+.crate-lock {
+  width: 76px;
+  height: 76px;
+  flex: 0 0 76px;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  border-radius: 12px;
+  background: #17191e;
+  color: #656b75;
+}
+
+/* ===== Roulette ===== */
 .roulette-window {
   height: 164px;
   overflow: hidden;
@@ -274,17 +347,38 @@ body {
   will-change: transform;
 }
 .reel-item {
+  --item-rarity: var(--rarity, #667080);
   width: 116px;
   flex: 0 0 116px;
-  background: #1b1e25;
-  border: 1px solid #303540;
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 10px;
   text-align: center;
+  border: 1px solid color-mix(in srgb, var(--item-rarity) 45%, #303540);
+  border-radius: 10px;
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--item-rarity) 12%, #1b1e25),
+    #17191f 75%
+  );
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s,
+    transform 0.3s;
+}
+.reel-item.winner {
+  border-color: var(--item-rarity);
+  box-shadow:
+    0 0 0 1px var(--item-rarity),
+    0 0 28px color-mix(in srgb, var(--item-rarity) 42%, transparent);
+  transform: scale(1.035);
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--item-rarity) 28%, #1b1e25),
+    #17191f 78%
+  );
 }
 .reel-icon {
   font-size: 2.1rem;
@@ -295,26 +389,27 @@ body {
   line-height: 1.2;
   color: #e8e9ed;
 }
-.rarity {
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-top: 7px;
+
+/* ===== Résultat ===== */
+#result .result-reveal {
+  border-color: var(--rarity) !important;
+  box-shadow: 0 0 28px color-mix(in srgb, var(--rarity) 17%, transparent);
+  animation: reward-pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
-.common {
-  color: #b3bac4;
+@keyframes reward-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
-.uncommon {
-  color: #8dbb94;
-}
-.rare {
-  color: #8eadd8;
-}
-.epic {
-  color: #b69ad9;
-}
-.legendary {
-  color: #d8bd82;
+
+/* ===== Collection & historique ===== */
+#collection-summary {
+  text-align: right;
 }
 .reward-card {
   background: #1a1d24;
@@ -328,31 +423,9 @@ body {
   display: grid;
   place-items: center;
   font-size: 2rem;
-  background: #22252d;
+  background: var(--surface);
   border-radius: 9px;
   margin-bottom: 9px;
-}
-.mini-stat {
-  background: #191c22;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 13px;
-}
-.section-title {
-  font-size: 1.1rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-}
-.hidden-crate {
-  border: 1px dashed #414650;
-  background: #14161b;
-  border-radius: 16px;
-  padding: 18px;
-  color: #777e89;
-}
-.hidden-crate .crate-art {
-  background: #17191e;
-  color: #656b75;
 }
 .history-row {
   display: flex;
@@ -369,16 +442,12 @@ body {
   height: 38px;
   display: grid;
   place-items: center;
-  background: #22252d;
+  background: var(--surface);
   border-radius: 9px;
   font-size: 1.25rem;
 }
-.empty {
-  color: #777e89;
-  text-align: center;
-  padding: 26px 10px;
-  font-size: 0.9rem;
-}
+
+/* ===== Modal & toasts ===== */
 .toast-container {
   z-index: 10;
 }
@@ -388,9 +457,27 @@ body {
   color: var(--text);
   border-radius: 18px;
 }
+.odds-table {
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--line);
+}
+
+/* ===== Mobile ===== */
 @media (max-width: 575px) {
-  .crate-art {
-    height: 90px;
+  .crate-visual {
+    height: 118px;
+  }
+  .crate-visual-large {
+    width: 76px;
+    height: 70px;
+    flex-basis: 76px;
+  }
+  .selected-crate-showcase {
+    gap: 10px;
+    padding: 10px;
+  }
+  .crate-status {
+    display: none;
   }
   .roulette-window {
     height: 148px;
@@ -399,64 +486,11 @@ body {
     height: 120px;
   }
   .reel-item {
-    height: 120px;
     width: 104px;
+    height: 120px;
     flex-basis: 104px;
   }
-}
-
-
-/* Roulette : cartes teintées selon leur rareté et révélation du gain */
-.reel-item {
-  border-color: color-mix(in srgb, var(--item-rarity, #667080) 45%, #303540);
-  background: linear-gradient(160deg, color-mix(in srgb, var(--item-rarity, #667080) 12%, #1b1e25), #17191f 75%);
-  transition: border-color .3s, box-shadow .3s, transform .3s;
-}
-.reel-item.common { --item-rarity: #aeb7c4; }
-.reel-item.uncommon { --item-rarity: #79c88b; }
-.reel-item.rare { --item-rarity: #6ca9f5; }
-.reel-item.epic { --item-rarity: #bd8cf0; }
-.reel-item.legendary { --item-rarity: #f0c45f; }
-.reel-item.winner {
-  border-color: var(--item-rarity);
-  box-shadow: 0 0 0 1px var(--item-rarity), 0 0 28px color-mix(in srgb, var(--item-rarity) 42%, transparent);
-  transform: scale(1.035);
-  background: linear-gradient(160deg, color-mix(in srgb, var(--item-rarity) 28%, #1b1e25), #17191f 78%);
-}
-#result .result-reveal {
-  border-color: var(--result-rarity) !important;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--result-rarity) 17%, transparent);
-}
-#result.rarity-common { --result-rarity: #aeb7c4; }
-#result.rarity-uncommon { --result-rarity: #79c88b; }
-#result.rarity-rare { --result-rarity: #6ca9f5; }
-#result.rarity-epic { --result-rarity: #bd8cf0; }
-#result.rarity-legendary { --result-rarity: #f0c45f; }
-@media (max-width: 575px) {
-  .selected-crate-showcase { gap: 10px; padding: 10px; }
-  .crate-visual-large { width: 70px; flex-basis: 70px; }
-  .crate-status { display: none; }
-}
-
-
-/* Illustrations fantasy des caisses */
-.crate-visual { height: 150px; padding: 5px; background: radial-gradient(circle at 50% 55%, color-mix(in srgb, var(--crate-accent) 20%, #17191e), #111319 78%); }
-.crate-visual:before, .crate-visual:after { display: none; }
-.crate-visual img { position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 12px #0009); }
-.crate-visual-large { width: 128px; height: 96px; flex: 0 0 128px; padding: 0; }
-.crate-visual-large img { width: 100%; height: 100%; }
-@media (max-width: 575px) { .crate-visual { height: 118px; } .crate-visual-large { width: 76px; height: 70px; flex-basis: 76px; } }
-
-
-/* Résultat : révélation plus lisible et compteur de collection */
-#result .result-reveal {
-  animation: reward-pop .45s cubic-bezier(.2,.8,.2,1) both;
-}
-@keyframes reward-pop {
-  0% { opacity: 0; transform: translateY(8px) scale(.97); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-#collection-summary { text-align: right; }
-@media (max-width: 575px) {
-  #collection-summary { max-width: 58%; }
+  #collection-summary {
+    max-width: 58%;
+  }
 }

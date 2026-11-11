@@ -1,3 +1,4 @@
+<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
@@ -23,7 +24,6 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
-    <style></style>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg sticky-top">
@@ -71,12 +71,7 @@
         </div>
         <div class="row g-3" id="crate-grid"></div>
         <div class="hidden-crate mt-3 d-flex align-items-center gap-3">
-          <div
-            class="crate-art mb-0 flex-shrink-0"
-            style="width: 76px; height: 76px; font-size: 2rem"
-          >
-            🔒
-          </div>
+          <div class="crate-lock">🔒</div>
           <div>
             <div class="eyebrow mb-1">Bientôt disponible</div>
             <div class="fw-semibold">Caisse secrète</div>
@@ -98,7 +93,10 @@
               Caisse Mystère
             </h2>
           </div>
-          <span class="tag">Ouvertures gratuites · Illimitées</span>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn-quiet small" type="button" data-bs-toggle="modal" data-bs-target="#odds-modal">Probabilités</button>
+            <span class="tag">Ouvertures gratuites · Illimitées</span>
+        </div>Ouvertures gratuites · Illimitées</span>
         </div>
         <div class="roulette-window mb-3">
           <div class="marker"></div>
@@ -189,6 +187,25 @@
         ce navigateur, sur cet appareil.
       </footer>
     </main>
+       <div class="modal fade" id="odds-modal" tabindex="-1" aria-labelledby="odds-title" aria-hidden="true" data-bs-theme="dark">
+     <div class="modal-dialog modal-dialog-centered">
+       <div class="modal-content">
+         <div class="modal-header border-0">
+           <div>
+             <div class="eyebrow mb-1">Probabilités</div>
+             <h2 class="modal-title section-title" id="odds-title"></h2>
+           </div>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+         </div>
+         <div class="modal-body pt-0">
+           <table class="table table-sm align-middle mb-0 odds-table">
+             <thead><tr><th>Objet</th><th>Rareté</th><th class="text-end">Chance</th></tr></thead>
+             <tbody id="odds-body"></tbody>
+           </table>
+         </div>
+       </div>
+     </div>
+   </div>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
       <div id="toast" class="toast text-bg-dark border-secondary" role="alert">
@@ -203,7 +220,7 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/main.js"></script>
+    <script type="module" src="js/main.js"></script>
     <script src="js/pwa.js"></script>
   </body>
 </html>
