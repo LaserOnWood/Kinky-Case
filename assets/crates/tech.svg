@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300">
+<defs>
+ <linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102d3c"/><stop offset=".55" stop-color="#171923"/><stop offset="1" stop-color="#090b12"/></linearGradient>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0c2"/><stop offset=".3" stop-color="#4c91a8"/><stop offset=".7" stop-color="#5c3d28"/><stop offset="1" stop-color="#17131b"/></linearGradient>
+ <radialGradient id="aura"><stop stop-color="#5cecff" stop-opacity=".48"/><stop offset="1" stop-color="#5cecff" stop-opacity="0"/></radialGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="13"/></filter>
+ <filter id="shadow"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<ellipse cx="240" cy="260" rx="190" ry="24" fill="#000" opacity=".55" filter="url(#shadow)"/>
+<ellipse cx="240" cy="150" rx="220" ry="135" fill="url(#aura)" filter="url(#blur)"/>
+
+
+<path d="M70 100 H115 V70 H155 M410 100 H365 V70 H325 M70 190 H110 V220 H150 M410 190 H370 V220 H330" fill="none" stroke="${glow}" stroke-width="5"/><circle cx="115" cy="70" r="7" fill="${glow}"/><circle cx="365" cy="70" r="7" fill="${glow}"/>
+
+<path d="M85 112 Q85 82 115 82 H365 Q395 82 395 112 V205 Q395 232 368 242 H112 Q85 232 85 205Z" fill="url(#body)" stroke="url(#metal)" stroke-width="12"/>
+<path d="M75 112 Q75 92 100 82 L145 52 H335 L380 82 Q405 92 405 112 L390 139 H90Z" fill="url(#body)" stroke="url(#metal)" stroke-width="12"/>
+<path d="M92 130 H388 V206 Q388 224 368 230 H112 Q92 224 92 206Z" fill="none" stroke="#4c91a8" stroke-width="7"/>
+<path d="M110 91 H370 M110 214 H370" stroke="#4c91a8" stroke-width="8"/>
+<path d="M135 82 V225 M345 82 V225" stroke="url(#metal)" stroke-width="12"/>
+<path d="M206 94 L240 75 L274 94 V190 L240 215 L206 190Z" fill="#080a11" stroke="url(#metal)" stroke-width="8"/>
+<path d="M220 125 L240 108 L260 125 L240 151Z" fill="#5cecff" opacity=".9" stroke="#4c91a8" stroke-width="4"/>
+<path d="M225 166 H255" stroke="#4c91a8" stroke-width="6"/>
+<path d="M92 150 L112 150 M368 150 L388 150" stroke="#5cecff" stroke-width="6"/>
+<path d="M120 240 L140 260 H340 L360 240" fill="none" stroke="url(#metal)" stroke-width="12"/>
+
+
+<g fill="none" stroke="${glow}" stroke-width="5"><path d="M150 112 H185 V130 M330 112 H295 V130 M150 195 H185 V178 M330 195 H295 V178"/></g>
+
+</svg>
