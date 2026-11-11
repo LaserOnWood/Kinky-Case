@@ -1,0 +1,29 @@
+{
+  "id": "./",
+  "name": "Kinky-Case — Ouverture de caisses",
+  "short_name": "Kinky-Case",
+  "description": "Ouvre des caisses, découvre des récompenses et construis ta collection.",
+  "lang": "fr-FR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#0d0e12",
+  "theme_color": "#0d0e12",
+  "categories": [
+    "games",
+    "entertainment"
+  ],
+  "icons": [
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
