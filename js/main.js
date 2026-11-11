@@ -194,8 +194,60 @@ function loadStoredJSON(key, fallback) {
         return fallback;
     }
 }
-let inventory = loadStoredJSON("loot_inventory", {});
-let history = loadStoredJSON("loot_history", []);
+function sanitizeInventory(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+    const validIds = new Set(crates.flatMap((crate) => crate.items.map((item) => item.id)));
+    const clean = {};
+    for (const [id, count] of Object.entries(raw)) {
+        if (
+            validIds.has(id) &&
+            Number.isSafeInteger(count) &&
+            count > 0 &&
+            count <= 1000000000
+        ) {
+            clean[id] = count;
+        }
+    }
+    return clean;
+}
+
+function sanitizeHistory(raw) {
+    if (!Array.isArray(raw)) return [];
+    const itemByName = new Map(
+        crates.flatMap((crate) => crate.items.map((item) => [item.name, item])),
+    );
+    const crateNames = new Set(crates.map((crate) => crate.name));
+    return raw
+        .filter((entry) =>
+            entry &&
+            typeof entry === "object" &&
+            !Array.isArray(entry) &&
+            typeof entry.name === "string" &&
+            typeof entry.icon === "string" &&
+            typeof entry.rarity === "string" &&
+            typeof entry.crate === "string" &&
+            typeof entry.time === "string" &&
+            entry.time.length <= 100
+        )
+        .filter((entry) => {
+            const item = itemByName.get(entry.name);
+            return item &&
+                crateNames.has(entry.crate) &&
+                item.icon === entry.icon &&
+                item.rarity === entry.rarity;
+        })
+        .slice(0, 30)
+        .map((entry) => ({
+            name: entry.name,
+            icon: entry.icon,
+            rarity: entry.rarity,
+            crate: entry.crate,
+            time: entry.time,
+        }));
+}
+
+let inventory = sanitizeInventory(loadStoredJSON("loot_inventory", {}));
+let history = sanitizeHistory(loadStoredJSON("loot_history", []));
 const $ = (id) => document.getElementById(id);
 
 function save() {
@@ -402,15 +454,44 @@ function renderCollection() {
         .join("");
 }
 function renderHistory() {
-    $("history-list").innerHTML = history.length
-        ? history
-            .slice(0, 12)
-            .map(
-                (h) =>
-                    `<div class="history-row"><div class="history-icon">${h.icon}</div><div class="flex-grow-1"><div class="small fw-semibold">${h.name}</div><div class="small subtle">${h.crate} · ${h.time}</div></div><span class="rarity ${rarityClass[h.rarity]}">${h.rarity}</span></div>`,
-            )
-            .join("")
-        : '<div class="empty">Aucune ouverture enregistrée.</div>';
+    const container = $("history-list");
+    container.replaceChildren();
+
+    if (!history.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Aucune ouverture enregistrée.";
+        container.appendChild(empty);
+        return;
+    }
+
+    history.slice(0, 12).forEach((entry) => {
+        const row = document.createElement("div");
+        row.className = "history-row";
+
+        const icon = document.createElement("div");
+        icon.className = "history-icon";
+        icon.textContent = entry.icon;
+
+        const details = document.createElement("div");
+        details.className = "flex-grow-1";
+
+        const name = document.createElement("div");
+        name.className = "small fw-semibold";
+        name.textContent = entry.name;
+
+        const metadata = document.createElement("div");
+        metadata.className = "small subtle";
+        metadata.textContent = `${entry.crate} · ${entry.time}`;
+
+        const rarity = document.createElement("span");
+        rarity.className = `rarity ${rarityClass[entry.rarity]}`;
+        rarity.textContent = entry.rarity;
+
+        details.append(name, metadata);
+        row.append(icon, details, rarity);
+        container.appendChild(row);
+    });
 }
 $("open-btn").addEventListener("click", openCrate);
 $("reset-btn").addEventListener("click", () => {
