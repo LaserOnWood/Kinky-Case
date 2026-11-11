@@ -234,7 +234,7 @@ function renderSelected() {
     $("track").style.transform = "translateX(0px)";
 }
 function itemCard(item) {
-    return `<div class="reel-item"><div class="reel-icon">${item.icon}</div><div class="reel-name">${item.name}</div><div class="rarity ${rarityClass[item.rarity]}">${item.rarity}</div></div>`;
+    return `<div class="reel-item ${rarityClass[item.rarity]}"><div class="reel-icon">${item.icon}</div><div class="reel-name">${item.name}</div><div class="rarity ${rarityClass[item.rarity]}">${item.rarity}</div></div>`;
 }
 function openCrate() {
     if (busy) return;
