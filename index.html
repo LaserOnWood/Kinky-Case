@@ -27,10 +27,10 @@
         <div class="collapse navbar-collapse" id="nav">
           <div class="navbar-nav ms-auto gap-lg-3">
             <a class="nav-link active" href="#caisses">Caisses</a>
+            <a class="nav-link" href="#historique">Historique</a>
             <a class="nav-link" href="#collection"
               >Collection <span id="nav-count" class="subtle">(0)</span></a
             >
-            <a class="nav-link" href="#historique">Historique</a>
           </div>
         </div>
       </div>
@@ -112,6 +112,21 @@
         </div>
       </section>
 
+      <section id="historique" class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+          <div>
+            <div class="eyebrow mb-1">Les dernières ouvertures</div>
+            <h2 class="section-title mb-0">Historique</h2>
+          </div>
+          <button class="btn-quiet small" id="reset-btn">
+            Réinitialiser la session
+          </button>
+        </div>
+        <div class="panel p-3" id="history-list">
+          <div class="empty">Aucune ouverture enregistrée.</div>
+        </div>
+      </section>
+
       <section id="collection" class="mb-5">
         <div class="d-flex justify-content-between align-items-end mb-3">
           <div>
@@ -127,21 +142,6 @@
               ouverture.
             </div>
           </div>
-        </div>
-      </section>
-
-      <section id="historique">
-        <div class="d-flex justify-content-between align-items-end mb-3">
-          <div>
-            <div class="eyebrow mb-1">Les dernières ouvertures</div>
-            <h2 class="section-title mb-0">Historique</h2>
-          </div>
-          <button class="btn-quiet small" id="reset-btn">
-            Réinitialiser la session
-          </button>
-        </div>
-        <div class="panel p-3" id="history-list">
-          <div class="empty">Aucune ouverture enregistrée.</div>
         </div>
       </section>
       <footer class="text-center subtle small py-5">
