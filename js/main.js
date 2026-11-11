@@ -3,7 +3,7 @@ const crates = [
         id: "mystere",
         name: "Caisse Mystère",
         icon: "◈",
-        image: "assets/crates/mystere.png",
+        image: "assets/crates/mystere.svg",
         description: "Un assortiment de surprises.",
         items: [
             {
@@ -47,7 +47,7 @@ const crates = [
         id: "royale",
         name: "Caisse Royale",
         icon: "♛",
-        image: "assets/crates/royale.png",
+        image: "assets/crates/royale.svg",
         description: "Des objets précieux et raffinés.",
         items: [
             {
@@ -91,7 +91,7 @@ const crates = [
         id: "tech",
         name: "Caisse Tech",
         icon: "⌘",
-        image: "assets/crates/tech.png",
+        image: "assets/crates/tech.svg",
         description: "Artefacts et curiosités futuristes.",
         items: [
             {
@@ -135,7 +135,7 @@ const crates = [
         id: "legendaire",
         name: "Caisse Légendaire",
         icon: "✦",
-        image: "assets/crates/legendaire.png",
+        image: "assets/crates/legendaire.svg",
         description: "Une sélection aux chances très rares.",
         items: [
             {
