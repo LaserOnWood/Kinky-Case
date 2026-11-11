@@ -1,29 +1,35 @@
 # 🎁 Kinky-Case
 
-**Ouvre des cases. Découvre des récompenses. Construis ta collection.**
+**Ouvre des caisses. Découvre des récompenses. Construis ta collection.**
 
-Kinky-Case est un mini-jeu privé d'ouverture de caisses inspiré des systèmes de *case opening* de CS:GO / CS2. Le principe est simple : choisis une caisse, lance la roulette et découvre quelle récompense tu vas obtenir !
+Kinky-Case est un mini-jeu privé et gratuit d'ouverture de caisses virtuelles. Choisis une caisse, lance la roulette et découvre l'une de ses récompenses. Les ouvertures sont gratuites et illimitées dans cette version.
 
-Le projet est pensé pour être utilisé entre amis, avec une interface élégante, sombre et minimaliste.
+Le jeu fonctionne dans le navigateur, sans compte joueur. La collection et l'historique sont enregistrés localement sur l'appareil utilisé.
 
 ## ✨ Fonctionnalités
 
-- 🎰 **Ouverture de cases animée** — Une roulette fluide qui ralentit progressivement avant de révéler la récompense.
-- 🎁 **Cases personnalisées** — Chaque caisse possède ses propres récompenses et probabilités.
-- 💎 **Système de rareté** — Cinq niveaux : Commun, Inhabituel, Rare, Épique et Légendaire.
-- 📦 **Collection personnelle** — Retrouve toutes les récompenses obtenues, avec un compteur pour les doublons.
-- 📜 **Historique des ouvertures** — Consulte les dernières récompenses gagnées.
-- 🔒 **Cases évolutives** — Quatre cases disponibles au lancement et une cinquième prévue pour une activation ultérieure.
-- 🆓 **Ouvertures gratuites et illimitées** — Aucun ticket nécessaire dans la première version.
+- 🎰 **Ouverture animée** — Une roulette révèle le résultat de chaque ouverture.
+- 🎁 **Quatre caisses disponibles** — Mystère, Royale, Tech et Légendaire. Une caisse secrète supplémentaire est annoncée comme contenu futur, mais n'est pas encore accessible.
+- 💎 **Cinq niveaux de rareté** — Commun, Inhabituel, Rare, Épique et Légendaire.
+- 📦 **Collection personnelle** — Les objets découverts et le nombre d'exemplaires de chacun sont affichés séparément.
+- 📜 **Historique local** — Consulte les dernières ouvertures enregistrées.
+- 🆓 **Ouvertures gratuites et illimitées** — Aucun ticket ni paiement n'est nécessaire.
+
+## 💎 Raretés
+
+Chaque caisse contient cinq récompenses réparties entre les niveaux Commun, Inhabituel, Rare, Épique et Légendaire. Les probabilités sont définies dans le catalogue du jeu, dans `js/main.js`.
+
+## 💾 Sauvegarde et limites
+
+- La collection et l'historique sont conservés dans le stockage local (`LocalStorage`) du navigateur.
+- Les données restent sur le navigateur et l'appareil utilisés. Elles ne sont pas synchronisées entre appareils.
+- Aucun compte joueur ni serveur de sauvegarde n'est actuellement mis en place.
+- Effacer les données du navigateur peut supprimer la collection et l'historique.
+- Le bouton de réinitialisation efface la collection et l'historique locaux après confirmation.
 
 ## 🎨 Direction artistique
 
-Kinky-Case mise sur une identité visuelle sobre et immersive :
-
-- Interface sombre et élégante.
-- Animations inspirées des jeux de collection.
-- Couleurs et effets visuels associés à la rareté.
-- Présentation soignée des récompenses et des caisses.
+Kinky-Case utilise une interface sombre et immersive, des illustrations dédiées aux caisses et des effets visuels associés aux niveaux de rareté.
 
 ## 🛠️ Technologies
 
@@ -31,22 +37,19 @@ Kinky-Case mise sur une identité visuelle sobre et immersive :
 - **CSS3** — Interface et animations.
 - **JavaScript** — Roulette, probabilités et gestion des récompenses.
 - **Bootstrap 5** — Mise en page responsive.
-- **LocalStorage** — Sauvegarde locale de la collection et de l'historique dans la première version.
+- **LocalStorage** — Sauvegarde locale de la collection et de l'historique.
 
-## 🚀 Évolutions prévues
+## 🚀 Évolutions possibles
 
-Kinky-Case est conçu pour pouvoir évoluer progressivement :
-
-- 👥 Système de comptes joueurs.
-- 🌐 Collection partagée et synchronisée entre plusieurs appareils.
-- 🛡️ Interface d'administration.
-- 🎟️ Système de tickets pour ouvrir les cases.
-- 🎁 Ajout de nouvelles caisses et récompenses.
-- 📊 Statistiques et suivi des ouvertures.
+- Comptes joueurs.
+- Collection partagée et synchronisée entre plusieurs appareils.
+- Interface d'administration.
+- Nouvelles caisses et récompenses.
+- Statistiques et suivi des ouvertures.
 
 ## 📌 À propos
 
-Kinky-Case est un projet personnel et privé, développé pour le divertissement et le plaisir de collectionner des récompenses virtuelles entre amis.
+Kinky-Case est un projet personnel et privé, développé pour le divertissement et la collection de récompenses virtuelles.
 
 **Un clic, une roulette, une surprise. Bonne chance ! 🍀**
 
