@@ -249,15 +249,18 @@ function openCrate() {
     );
     sequence[29] = win;
     track.innerHTML = sequence.map(itemCard).join("");
-    const cardWidth = 116,
-        gap = 10,
-        actualWidth = windowEl.clientWidth;
-    const targetIndex = 29,
-        center = actualWidth / 2;
-    const cardCenter = targetIndex * (cardWidth + gap) + cardWidth / 2;
-    const finalX = center - cardCenter;
+    const targetIndex = 29;
     track.style.transition = "none";
     track.style.transform = "translateX(0px)";
+
+    // Mesure la vraie carte après son insertion : sa largeur peut varier
+    // selon le breakpoint CSS (notamment sur les écrans mobiles).
+    const targetCard = track.children[targetIndex];
+    const windowRect = windowEl.getBoundingClientRect();
+    const cardRect = targetCard.getBoundingClientRect();
+    const center = windowRect.left + windowEl.clientWidth / 2;
+    const cardCenter = cardRect.left + cardRect.width / 2;
+    const finalX = center - cardCenter;
     requestAnimationFrame(() =>
         requestAnimationFrame(() => {
             track.style.transition =
