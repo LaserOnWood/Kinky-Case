@@ -72,7 +72,7 @@ const crates = [
                 weight: 17,
             },
             {
-                id: " sceptre",
+                id: "sceptre",
                 name: "Sceptre solaire",
                 icon: "⚜️",
                 rarity: "Épique",
@@ -198,14 +198,19 @@ function sanitizeInventory(raw) {
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
     const validIds = new Set(crates.flatMap((crate) => crate.items.map((item) => item.id)));
     const clean = {};
-    for (const [id, count] of Object.entries(raw)) {
+    for (const [storedId, count] of Object.entries(raw)) {
+        // Preserve collections saved before the "sceptre" identifier was corrected.
+        const id = storedId === " sceptre" ? "sceptre" : storedId;
         if (
             validIds.has(id) &&
             Number.isSafeInteger(count) &&
             count > 0 &&
             count <= 1000000000
         ) {
-            clean[id] = count;
+            const combined = (clean[id] || 0) + count;
+            if (Number.isSafeInteger(combined) && combined <= 1000000000) {
+                clean[id] = combined;
+            }
         }
     }
     return clean;
@@ -410,10 +415,10 @@ function openCrate() {
             $("result").querySelector(".text-center").classList.add("result-reveal");
 
             $("opening-hint").textContent = saved
-                ? "Récompense ajoutée à la collection commune."
+                ? "Récompense ajoutée à votre collection sur cet appareil."
                 : "Gain obtenu, mais sauvegarde impossible. Ne fermez pas cette page avant d'avoir réessayé.";
             showToast(saved
-                ? `${win.name} ajouté à la collection.`
+                ? `${win.name} ajouté à votre collection.`
                 : `${win.name} obtenu, mais non sauvegardé.`);
         } catch (error) {
             console.error("Une erreur est survenue à la fin de l'ouverture.", error);
@@ -437,9 +442,10 @@ function renderCollection() {
         ([, count]) => count > 0,
     );
     const allItems = crates.flatMap((c) => c.items);
-    $("nav-count").textContent = `(${entries.length})`;
+    const totalCopies = entries.reduce((sum, [, count]) => sum + count, 0);
+    $("nav-count").textContent = `(${entries.length}/${allItems.length})`;
     $("collection-summary").textContent =
-        `${entries.reduce((s, [, n]) => s + n, 0)} exemplaire(s)`;
+        `${entries.length} objet(s) découvert(s) · ${totalCopies} exemplaire(s)`;
     if (!entries.length) {
         $("collection-grid").innerHTML =
             '<div class="col-12"><div class="panel empty">Aucune récompense pour le moment. À vous de faire la première ouverture.</div></div>';
@@ -497,7 +503,7 @@ $("open-btn").addEventListener("click", openCrate);
 $("reset-btn").addEventListener("click", () => {
     // Also guard the handler itself: a disabled button is not the only protection.
     if (busy) return;
-    if (!confirm("Effacer la collection et l'historique de cette session ?"))
+    if (!confirm("Effacer la collection et l'historique enregistrés sur cet appareil ?"))
         return;
 
     const previousInventory = inventory;
