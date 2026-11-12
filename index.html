@@ -84,19 +84,24 @@
       </section>
 
       <section class="panel p-3 p-md-4 mb-5" id="opening">
-        <div
-          class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"
-        >
+        <div class="opening-header">
           <div>
             <div class="eyebrow mb-1">Ouverture</div>
             <h2 class="section-title mb-0" id="selected-title">
               Caisse Mystère
             </h2>
           </div>
-          <div class="d-flex align-items-center gap-2">
-            <button class="btn-quiet small" type="button" data-bs-toggle="modal" data-bs-target="#odds-modal">Probabilités</button>
-            <span class="tag">Ouvertures gratuites · Illimitées</span>
-        </div>Ouvertures gratuites · Illimitées</span>
+          <span class="tag">Ouvertures gratuites · Illimitées</span>
+          <button
+            type="button"
+            class="odds-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#odds-modal"
+            aria-label="Probabilités de la caisse sélectionnée"
+            title="Probabilités"
+          >
+            %
+          </button>
         </div>
         <div class="roulette-window mb-3">
           <div class="marker"></div>
@@ -187,25 +192,43 @@
         ce navigateur, sur cet appareil.
       </footer>
     </main>
-       <div class="modal fade" id="odds-modal" tabindex="-1" aria-labelledby="odds-title" aria-hidden="true" data-bs-theme="dark">
-     <div class="modal-dialog modal-dialog-centered">
-       <div class="modal-content">
-         <div class="modal-header border-0">
-           <div>
-             <div class="eyebrow mb-1">Probabilités</div>
-             <h2 class="modal-title section-title" id="odds-title"></h2>
-           </div>
-           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-         </div>
-         <div class="modal-body pt-0">
-           <table class="table table-sm align-middle mb-0 odds-table">
-             <thead><tr><th>Objet</th><th>Rareté</th><th class="text-end">Chance</th></tr></thead>
-             <tbody id="odds-body"></tbody>
-           </table>
-         </div>
-       </div>
-     </div>
-   </div>
+    <div
+      class="modal fade"
+      id="odds-modal"
+      tabindex="-1"
+      aria-labelledby="odds-title"
+      aria-hidden="true"
+      data-bs-theme="dark"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <div>
+              <div class="eyebrow mb-1">Probabilités</div>
+              <h2 class="modal-title section-title" id="odds-title"></h2>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Fermer"
+            ></button>
+          </div>
+          <div class="modal-body pt-0">
+            <table class="table table-sm align-middle mb-0 odds-table">
+              <thead>
+                <tr>
+                  <th>Objet</th>
+                  <th>Rareté</th>
+                  <th class="text-end">Chance</th>
+                </tr>
+              </thead>
+              <tbody id="odds-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
       <div id="toast" class="toast text-bg-dark border-secondary" role="alert">

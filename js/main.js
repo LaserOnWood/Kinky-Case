@@ -106,12 +106,17 @@ function chooseWeighted(items) {
 function rendercases() {
     $("case-grid").innerHTML = CASES.map(
         (c) => `<div class="col-6 col-lg-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-id="${c.id}" data-theme="${c.id}">
- <div class="case-visual"><img src="${c.image}" alt="Illustration ${c.name}" loading="lazy"></div><div class="d-flex justify-content-between align-items-center gap-2 mb-2"><span class="fw-semibold">${c.name}</span><span class="tag">${c.items.length} objets</span></div>
+ <div class="case-visual">
+  <img src="${c.image}" alt="Illustration ${c.name}" loading="lazy">
+  <button type="button" class="odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
+  <span class="case-count" title="${c.items.length} objets" aria-label="${c.items.length} objets">${c.items.length}</span>
+ </div>
+ <div class="fw-semibold mb-2">${c.name}</div>
  <div class="small subtle">${c.description}</div></article></div>`,
     ).join("");
     document.querySelectorAll(".case-card").forEach((el) =>
-        el.addEventListener("click", () => {
-            if (busy) return;
+        el.addEventListener("click", (event) => {
+            if (busy || event.target.closest(".odds-btn")) return;
             selectedcase = CASE_BY_ID.get(el.dataset.id);
             rendercases();
             renderSelected();
@@ -139,11 +144,10 @@ function renderSelected() {
     $("track").style.transform = "translateX(0px)";
 }
 
-function renderOdds() {
-    const selected = selectedcase;
-    const total = selected.items.reduce((s, i) => s + i.weight, 0);
-    $("odds-title").textContent = selected.name;
-    $("odds-body").innerHTML = selected.items
+function renderOdds(box) {
+    const total = box.items.reduce((s, i) => s + i.weight, 0);
+    $("odds-title").textContent = box.name;
+    $("odds-body").innerHTML = box.items
         .map((i) => `<tr class="${i.rarity}"><td>${i.icon} ${i.name}</td><td><span class="rarity m-0">${RARITIES[i.rarity].label}</span></td><td class="text-end">${percentFormat.format((i.weight / total) * 100)} %</td></tr>`)
         .join("");
 }
@@ -290,7 +294,10 @@ function opencase() {
 
 // ---- Événements
 $("open-btn").addEventListener("click", opencase);
-$("odds-modal").addEventListener("show.bs.modal", renderOdds);
+$("odds-modal").addEventListener("show.bs.modal", (event) => {
+    const box = CASE_BY_ID.get(event.relatedTarget?.dataset.caseId) ?? selectedcase;
+    renderOdds(box);
+});
 $("reset-btn").addEventListener("click", () => {
     if (busy) return;
     if (!confirm("Effacer la collection et l'historique enregistrés sur cet appareil ?")) return;
