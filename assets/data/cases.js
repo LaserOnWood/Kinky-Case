@@ -14,20 +14,22 @@ export const CASES = [
     {
         id: "mystere",
         name: "Caisse Mystère",
-        image: "./assets/img/cases/mystere.png",
+        image: "./assets/img/cases/mystere.webp",
         description: "Un assortiment de surprises.",
         items: [
-            { id: "bois", name: "Relique de bois", icon: "🪵", rarity: "common", weight: 48 },
+            { id: "bois", name: "Paddle", icon: "🪵", rarity: "common", weight: 48 },
             { id: "jeton", name: "Jeton ancien", icon: "🪙", rarity: "uncommon", weight: 28 },
             { id: "cristal", name: "Cristal brumeux", icon: "💎", rarity: "rare", weight: 16 },
             { id: "masque", name: "Masque astral", icon: "🎭", rarity: "epic", weight: 6 },
+            { id: "couronne", name: "Couronne oubliée", icon: "👑", rarity: "legendary", weight: 2 },
+            { id: "couronne", name: "Couronne oubliée", icon: "👑", rarity: "legendary", weight: 2 },
             { id: "couronne", name: "Couronne oubliée", icon: "👑", rarity: "legendary", weight: 2 },
         ],
     },
     {
         id: "royale",
         name: "Caisse Royale",
-        image: "./assets/img/cases/royale.png",
+        image: "./assets/img/cases/royale.webp",
         description: "Des objets précieux et raffinés.",
         items: [
             { id: "sceau", name: "Sceau royal", icon: "🔰", rarity: "common", weight: 45 },
@@ -40,7 +42,7 @@ export const CASES = [
     {
         id: "tech",
         name: "Caisse Tech",
-        image: "./assets/img/cases/tech.png",
+        image: "./assets/img/cases/tech.webp",
         description: "Artefacts et curiosités futuristes.",
         items: [
             { id: "circuit", name: "Circuit imprimé", icon: "▦", rarity: "common", weight: 48 },
@@ -53,7 +55,7 @@ export const CASES = [
     {
         id: "legendaire",
         name: "Caisse Légendaire",
-        image: "./assets/img/cases/legendaire.png",
+        image: "./assets/img/cases/legendaire.webp",
         description: "Une sélection aux chances très rares.",
         items: [
             { id: "pierre", name: "Pierre runique", icon: "🪨", rarity: "common", weight: 42 },
