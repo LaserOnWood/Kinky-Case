@@ -6,9 +6,7 @@ const VISIBLE_HISTORY = 12;
 
 const ALL_ITEMS = CASES.flatMap((c) => c.items);
 const ITEM_BY_ID = new Map(ALL_ITEMS.map((i) => [i.id, i]));
-const ITEM_BY_NAME = new Map(ALL_ITEMS.map((i) => [i.name, i]));
 const CASE_BY_ID = new Map(CASES.map((c) => [c.id, c]));
-const CASE_BY_NAME = new Map(CASES.map((c) => [c.name, c]));
 const $ = (id) => document.getElementById(id);
 
 // ---- Formatage (la date est stockée en timestamp, formatée uniquement à l'affichage)
@@ -41,25 +39,10 @@ function sanitizeInventory(raw) {
     return clean;
 }
 
-// Ancien format : "11/11/2026 14:32:05" (toLocaleString fr-FR) -> timestamp.
-function parseLegacyDate(str) {
-    const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})\D+(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(str.trim());
-    if (!m) return null;
-    const [d, mo, y, h, mi, s] = m.slice(1).map((v) => Number(v ?? 0));
-    const t = new Date(y, mo - 1, d, h, mi, s).getTime();
-    return Number.isFinite(t) ? t : null;
-}
-
-// Nouveau format : { itemId, caseId, ts }
-// Ancien format  : { name, icon, rarity, case, time } (migré automatiquement)
+// Format : { itemId, caseId, ts }
 function normalizeEntry(entry) {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) return null;
-    let { itemId, caseId, ts } = entry;
-    if (itemId === undefined) {
-        itemId = ITEM_BY_NAME.get(entry.name)?.id;
-        caseId = CASE_BY_NAME.get(entry.case)?.id;
-        ts = typeof entry.time === "string" ? parseLegacyDate(entry.time) : null;
-    }
+    const { itemId, caseId, ts } = entry;
     if (!CASE_BY_ID.get(caseId)?.items.some((i) => i.id === itemId)) return null;
     return { itemId, caseId, ts: Number.isFinite(ts) && ts > 0 ? ts : null };
 }
