@@ -29,16 +29,19 @@
 }
 
 /* Couleur d'accent de chaque caisse (cartes + caisse sélectionnée) */
-[data-theme="mystere"] {
+[data-theme="zonecorp"] {
   --case-accent: #a58be0;
 }
-[data-theme="royale"] {
+[data-theme="accessoires"] {
   --case-accent: #d8b45e;
 }
-[data-theme="tech"] {
+[data-theme="coups"] {
   --case-accent: #4bc7d8;
 }
-[data-theme="legendaire"] {
+[data-theme="bonusmalus"] {
+  --case-accent: #e47b58;
+}
+[data-theme="position"] {
   --case-accent: #e47b58;
 }
 
