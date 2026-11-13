@@ -10,24 +10,25 @@ export const RARITIES = {
 };
 
 // weight = poids relatif. La probabilité affichée vaut weight / somme des poids de la caisse.
-export const CASES = [
+const ALL_CASES = [
     {
-        id: "mystere",
+        id: "zonecorp",
         name: "Caisse Mystère",
         image: "./assets/img/cases/mystere.webp",
         description: "Un assortiment de surprises.",
         items: [
-            { id: "bois", name: "Paddle", icon: "🪵", rarity: "common", weight: 48 },
-            { id: "jeton", name: "Jeton ancien", icon: "🪙", rarity: "uncommon", weight: 28 },
-            { id: "cristal", name: "Cristal brumeux", icon: "💎", rarity: "rare", weight: 16 },
-            { id: "masque", name: "Masque astral", icon: "🎭", rarity: "epic", weight: 6 },
-            { id: "couronne", name: "Couronne oubliée", icon: "👑", rarity: "legendary", weight: 2 },
-            { id: "couronne", name: "Couronne oubliée", icon: "👑", rarity: "legendary", weight: 2 },
-            { id: "couronne", name: "Couronne oubliée", icon: "👑", rarity: "legendary", weight: 2 },
+            { id: "fesses", name: "Fesses", icon: "💎", rarity: "common", weight: 15 },
+            { id: "cuisses", name: "Cuisses", icon: "🪙", rarity: "common", weight: 15 },
+            { id: "dos", name: "Dos", icon: "🎭", rarity: "common", weight: 15 },
+            { id: "pieds", name: "Pieds", icon: "🪵", rarity: "uncommon", weight: 10 },
+            { id: "bras", name: "Bras", icon: "👑", rarity: "legendary", weight: 2 },
+            { id: "mains", name: "Mains", icon: "👑", rarity: "legendary", weight: 2 },
+            { id: "torse", name: "Torse", icon: "👑", rarity: "legendary", weight: 2 },
+            { id: "genitales", name: "Genitales", icon: "👑", rarity: "legendary", weight: 2 },
         ],
     },
     {
-        id: "royale",
+        id: "accessoires",
         name: "Caisse Royale",
         image: "./assets/img/cases/royale.webp",
         description: "Des objets précieux et raffinés.",
@@ -40,20 +41,20 @@ export const CASES = [
         ],
     },
     {
-        id: "tech",
+        id: "coups",
         name: "Caisse Tech",
         image: "./assets/img/cases/tech.webp",
         description: "Artefacts et curiosités futuristes.",
         items: [
-            { id: "circuit", name: "Circuit imprimé", icon: "▦", rarity: "common", weight: 48 },
-            { id: "puce", name: "Puce quantique", icon: "💠", rarity: "uncommon", weight: 27 },
-            { id: "noyau", name: "Noyau plasma", icon: "🔋", rarity: "rare", weight: 17 },
-            { id: "drone", name: "Drone fantôme", icon: "🛸", rarity: "epic", weight: 6 },
-            { id: "ia", name: "Intelligence originelle", icon: "✧", rarity: "legendary", weight: 2 },
+            { id: "5", name: "Circuit imprimé", icon: "▦", rarity: "common", weight: 2 },
+            { id: "20", name: "Puce quantique", icon: "💠", rarity: "uncommon", weight: 27 },
+            { id: "50", name: "Noyau plasma", icon: "🔋", rarity: "rare", weight: 17 },
+            { id: "100", name: "Drone fantôme", icon: "🛸", rarity: "epic", weight: 6 },
+            { id: "150", name: "Intelligence originelle", icon: "✧", rarity: "legendary", weight: 2 },
         ],
     },
     {
-        id: "legendaire",
+        id: "bonusmalus",
         name: "Caisse Légendaire",
         image: "./assets/img/cases/legendaire.webp",
         description: "Une sélection aux chances très rares.",
@@ -62,20 +63,22 @@ export const CASES = [
             { id: "plume", name: "Plume céleste", icon: "🪶", rarity: "uncommon", weight: 30 },
             { id: "orbe", name: "Orbe lunaire", icon: "🔮", rarity: "rare", weight: 19 },
             { id: "phoenix", name: "Flamme du phénix", icon: "🔥", rarity: "epic", weight: 7 },
-            { id: "relique", name: "Relique éternelle", icon: "🏺", rarity: "legendary", weight: 2 },
+            { id: "relique", name: "Relique éternelle", icon: "🏺", rarity: "legendary", weight: 1 },
         ],
     },
-    //{
-    //  id: "special",
-    //  name: "Caisse Spéciale",
-    //  image: "../assets/img/cases/special.png",
-    //  description: "Une caisse contenant des objets uniques.",
-    //  items: [
-    //      { id: "arc", name: "Arc divin", icon: "🏹", rarity: "common", weight: 45 },
-    //      { id: "epee", name: "Épée sacrée", icon: "⚔️", rarity: "uncommon", weight: 30 },
-    //      { id: "bouclier", name: "Bouclier mythique", icon: "🛡️", rarity: "rare", weight: 17 },
-    //      { id: "anneau", name: "Anneau de puissance", icon: "💍", rarity: "epic", weight: 6 },
-    //      { id: "amulette", name: "Amulette de sagesse", icon: "📿", rarity: "legendary", weight: 2 },
-    //  ],
-    //},
+    {
+        id: "position",
+        name: "Caisse Spéciale",
+        locked: true,
+        image: "../assets/img/cases/mythique.webp",
+        description: "Une caisse contenant des objets uniques.",
+        items: [
+            { id: "debout", name: "Debout", icon: "🏹", rarity: "common", weight: 45 },
+            { id: "croix", name: "Croix", icon: "⚔️", rarity: "uncommon", weight: 30 },
+            { id: "genoux", name: "A genoux", icon: "🛡️", rarity: "rare", weight: 17 },
+            { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic", weight: 6 },
+        ],
+    },
 ];
+
+export const CASES = ALL_CASES.filter((c) => !c.locked);
