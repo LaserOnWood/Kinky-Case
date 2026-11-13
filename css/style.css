@@ -30,7 +30,7 @@
 
 /* Couleur d'accent de chaque caisse (cartes + caisse sélectionnée) */
 [data-theme="zonecorp"] {
-  --case-accent: #a58be0;
+  --case-accent: #8449f3;
 }
 [data-theme="accessoires"] {
   --case-accent: #d8b45e;
@@ -42,7 +42,7 @@
   --case-accent: #e47b58;
 }
 [data-theme="position"] {
-  --case-accent: #e47b58;
+  --case-accent: #e9e2d0;
 }
 
 /* ===== Base ===== */
@@ -566,4 +566,34 @@ body {
     grid-column: 1 / -1;
     justify-self: center;
   }
+}
+
+.case-card.locked {
+  cursor: default;
+  border: 1px dashed #414650;
+  background: #14161b;
+}
+.case-card.locked:before {
+  display: none;
+}
+.case-card.locked:hover {
+  transform: none;
+  box-shadow: none;
+}
+.case-card.locked .case-visual {
+  background: #14161b;
+}
+.case-card.locked .case-visual img {
+  filter: brightness(0) opacity(0.35);
+}
+.case-card.locked .case-lock {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+}
+.case-card.locked .fw-semibold {
+  color: #777e89;
 }

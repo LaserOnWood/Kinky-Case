@@ -17,13 +17,13 @@ const ALL_CASES = [
         image: "./assets/img/cases/mystere.webp",
         description: "Un assortiment de surprises.",
         items: [
-            { id: "fesses", name: "Fesses", icon: "💎", rarity: "common", weight: 15 },
-            { id: "cuisses", name: "Cuisses", icon: "🪙", rarity: "common", weight: 15 },
-            { id: "dos", name: "Dos", icon: "🎭", rarity: "common", weight: 15 },
-            { id: "pieds", name: "Pieds", icon: "🪵", rarity: "uncommon", weight: 10 },
-            { id: "bras", name: "Bras", icon: "👑", rarity: "legendary", weight: 2 },
-            { id: "mains", name: "Mains", icon: "👑", rarity: "legendary", weight: 2 },
-            { id: "torse", name: "Torse", icon: "👑", rarity: "legendary", weight: 2 },
+            { id: "fesses", name: "Fesses", icon: "💎", rarity: "common", weight: 20 },
+            { id: "cuisses", name: "Cuisses", icon: "🪙", rarity: "common", weight: 20 },
+            { id: "dos", name: "Dos", icon: "🎭", rarity: "common", weight: 20 },
+            { id: "torse", name: "Torse", icon: "👑", rarity: "uncommon", weight: 14 },
+            { id: "bras", name: "Bras", icon: "👑", rarity: "uncommon", weight: 14 },
+            { id: "pieds", name: "Pieds", icon: "🪵", rarity: "epic", weight: 5 },
+            { id: "mains", name: "Mains", icon: "👑", rarity: "epic", weight: 5 },
             { id: "genitales", name: "Genitales", icon: "👑", rarity: "legendary", weight: 2 },
         ],
     },
@@ -33,11 +33,13 @@ const ALL_CASES = [
         image: "./assets/img/cases/royale.webp",
         description: "Des objets précieux et raffinés.",
         items: [
-            { id: "sceau", name: "Sceau royal", icon: "🔰", rarity: "common", weight: 45 },
-            { id: "broche", name: "Broche dorée", icon: "📿", rarity: "uncommon", weight: 30 },
-            { id: "saphir", name: "Saphir taillé", icon: "🔷", rarity: "rare", weight: 17 },
-            { id: "sceptre", name: "Sceptre solaire", icon: "⚜️", rarity: "epic", weight: 6 },
-            { id: "diademe", name: "Diadème impérial", icon: "👑", rarity: "legendary", weight: 2 },
+            { id: "paddle", name: "Paddle", icon: "🔰", rarity: "common", weight: 15 },
+            { id: "sansaccessoire", name: "Sans accessoire", icon: "🪞", rarity: "uncommon", weight: 15 },
+            { id: "auchoix", name: "Au choix", icon: "🤲", rarity: "uncommon", weight: 15 },
+            { id: "cane", name: "Cane", icon: "📿", rarity: "uncommon", weight: 30 },
+            { id: "martinet", name: "Martinet", icon: "🔷", rarity: "rare", weight: 17 },
+            { id: "fouet", name: "Fouet", icon: "⚜️", rarity: "epic", weight: 6 },
+            { id: "roulette", name: "Roulette", icon: "👑", rarity: "legendary", weight: 2 },
         ],
     },
     {
@@ -79,6 +81,20 @@ const ALL_CASES = [
             { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic", weight: 6 },
         ],
     },
+    {
+        id: "position",
+        name: "Caisse Spéciale",
+        //        locked: true,
+        image: "../assets/img/cases/mythique.webp",
+        description: "Une caisse contenant des objets uniques.",
+        items: [
+            { id: "debout", name: "Debout", icon: "🏹", rarity: "common", weight: 45 },
+            { id: "croix", name: "Croix", icon: "⚔️", rarity: "uncommon", weight: 30 },
+            { id: "genoux", name: "A genoux", icon: "🛡️", rarity: "rare", weight: 17 },
+            { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic", weight: 6 },
+        ],
+    },
 ];
 
 export const CASES = ALL_CASES.filter((c) => !c.locked);
+export const LOCKED_CASES = ALL_CASES.filter((c) => c.locked);
