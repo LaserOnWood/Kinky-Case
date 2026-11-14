@@ -1,4 +1,4 @@
-const CACHE_NAME = "kinky-case-v1.1";
+const CACHE_NAME = "kinky-case-v1.1.1";
 const BASE_URL = new URL("./", self.registration.scope);
 const APP_SHELL = [
   "./",
@@ -7,10 +7,11 @@ const APP_SHELL = [
   "./js/main.js",
   "./assets/icons/icon.svg",
   "./assets/data/cases.js",
-  "./assets/img/cases//mystere.webp",
-  "./assets/img/cases//royale.webp",
-  "./assets/img/cases//tech.webp",
-  "./assets/img/cases//legendaire.webp",
+  "./assets/img/cases/mystere.webp",
+  "./assets/img/cases/royale.webp",
+  "./assets/img/cases/tech.webp",
+  "./assets/img/cases/legendaire.webp",
+"./assets/img/cases/mythic.webp",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 ].map((path) => path.startsWith("http") ? path : new URL(path, BASE_URL).href);
