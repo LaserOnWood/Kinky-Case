@@ -28,7 +28,8 @@
   --rarity: #f0c45f;
 }
 
-/* Couleur d'accent de chaque caisse (cartes + caisse sélectionnée) */
+/* Couleur d'accent de chaque caisse (cartes + caisse sélectionnée).
+   La clé correspond à l'id de la caisse dans assets/data/cases.js. */
 [data-theme="zonecorp"] {
   --case-accent: #8449f3;
 }
@@ -160,6 +161,30 @@ body {
   font-size: 0.9rem;
 }
 
+/* Bouton rond « % » (en-tête d'ouverture et cartes de caisses) */
+.odds-btn {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--case-accent, var(--accent));
+  background: rgba(13, 14, 18, 0.7);
+  border: 1px solid
+    color-mix(in srgb, var(--case-accent, var(--accent)) 50%, transparent);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.odds-btn:hover,
+.odds-btn:focus-visible {
+  background: var(--case-accent, var(--accent));
+  color: #111;
+}
+
 /* ===== Rareté (texte) ===== */
 .rarity {
   font-size: 0.62rem;
@@ -169,7 +194,7 @@ body {
   color: var(--rarity);
 }
 
-/* ===== Caisses ===== */
+/* ===== Cartes de caisses ===== */
 .case-card {
   height: 100%;
   background: linear-gradient(145deg, #1a1d24, #121419);
@@ -210,9 +235,12 @@ body {
 }
 
 .case-visual {
-  height: 150px;
+  --visual-max-h: 175px;
+  width: 100%;
+  max-width: calc(var(--visual-max-h) * 4 / 3);
+  aspect-ratio: 4 / 3;
+  margin: 0 auto 16px;
   padding: 5px;
-  margin-bottom: 16px;
   display: grid;
   place-items: center;
   position: relative;
@@ -232,9 +260,68 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
   filter: drop-shadow(0 8px 12px #0009);
 }
 
+/* Badges dans l'image : « % » en haut à droite, nombre d'objets en bas à droite */
+.case-visual .odds-btn,
+.case-visual .case-count {
+  position: absolute;
+  right: 2px;
+  z-index: 2;
+}
+.case-visual .odds-btn {
+  top: 2px;
+}
+.case-count {
+  bottom: 2px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+  background: rgba(13, 14, 18, 0.7);
+  border: 1px solid color-mix(in srgb, var(--case-accent) 50%, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Carte verrouillée (caisse secrète) */
+.case-card.locked {
+  cursor: default;
+  border: 1px dashed #414650;
+  background: #14161b;
+}
+.case-card.locked:before {
+  display: none;
+}
+.case-card.locked:hover {
+  transform: none;
+  box-shadow: none;
+}
+.case-card.locked .case-visual {
+  background: #14161b;
+}
+.case-card.locked .case-visual img {
+  filter: brightness(0) opacity(0.35);
+}
+.case-card.locked .fw-semibold {
+  color: #777e89;
+}
+.case-lock {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+}
+
+/* ===== Caisse sélectionnée ===== */
 .selected-case-showcase {
   display: flex;
   align-items: center;
@@ -274,24 +361,16 @@ body {
   white-space: nowrap;
 }
 
-/* Caisse verrouillée */
-.hidden-case {
-  border: 1px dashed #414650;
-  background: #14161b;
-  border-radius: 16px;
-  padding: 18px;
-  color: #777e89;
-}
-.case-lock {
-  width: 76px;
-  height: 76px;
-  flex: 0 0 76px;
+/* En-tête de la section d'ouverture : nom à gauche, tag centré, bouton % à droite */
+.opening-header {
   display: grid;
-  place-items: center;
-  font-size: 2rem;
-  border-radius: 12px;
-  background: #17191e;
-  color: #656b75;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+.opening-header .odds-btn {
+  justify-self: end;
 }
 
 /* ===== Roulette ===== */
@@ -467,9 +546,6 @@ body {
 
 /* ===== Mobile ===== */
 @media (max-width: 575px) {
-  .case-visual {
-    height: 118px;
-  }
   .case-visual-large {
     width: 76px;
     height: 70px;
@@ -496,68 +572,8 @@ body {
   #collection-summary {
     max-width: 58%;
   }
-}
-.odds-btn {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  font-size: 0.85rem;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--crate-accent, var(--accent));
-  background: rgba(13, 14, 18, 0.7);
-  border: 1px solid
-    color-mix(in srgb, var(--crate-accent, var(--accent)) 50%, transparent);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.odds-btn:hover,
-.odds-btn:focus-visible {
-  background: var(--crate-accent, var(--accent));
-  color: #111;
-}
-.case-visual .odds-btn,
-.case-visual .case-count {
-  position: absolute;
-  right: 2px;
-  z-index: 2;
-}
-.case-visual .odds-btn {
-  top: 2px;
-}
 
-.case-count {
-  bottom: 2px;
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  font-size: 0.8rem;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--text);
-  background: rgba(13, 14, 18, 0.7);
-  border: 1px solid color-mix(in srgb, var(--crate-accent) 50%, transparent);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.opening-header {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 1rem;
-}
-.opening-header .odds-btn {
-  justify-self: end;
-}
-
-@media (max-width: 575px) {
-  /* Sur mobile le tag est trop large pour tenir entre les deux : il passe sur sa propre ligne, centré. */
+  /* Le tag est trop large pour tenir entre le titre et le bouton : il passe sur sa propre ligne, centré. */
   .opening-header {
     grid-template-columns: 1fr auto;
   }
@@ -566,34 +582,4 @@ body {
     grid-column: 1 / -1;
     justify-self: center;
   }
-}
-
-.case-card.locked {
-  cursor: default;
-  border: 1px dashed #414650;
-  background: #14161b;
-}
-.case-card.locked:before {
-  display: none;
-}
-.case-card.locked:hover {
-  transform: none;
-  box-shadow: none;
-}
-.case-card.locked .case-visual {
-  background: #14161b;
-}
-.case-card.locked .case-visual img {
-  filter: brightness(0) opacity(0.35);
-}
-.case-card.locked .case-lock {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  font-size: 2rem;
-}
-.case-card.locked .fw-semibold {
-  color: #777e89;
 }

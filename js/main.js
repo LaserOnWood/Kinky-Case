@@ -120,8 +120,9 @@ function rendercases() {
  </div>
  <div class="fw-semibold mb-2">${c.name}</div>
  <div class="small subtle">${c.description}</div></article></div>`,
-    ).join("");
-    document.querySelectorAll(".case-card").forEach((el) =>
+    ).join("") + lockedCards;
+    document.querySelector(".opening-header").dataset.theme = selectedcase.id;
+    document.querySelectorAll(".case-card:not(.locked)").forEach((el) =>
         el.addEventListener("click", (event) => {
             if (busy || event.target.closest(".odds-btn")) return;
             selectedcase = CASE_BY_ID.get(el.dataset.id);

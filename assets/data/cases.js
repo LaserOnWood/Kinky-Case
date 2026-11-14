@@ -71,21 +71,8 @@ const ALL_CASES = [
     {
         id: "position",
         name: "Caisse Spéciale",
-        locked: true,
-        image: "../assets/img/cases/mythique.webp",
-        description: "Une caisse contenant des objets uniques.",
-        items: [
-            { id: "debout", name: "Debout", icon: "🏹", rarity: "common", weight: 45 },
-            { id: "croix", name: "Croix", icon: "⚔️", rarity: "uncommon", weight: 30 },
-            { id: "genoux", name: "A genoux", icon: "🛡️", rarity: "rare", weight: 17 },
-            { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic", weight: 6 },
-        ],
-    },
-    {
-        id: "position",
-        name: "Caisse Spéciale",
-        //        locked: true,
-        image: "../assets/img/cases/mythique.webp",
+        locked: true, 
+        image: "./assets/img/cases/mythique.webp",
         description: "Une caisse contenant des objets uniques.",
         items: [
             { id: "debout", name: "Debout", icon: "🏹", rarity: "common", weight: 45 },
