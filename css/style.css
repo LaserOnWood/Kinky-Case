@@ -1,17 +1,56 @@
-/* ===== Variables ===== */
+/* ==========================================================================
+   Kinky-Case — feuille de style
+   Sommaire
+     1. Design tokens (couleurs, rayons, raretés, thèmes de caisses)
+     2. Base & typographie
+     3. Navigation
+     4. Composants génériques (panneau, tag, boutons, bouton %)
+     5. Caisses (cartes, visuel, carte verrouillée)
+     6. Section d'ouverture (en-tête, caisse sélectionnée, roulette, résultat)
+     7. Collection & historique
+     8. Modal & toasts
+     9. Mobile
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Design tokens
+   ========================================================================== */
 :root {
+  /* Surfaces */
   --bg: #0d0e12;
+  --inset: #101217; /* fonds en creux : roulette, dégradés des visuels */
   --panel: #15171d;
   --panel2: #1b1e26;
-  --surface: #22252d;
+  --card: #1a1d24;
+  --surface: #22252d; /* pastilles d'icônes */
+
+  /* Bordures & texte */
   --line: #292d37;
-  --muted: #9298a5;
+  --line-dashed: #414650;
   --text: #f2f3f6;
+  --text-soft: #d8dbe1;
+  --muted: #9298a5;
+  --muted-dim: #777e89;
+
+  /* Accent global (boutons, marqueur de roulette) */
   --accent: #c7b9a5;
+  --accent-strong: #d0c4b1;
+  --accent-strong-hover: #e4d9c8;
+
+  /* Rayons */
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-2xl: 18px;
+  --radius-pill: 99px;
+
+  /* Valeurs par défaut quand aucun [data-theme] n'est défini (évite un accent « cassé » si l'id d'une caisse n'a pas de thème). */
+  --case-accent: var(--accent);
+  --case-border: color-mix(in srgb, var(--case-accent) 50%, transparent);
 }
 
-/* Une seule source de vérité pour les raretés : chaque élément définit --rarity,
-   les composants (texte, bordure, halo) s'en servent. */
+/* --- Raretés : chaque élément définit --rarity, les composants s'en servent. Les clés correspondent à RARITIES dans assets/data/cases.js. --- */
 .common {
   --rarity: #aeb7c4;
 }
@@ -28,8 +67,7 @@
   --rarity: #f0c45f;
 }
 
-/* Couleur d'accent de chaque caisse (cartes + caisse sélectionnée).
-   La clé correspond à l'id de la caisse dans assets/data/cases.js. */
+/* --- Thèmes de caisses : la clé correspond à l'id de la caisse dans assets/data/cases.js. Pour ajouter une caisse, ajouter UNE ligne ici. --- */
 [data-theme="zonecorp"] {
   --case-accent: #8449f3;
 }
@@ -46,11 +84,16 @@
   --case-accent: #e9e2d0;
 }
 
-/* ===== Base ===== */
-* {
-  box-sizing: border-box;
+/* Dérivés de l'accent, recalculés sur chaque élément thémé. */
+[data-theme] {
+  --case-border: color-mix(in srgb, var(--case-accent) 50%, transparent);
 }
+
+/* ==========================================================================
+   2. Base & typographie (box-sizing est déjà géré par Bootstrap)
+   ========================================================================== */
 body {
+  min-height: 100vh;
   background: var(--bg);
   color: var(--text);
   font-family:
@@ -60,153 +103,166 @@ body {
     -apple-system,
     "Segoe UI",
     sans-serif;
-  min-height: 100vh;
 }
+
 .subtle {
   color: var(--muted);
 }
+
 .eyebrow {
   font-size: 0.7rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
 }
+
 .hero-title {
   font-size: clamp(2rem, 5vw, 3.4rem);
   font-weight: 650;
   letter-spacing: -0.055em;
 }
+
 .section-title {
   font-size: 1.1rem;
   font-weight: 650;
   letter-spacing: -0.02em;
 }
 
-/* ===== Navigation ===== */
+.empty {
+  padding: 26px 10px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted-dim);
+}
+
+/* Rareté (texte) */
+.rarity {
+  margin-top: 7px;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rarity);
+}
+
+/* ==========================================================================
+   3. Navigation Les couleurs passent par les variables Bootstrap : plus besoin de !important.
+   ========================================================================== */
 .navbar {
+  --bs-navbar-color: #aeb3bd;
+  --bs-navbar-hover-color: #fff;
+  --bs-navbar-active-color: #fff;
   background: rgba(13, 14, 18, 0.92);
   border-bottom: 1px solid var(--line);
 }
+
+.nav-link {
+  font-size: 0.9rem;
+}
+
 .brand {
-  letter-spacing: 0.22em;
   font-size: 0.9rem;
   font-weight: 800;
+  letter-spacing: 0.22em;
 }
+
 .brand-mark {
   display: inline-grid;
   place-items: center;
   width: 28px;
   height: 28px;
+  margin-right: 10px;
   border: 1px solid #6f685e;
   border-radius: 9px;
-  margin-right: 10px;
   color: var(--accent);
 }
-.nav-link {
-  color: #aeb3bd !important;
-  font-size: 0.9rem;
-}
-.nav-link.active,
-.nav-link:hover {
-  color: #fff !important;
-}
 
-/* ===== Panneaux, étiquettes, boutons ===== */
+/* ==========================================================================
+   4. Composants génériques
+   ========================================================================== */
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--radius-2xl);
 }
+
 .tag {
+  padding: 5px 9px;
   font-size: 0.68rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #b8b1a6;
   border: 1px solid #49453e;
-  border-radius: 99px;
-  padding: 5px 9px;
+  border-radius: var(--radius-pill);
 }
+
 .btn-open {
-  background: #d0c4b1;
-  color: #171717;
-  border: 0;
-  border-radius: 10px;
   padding: 12px 22px;
   font-weight: 700;
+  color: #171717;
+  background: var(--accent-strong);
+  border: 0;
+  border-radius: var(--radius-sm);
   transition: 0.2s;
 }
 .btn-open:hover {
-  background: #e4d9c8;
+  background: var(--accent-strong-hover);
   transform: translateY(-1px);
 }
 .btn-open:disabled {
   opacity: 0.5;
   transform: none;
 }
+
 .btn-quiet {
-  border: 1px solid var(--line);
-  color: #d8dbe1;
-  background: transparent;
-  border-radius: 10px;
   padding: 10px 16px;
+  color: var(--text-soft);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
 }
 .btn-quiet:hover {
-  background: var(--panel2);
   color: #fff;
-}
-.empty {
-  color: #777e89;
-  text-align: center;
-  padding: 26px 10px;
-  font-size: 0.9rem;
+  background: var(--panel2);
 }
 
 /* Bouton rond « % » (en-tête d'ouverture et cartes de caisses) */
 .odds-btn {
-  width: 30px;
-  height: 30px;
   display: grid;
   place-items: center;
+  width: 30px;
+  height: 30px;
   padding: 0;
   font-size: 0.85rem;
   font-weight: 700;
   line-height: 1;
-  color: var(--case-accent, var(--accent));
+  color: var(--case-accent);
   background: rgba(13, 14, 18, 0.7);
-  border: 1px solid
-    color-mix(in srgb, var(--case-accent, var(--accent)) 50%, transparent);
+  border: 1px solid var(--case-border);
   border-radius: 50%;
   cursor: pointer;
   transition: 0.2s;
 }
 .odds-btn:hover,
 .odds-btn:focus-visible {
-  background: var(--case-accent, var(--accent));
   color: #111;
+  background: var(--case-accent);
 }
 
-/* ===== Rareté (texte) ===== */
-.rarity {
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-top: 7px;
-  color: var(--rarity);
-}
-
-/* ===== Cartes de caisses ===== */
+/* ==========================================================================
+   5. Caisses
+   ========================================================================== */
 .case-card {
-  height: 100%;
-  background: linear-gradient(145deg, #1a1d24, #121419);
-  border: 1px solid color-mix(in srgb, var(--case-accent) 38%, var(--line));
-  border-radius: 16px;
-  padding: 18px;
-  cursor: pointer;
-  transition: 0.25s ease;
   position: relative;
+  height: 100%;
+  padding: 18px;
   overflow: hidden;
+  cursor: pointer;
+  background: linear-gradient(145deg, var(--card), #121419);
+  border: 1px solid color-mix(in srgb, var(--case-accent) 38%, var(--line));
+  border-radius: var(--radius-xl);
+  transition: 0.25s ease;
 }
-.case-card:before {
+.case-card::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -222,10 +278,10 @@ body {
   position: relative;
 }
 .case-card:hover {
-  transform: translateY(-4px);
   border-color: var(--case-accent);
   box-shadow: 0 10px 30px
     color-mix(in srgb, var(--case-accent) 12%, transparent);
+  transform: translateY(-4px);
 }
 .case-card.selected {
   border-color: var(--case-accent);
@@ -234,23 +290,24 @@ body {
     0 0 24px color-mix(in srgb, var(--case-accent) 18%, transparent);
 }
 
+/* Visuel (image) d'une caisse */
 .case-visual {
   --visual-max-h: 175px;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
   width: 100%;
   max-width: calc(var(--visual-max-h) * 4 / 3);
   aspect-ratio: 4 / 3;
   margin: 0 auto 16px;
   padding: 5px;
-  display: grid;
-  place-items: center;
-  position: relative;
   overflow: hidden;
-  isolation: isolate;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: radial-gradient(
     circle at 50% 55%,
     color-mix(in srgb, var(--case-accent) 20%, #17191e),
-    #111319 78%
+    var(--inset) 78%
   );
 }
 .case-visual img {
@@ -266,7 +323,7 @@ body {
 
 /* Badges dans l'image : « % » en haut à droite, nombre d'objets en bas à droite */
 .case-visual .odds-btn,
-.case-visual .case-count {
+.case-count {
   position: absolute;
   right: 2px;
   z-index: 2;
@@ -276,16 +333,16 @@ body {
 }
 .case-count {
   bottom: 2px;
-  width: 30px;
-  height: 30px;
   display: grid;
   place-items: center;
+  width: 30px;
+  height: 30px;
   font-size: 0.8rem;
   font-weight: 700;
   line-height: 1;
   color: var(--text);
   background: rgba(13, 14, 18, 0.7);
-  border: 1px solid color-mix(in srgb, var(--case-accent) 50%, transparent);
+  border: 1px solid var(--case-border);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -293,15 +350,15 @@ body {
 /* Carte verrouillée (caisse secrète) */
 .case-card.locked {
   cursor: default;
-  border: 1px dashed #414650;
   background: #14161b;
+  border: 1px dashed var(--line-dashed);
 }
-.case-card.locked:before {
+.case-card.locked::before {
   display: none;
 }
 .case-card.locked:hover {
-  transform: none;
   box-shadow: none;
+  transform: none;
 }
 .case-card.locked .case-visual {
   background: #14161b;
@@ -310,7 +367,7 @@ body {
   filter: brightness(0) opacity(0.35);
 }
 .case-card.locked .fw-semibold {
-  color: #777e89;
+  color: var(--muted-dim);
 }
 .case-lock {
   position: absolute;
@@ -321,47 +378,11 @@ body {
   font-size: 2rem;
 }
 
-/* ===== Caisse sélectionnée ===== */
-.selected-case-showcase {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  min-height: 104px;
-  padding: 12px 16px;
-  border: 1px solid color-mix(in srgb, var(--case-accent) 48%, var(--line));
-  border-radius: 14px;
-  background: linear-gradient(
-    105deg,
-    color-mix(in srgb, var(--case-accent) 13%, var(--panel)),
-    var(--panel) 72%
-  );
-  box-shadow: inset 3px 0 var(--case-accent);
-  transition:
-    border-color 0.25s,
-    background 0.25s;
-}
-.selected-case-copy {
-  min-width: 0;
-}
-.case-visual-large {
-  width: 128px;
-  height: 96px;
-  flex: 0 0 128px;
-  margin: 0;
-  padding: 0;
-}
-.case-status {
-  color: var(--case-accent);
-  border: 1px solid color-mix(in srgb, var(--case-accent) 50%, transparent);
-  border-radius: 99px;
-  padding: 6px 10px;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
+/* ==========================================================================
+   6. Section d'ouverture
+   ========================================================================== */
 
-/* En-tête de la section d'ouverture : nom à gauche, tag centré, bouton % à droite */
+/* En-tête : nom à gauche, tag centré, bouton % à droite */
 .opening-header {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -373,98 +394,142 @@ body {
   justify-self: end;
 }
 
-/* ===== Roulette ===== */
+/* Caisse sélectionnée */
+.selected-case-showcase {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 104px;
+  padding: 12px 16px;
+  background: linear-gradient(
+    105deg,
+    color-mix(in srgb, var(--case-accent) 13%, var(--panel)),
+    var(--panel) 72%
+  );
+  border: 1px solid color-mix(in srgb, var(--case-accent) 48%, var(--line));
+  border-radius: var(--radius-lg);
+  box-shadow: inset 3px 0 var(--case-accent);
+  transition:
+    border-color 0.25s,
+    background 0.25s;
+}
+.selected-case-copy {
+  min-width: 0;
+}
+.case-visual-large {
+  flex: 0 0 128px;
+  width: 128px;
+  height: 96px;
+  margin: 0;
+  padding: 0;
+}
+.case-status {
+  padding: 6px 10px;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--case-accent);
+  border: 1px solid var(--case-border);
+  border-radius: var(--radius-pill);
+}
+
+/* Roulette */
 .roulette-window {
+  position: relative;
   height: 164px;
   overflow: hidden;
-  position: relative;
-  background: #101217;
+  background: var(--inset);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
 }
-.roulette-window:before,
-.roulette-window:after {
+/* Fondus latéraux */
+.roulette-window::before,
+.roulette-window::after {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 15%;
   z-index: 2;
+  width: 15%;
   pointer-events: none;
 }
-.roulette-window:before {
+.roulette-window::before {
   left: 0;
-  background: linear-gradient(90deg, #101217, transparent);
+  background: linear-gradient(90deg, var(--inset), transparent);
 }
-.roulette-window:after {
+.roulette-window::after {
   right: 0;
-  background: linear-gradient(270deg, #101217, transparent);
+  background: linear-gradient(270deg, var(--inset), transparent);
 }
+
 .marker {
   position: absolute;
   z-index: 3;
-  left: 50%;
   top: 0;
   bottom: 0;
+  left: 50%;
   width: 2px;
-  background: #d4c7b3;
-  box-shadow: 0 0 12px #d4c7b3;
+  background: var(--accent-strong);
+  box-shadow: 0 0 12px var(--accent-strong);
 }
-.marker:before {
+.marker::before {
   content: "";
   position: absolute;
   top: 0;
   left: -5px;
-  border-left: 6px solid transparent;
+  border-top: 9px solid var(--accent-strong);
   border-right: 6px solid transparent;
-  border-top: 9px solid #d4c7b3;
+  border-left: 6px solid transparent;
 }
+
 .track {
+  position: absolute;
+  top: 14px;
+  left: 0;
   display: flex;
   gap: 10px;
-  position: absolute;
-  left: 0;
-  top: 14px;
   height: 136px;
   will-change: transform;
 }
+
 .reel-item {
   --item-rarity: var(--rarity, #667080);
-  width: 116px;
-  flex: 0 0 116px;
   display: flex;
+  flex: 0 0 116px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 116px;
   padding: 10px;
   text-align: center;
-  border: 1px solid color-mix(in srgb, var(--item-rarity) 45%, #303540);
-  border-radius: 10px;
   background: linear-gradient(
     160deg,
-    color-mix(in srgb, var(--item-rarity) 12%, #1b1e25),
+    color-mix(in srgb, var(--item-rarity) 12%, var(--panel2)),
     #17191f 75%
   );
+  border: 1px solid color-mix(in srgb, var(--item-rarity) 45%, #303540);
+  border-radius: var(--radius-sm);
   transition:
     border-color 0.3s,
     box-shadow 0.3s,
     transform 0.3s;
 }
 .reel-item.winner {
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--item-rarity) 28%, var(--panel2)),
+    #17191f 78%
+  );
   border-color: var(--item-rarity);
   box-shadow:
     0 0 0 1px var(--item-rarity),
     0 0 28px color-mix(in srgb, var(--item-rarity) 42%, transparent);
   transform: scale(1.035);
-  background: linear-gradient(
-    160deg,
-    color-mix(in srgb, var(--item-rarity) 28%, #1b1e25),
-    #17191f 78%
-  );
 }
 .reel-icon {
-  font-size: 2.1rem;
   margin-bottom: 8px;
+  font-size: 2.1rem;
 }
 .reel-name {
   font-size: 0.73rem;
@@ -472,43 +537,58 @@ body {
   color: #e8e9ed;
 }
 
-/* ===== Résultat ===== */
+/* Résultat
+NB : !important nécessaire tant que la carte garde son style inline dans index.html. Voir la note de migration (classe .result-card). */
 #result .result-reveal {
   border-color: var(--rarity) !important;
   box-shadow: 0 0 28px color-mix(in srgb, var(--rarity) 17%, transparent);
   animation: reward-pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 @keyframes reward-pop {
-  0% {
+  from {
     opacity: 0;
     transform: translateY(8px) scale(0.97);
   }
-  100% {
+  to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: none;
   }
 }
 
-/* ===== Collection & historique ===== */
+/* ==========================================================================
+   7. Collection & historique
+   ========================================================================== */
 #collection-summary {
   text-align: right;
 }
+
 .reward-card {
-  background: #1a1d24;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 12px;
   min-height: 140px;
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+/* Pastille d'icône (collection + historique) */
+.reward-icon,
+.history-icon {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
 }
 .reward-icon {
   height: 66px;
-  display: grid;
-  place-items: center;
-  font-size: 2rem;
-  background: var(--surface);
-  border-radius: 9px;
   margin-bottom: 9px;
+  font-size: 2rem;
 }
+.history-icon {
+  width: 38px;
+  height: 38px;
+  font-size: 1.25rem;
+}
+
 .history-row {
   display: flex;
   align-items: center;
@@ -519,37 +599,34 @@ body {
 .history-row:last-child {
   border-bottom: 0;
 }
-.history-icon {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  background: var(--surface);
-  border-radius: 9px;
-  font-size: 1.25rem;
-}
 
-/* ===== Modal & toasts ===== */
+/* ==========================================================================
+   8. Modal & toasts
+   ========================================================================== */
 .toast-container {
   z-index: 10;
 }
+
 .modal-content {
-  background: #171a20;
-  border: 1px solid var(--line);
   color: var(--text);
-  border-radius: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2xl);
 }
+
 .odds-table {
   --bs-table-bg: transparent;
   --bs-table-border-color: var(--line);
 }
 
-/* ===== Mobile ===== */
+/* ==========================================================================
+   9. Mobile
+   ========================================================================== */
 @media (max-width: 575px) {
   .case-visual-large {
+    flex-basis: 76px;
     width: 76px;
     height: 70px;
-    flex-basis: 76px;
   }
   .selected-case-showcase {
     gap: 10px;
@@ -558,6 +635,7 @@ body {
   .case-status {
     display: none;
   }
+
   .roulette-window {
     height: 148px;
   }
@@ -565,10 +643,11 @@ body {
     height: 120px;
   }
   .reel-item {
+    flex-basis: 104px;
     width: 104px;
     height: 120px;
-    flex-basis: 104px;
   }
+
   #collection-summary {
     max-width: 58%;
   }
