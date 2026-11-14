@@ -1,4 +1,4 @@
-const CACHE_NAME = "kinky-case-v1";
+const CACHE_NAME = "kinky-case-v1.1";
 const BASE_URL = new URL("./", self.registration.scope);
 const APP_SHELL = [
   "./",
