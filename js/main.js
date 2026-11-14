@@ -4,6 +4,8 @@ const MAX_COUNT = 1_000_000_000;
 const MAX_HISTORY = 30;
 const VISIBLE_HISTORY = 12;
 
+const SPIN_DURATION_MS = 9000; // durée de la roulette, à ajuster en cas de besoin (animation CSS + JS)
+
 const ALL_ITEMS = CASES.flatMap((c) => c.items);
 const ITEM_BY_ID = new Map(ALL_ITEMS.map((i) => [i.id, i]));
 const CASE_BY_ID = new Map(CASES.map((c) => [c.id, c]));
@@ -130,6 +132,7 @@ function rendercases() {
             renderSelected();
         }),
     );
+    $("case-count-label").textContent = `${CASES.length} disponibles`;
 }
 
 function itemCard(item) {
@@ -249,7 +252,7 @@ function opencase() {
     const finalX = windowRect.left + windowEl.clientWidth / 2 - (cardRect.left + cardRect.width / 2);
     requestAnimationFrame(() =>
         requestAnimationFrame(() => {
-            track.style.transition = "transform 6.1s cubic-bezier(.055,.72,.12,1)";
+            track.style.transition = `transform ${SPIN_DURATION_MS}ms cubic-bezier(.08,.6,.08,1)`;
             track.style.transform = `translateX(${finalX}px)`;
         }),
     );
@@ -297,7 +300,7 @@ function opencase() {
         if (event.target === track && event.propertyName === "transform") finish();
     };
     track.addEventListener("transitionend", onTransitionEnd);
-    setTimeout(finish, 6500); // secours si transitionend ne se déclenche pas
+    setTimeout(finish, SPIN_DURATION_MS + 400); // secours si transitionend ne se déclenche pas
 }
 
 // ---- Événements
