@@ -5,13 +5,15 @@ const APP_SHELL = [
   "./index.html",
   "./css/style.css",
   "./js/main.js",
+  "./js/cases.js",
   "./assets/icons/icon.svg",
   "./assets/data/cases.js",
   "./assets/img/cases/mystere.webp",
   "./assets/img/cases/royale.webp",
   "./assets/img/cases/tech.webp",
   "./assets/img/cases/legendaire.webp",
-"./assets/img/cases/mythic.webp",
+  "./assets/img/cases/angelique.webp",
+  "./assets/img/cases/mythic.webp",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 ].map((path) => path.startsWith("http") ? path : new URL(path, BASE_URL).href);
