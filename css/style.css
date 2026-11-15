@@ -83,6 +83,12 @@
 [data-theme="position"] {
   --case-accent: #e9e2d0;
 }
+[data-theme="mobilier"] {
+  --case-accent: #f0c45f;
+}
+[data-theme="enfer"] {
+  --case-accent: #da5d23;
+}
 
 /* Dérivés de l'accent, recalculés sur chaque élément thémé. */
 [data-theme] {
@@ -661,4 +667,62 @@ NB : !important nécessaire tant que la carte garde son style inline dans index.
     grid-column: 1 / -1;
     justify-self: center;
   }
+}
+
+/* ===== Roulettes multiples ===== */
+.reels {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.roulette-window[data-theme] {
+  border-color: color-mix(in srgb, var(--case-accent) 45%, var(--line));
+}
+.roulette-window[data-theme] .marker {
+  background: var(--case-accent);
+  box-shadow: 0 0 12px var(--case-accent);
+}
+.roulette-window[data-theme] .marker:before {
+  border-top-color: var(--case-accent);
+}
+
+/* Mode lot : roulettes compactes */
+.reels.is-bundle .roulette-window {
+  height: 108px;
+}
+.reels.is-bundle .track {
+  top: 8px;
+  height: 92px;
+}
+.reels.is-bundle .reel-item {
+  width: 88px;
+  height: 92px;
+  flex-basis: 88px;
+  padding: 6px;
+}
+.reels.is-bundle .reel-icon {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+.reels.is-bundle .reel-name {
+  font-size: 0.62rem;
+}
+.reels.is-bundle .reel-item .rarity {
+  display: none;
+}
+
+/* ===== Cartes de résultat ===== */
+.result-card {
+  text-align: center;
+  padding: 16px 12px;
+  background: #20231f;
+  border: 1px solid var(--rarity);
+  border-radius: 14px;
+  box-shadow: 0 0 28px color-mix(in srgb, var(--rarity) 17%, transparent);
+}
+.reward-icon-lg {
+  font-size: 3rem;
+}
+.result-reveal {
+  animation: reward-pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }

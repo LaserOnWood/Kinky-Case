@@ -1,15 +1,19 @@
 import { RARITIES, CASES, LOCKED_CASES } from "../assets/data/cases.js";
 
 const MAX_COUNT = 1_000_000_000;
-const MAX_HISTORY = 30;
+const MAX_HISTORY = 60;
 const VISIBLE_HISTORY = 12;
 
 const SPIN_DURATION_MS = 9000; // durée de la roulette, à ajuster en cas de besoin (animation CSS + JS)
 
-const ALL_ITEMS = CASES.flatMap((c) => c.items);
+const ALL_ITEMS = CASES.flatMap((c) => c.items ?? []); // les lots n'ont pas d'items
 const ITEM_BY_ID = new Map(ALL_ITEMS.map((i) => [i.id, i]));
 const CASE_BY_ID = new Map(CASES.map((c) => [c.id, c]));
 const $ = (id) => document.getElementById(id);
+
+// Une caisse normale = 1 roulette ; un lot = 1 roulette par sous-caisse.
+const subCases = (c) => (c.bundle ? c.bundle.map((id) => CASE_BY_ID.get(id)).filter(Boolean) : [c]);
+const caseSize = (c) => subCases(c).reduce((s, b) => s + b.items.length, 0);
 
 // ---- Formatage (la date est stockée en timestamp, formatée uniquement à l'affichage)
 const dateFormat = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "medium" });
@@ -44,9 +48,14 @@ function sanitizeInventory(raw) {
 // Format : { itemId, caseId, ts }
 function normalizeEntry(entry) {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) return null;
-    const { itemId, caseId, ts } = entry;
-    if (!CASE_BY_ID.get(caseId)?.items.some((i) => i.id === itemId)) return null;
-    return { itemId, caseId, ts: Number.isFinite(ts) && ts > 0 ? ts : null };
+    const { itemId, caseId, bundleId, ts } = entry;
+    if (!CASE_BY_ID.get(caseId)?.items?.some((i) => i.id === itemId)) return null;
+    return {
+        itemId,
+        caseId,
+        bundleId: CASE_BY_ID.get(bundleId)?.bundle ? bundleId : undefined,
+        ts: Number.isFinite(ts) && ts > 0 ? ts : null,
+    };
 }
 
 function sanitizeHistory(raw) {
@@ -118,7 +127,7 @@ function rendercases() {
  <div class="case-visual">
   <img src="${c.image}" alt="Illustration ${c.name}" loading="lazy">
   <button type="button" class="odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
-  <span class="case-count" title="${c.items.length} objets" aria-label="${c.items.length} objets">${c.items.length}</span>
+  <span class="case-count" title="${caseSize(c)} objets" aria-label="${caseSize(c)} objets">${caseSize(c)}</span>
  </div>
  <div class="fw-semibold mb-2">${c.name}</div>
  <div class="small subtle">${c.description}</div></article></div>`,
@@ -139,7 +148,13 @@ function itemCard(item) {
     return `<div class="reel-item ${item.rarity}"><div class="reel-icon">${item.icon}</div><div class="reel-name">${item.name}</div><div class="rarity">${RARITIES[item.rarity].label}</div></div>`;
 }
 
+function reelMarkup(box) {
+    const cards = Array.from({ length: 11 }, (_, i) => itemCard(box.items[i % box.items.length])).join("");
+    return `<div class="roulette-window" data-theme="${box.id}"><div class="marker"></div><div class="track">${cards}</div></div>`;
+}
+
 function renderSelected() {
+    const boxes = subCases(selectedcase);
     $("selected-title").textContent = selectedcase.name;
     $("selected-case-showcase").dataset.theme = selectedcase.id;
     const img = $("selected-case-image");
@@ -148,18 +163,29 @@ function renderSelected() {
     $("selected-case-name").textContent = selectedcase.name;
     $("selected-case-description").textContent = selectedcase.description;
     $("result").className = "mt-4 d-none";
-    $("opening-hint").textContent = "Le résultat est déterminé avant l'animation.";
-    $("track").innerHTML = Array.from({ length: 11 }, (_, i) =>
-        itemCard(selectedcase.items[i % selectedcase.items.length]),
-    ).join("");
-    $("track").style.transform = "translateX(0px)";
+    $("opening-hint").textContent =
+        boxes.length > 1
+            ? "Les résultats sont déterminés avant l'animation."
+            : "Le résultat est déterminé avant l'animation.";
+    $("reels").innerHTML = boxes.map(reelMarkup).join("");
+    $("reels").classList.toggle("is-bundle", boxes.length > 1);
 }
 
 function renderOdds(box) {
-    const total = box.items.reduce((s, i) => s + i.weight, 0);
     $("odds-title").textContent = box.name;
-    $("odds-body").innerHTML = box.items
-        .map((i) => `<tr class="${i.rarity}"><td>${i.icon} ${i.name}</td><td><span class="rarity m-0">${RARITIES[i.rarity].label}</span></td><td class="text-end">${percentFormat.format((i.weight / total) * 100)} %</td></tr>`)
+    $("odds-content").innerHTML = subCases(box)
+        .map((sub) => {
+            const total = sub.items.reduce((s, i) => s + i.weight, 0);
+            const rows = sub.items
+                .map((i) => `<tr class="${i.rarity}"><td>${i.icon} ${i.name}</td><td><span class="rarity m-0">${RARITIES[i.rarity].label}</span></td><td class="text-end">${percentFormat.format((i.weight / total) * 100)} %</td></tr>`)
+                .join("");
+            return `<div class="mb-3" data-theme="${sub.id}">
+  ${box.bundle ? `<div class="eyebrow mb-2">${sub.name}</div>` : ""}
+  <table class="table table-sm align-middle mb-0 odds-table">
+    <thead><tr><th>Objet</th><th>Rareté</th><th class="text-end">Chance</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+        })
         .join("");
 }
 
@@ -209,7 +235,8 @@ function renderHistory() {
         name.textContent = item.name;
         const meta = document.createElement("div");
         meta.className = "small subtle";
-        meta.textContent = `${box.name} · ${formatDate(entry.ts)}`;
+        const bundle = entry.bundleId ? CASE_BY_ID.get(entry.bundleId) : null;
+        meta.textContent = `${bundle ? `${bundle.name} · ` : ""}${box.name} · ${formatDate(entry.ts)}`;
         details.append(name, meta);
 
         const rarity = document.createElement("span");
@@ -221,86 +248,113 @@ function renderHistory() {
     });
 }
 
+function renderResult(wins) {
+    $("result-list").innerHTML = wins
+        .map(
+            (win, i) => `<div class="col-12 col-sm"><div class="result-card ${win.rarity} result-reveal" style="animation-delay:${i * 0.15}s">
+  <div class="reward-icon-lg">${win.icon}</div>
+  <div class="fw-semibold mt-1">${win.name}</div>
+  <div class="rarity">${RARITIES[win.rarity].label}</div></div></div>`,
+        )
+        .join("");
+    $("result").className = "mt-4";
+}
+
 // ---- Ouverture
-function opencase() {
+// Fait tourner UNE roulette ; la promesse se résout quand elle est arrêtée.
+function spinReel(windowEl, box, win, duration) {
+    return new Promise((resolve) => {
+        const track = windowEl.querySelector(".track");
+        const targetIndex = 29;
+        const sequence = Array.from(
+            { length: 35 },
+            () => box.items[Math.floor(Math.random() * box.items.length)],
+        );
+        sequence[targetIndex] = win;
+        track.innerHTML = sequence.map(itemCard).join("");
+        track.style.transition = "none";
+        track.style.transform = "translateX(0px)";
+
+        // Mesure après insertion : la largeur des cartes varie selon le breakpoint.
+        const windowRect = windowEl.getBoundingClientRect();
+        const cardRect = track.children[targetIndex].getBoundingClientRect();
+        const finalX = windowRect.left + windowEl.clientWidth / 2 - (cardRect.left + cardRect.width / 2);
+        requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+                track.style.transition = `transform ${duration}ms cubic-bezier(.055,.72,.12,1)`;
+                track.style.transform = `translateX(${finalX}px)`;
+            }),
+        );
+
+        let finished = false;
+        const end = () => {
+            if (finished) return;
+            finished = true;
+            track.removeEventListener("transitionend", onTransitionEnd);
+            track.children[targetIndex]?.classList.add("winner");
+            resolve();
+        };
+        const onTransitionEnd = (event) => {
+            if (event.target === track && event.propertyName === "transform") end();
+        };
+        track.addEventListener("transitionend", onTransitionEnd);
+        setTimeout(end, duration + 400); // secours
+    });
+}
+
+async function opencase() {
     if (busy) return;
     busy = true;
     $("open-btn").disabled = true;
     $("reset-btn").disabled = true;
     $("result").classList.add("d-none");
-    // Retire l'animation précédente pour qu'elle puisse se rejouer à chaque gain.
-    $("result").querySelector(".text-center").classList.remove("result-reveal");
 
-    // Le gain est tiré avant l'animation : elle ne fait que le révéler.
+    // Tous les gains sont tirés avant l'animation : elle ne fait que les révéler.
     const caseAtOpening = selectedcase;
-    const win = chooseWeighted(caseAtOpening.items);
-    const track = $("track");
-    const windowEl = document.querySelector(".roulette-window");
-    const targetIndex = 29;
-    const sequence = Array.from(
-        { length: 35 },
-        () => caseAtOpening.items[Math.floor(Math.random() * caseAtOpening.items.length)],
-    );
-    sequence[targetIndex] = win;
-    track.innerHTML = sequence.map(itemCard).join("");
-    track.style.transition = "none";
-    track.style.transform = "translateX(0px)";
+    const boxes = subCases(caseAtOpening);
+    const wins = boxes.map((b) => chooseWeighted(b.items));
+    const windows = [...document.querySelectorAll("#reels .roulette-window")];
+    // Durées échelonnées pour un effet de révélation une par une.
+    const durations = boxes.map((_, i) => (boxes.length === 1 ? 6100 : 4800 + i * 1400));
 
-    // Mesure la vraie carte après insertion : sa largeur varie selon le breakpoint CSS.
-    const windowRect = windowEl.getBoundingClientRect();
-    const cardRect = track.children[targetIndex].getBoundingClientRect();
-    const finalX = windowRect.left + windowEl.clientWidth / 2 - (cardRect.left + cardRect.width / 2);
-    requestAnimationFrame(() =>
-        requestAnimationFrame(() => {
-            track.style.transition = `transform ${SPIN_DURATION_MS}ms cubic-bezier(.08,.6,.08,1)`;
-            track.style.transform = `translateX(${finalX}px)`;
-        }),
-    );
+    try {
+        await Promise.all(windows.map((w, i) => spinReel(w, boxes[i], wins[i], durations[i])));
 
-    let finished = false;
-    const finish = () => {
-        // transitionend et le timeout de secours peuvent se doubler : on n'attribue le gain qu'une fois.
-        if (finished) return;
-        finished = true;
-        track.removeEventListener("transitionend", onTransitionEnd);
-        try {
-            track.children[targetIndex]?.classList.add("winner");
+        const now = Date.now();
+        wins.forEach((win) => (inventory[win.id] = (inventory[win.id] || 0) + 1));
+        history.unshift(
+            ...wins.map((win, i) => ({
+                itemId: win.id,
+                caseId: boxes[i].id,
+                bundleId: caseAtOpening.bundle ? caseAtOpening.id : undefined,
+                ts: now,
+            })),
+        );
+        history = history.slice(0, MAX_HISTORY);
 
-            inventory[win.id] = (inventory[win.id] || 0) + 1;
-            history.unshift({ itemId: win.id, caseId: caseAtOpening.id, ts: Date.now() });
-            history = history.slice(0, MAX_HISTORY);
+        const saved = save(); // une seule sauvegarde pour tout le lot
+        renderCollection();
+        renderHistory();
+        renderResult(wins);
 
-            const saved = save();
-            renderCollection();
-            renderHistory();
-
-            const label = RARITIES[win.rarity].label;
-            $("result-icon").textContent = win.icon;
-            $("result-name").textContent = win.name;
-            $("result-rarity").textContent = label;
-            $("result-rarity").className = "rarity";
-            $("result").className = `mt-4 ${win.rarity}`;
-            $("result").querySelector(".text-center").classList.add("result-reveal");
-
-            $("opening-hint").textContent = saved
-                ? "Récompense ajoutée à votre collection sur cet appareil."
-                : "Gain obtenu, mais sauvegarde impossible. Ne fermez pas cette page avant d'avoir réessayé.";
-            showToast(saved ? `${win.name} ajouté à votre collection.` : `${win.name} obtenu, mais non sauvegardé.`);
-        } catch (error) {
-            console.error("Une erreur est survenue à la fin de l'ouverture.", error);
-            $("opening-hint").textContent =
-                "Le gain a été attribué en mémoire, mais son affichage ou sa sauvegarde a rencontré une erreur.";
-        } finally {
-            $("open-btn").disabled = false;
-            $("reset-btn").disabled = false;
-            busy = false;
-        }
-    };
-    const onTransitionEnd = (event) => {
-        if (event.target === track && event.propertyName === "transform") finish();
-    };
-    track.addEventListener("transitionend", onTransitionEnd);
-    setTimeout(finish, SPIN_DURATION_MS + 400); // secours si transitionend ne se déclenche pas
+        const plural = wins.length > 1;
+        $("opening-hint").textContent = saved
+            ? `${plural ? "Récompenses ajoutées" : "Récompense ajoutée"} à votre collection sur cet appareil.`
+            : "Gains obtenus, mais sauvegarde impossible. Ne fermez pas cette page avant d'avoir réessayé.";
+        showToast(
+            saved
+                ? plural ? `${wins.length} récompenses ajoutées à votre collection.` : `${wins[0].name} ajouté à votre collection.`
+                : "Gains obtenus, mais non sauvegardés.",
+        );
+    } catch (error) {
+        console.error("Une erreur est survenue à la fin de l'ouverture.", error);
+        $("opening-hint").textContent =
+            "Les gains ont été attribués en mémoire, mais leur affichage ou sauvegarde a rencontré une erreur.";
+    } finally {
+        $("open-btn").disabled = false;
+        $("reset-btn").disabled = false;
+        busy = false;
+    }
 }
 
 // ---- Événements

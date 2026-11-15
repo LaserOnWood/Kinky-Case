@@ -102,6 +102,13 @@ const ALL_CASES = [
             { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic", weight: 6 },
         ],
     },
+    {
+        id: "enfer",
+        name: "Caisse de L'Enfer",
+        description: "Lot Royale + Angélique + Mythique, tirées en même temps.",
+        image: "assets/img/cases/enfer.webp",
+        bundle: ["zonecorp", "accessoires", "coups"], // pas de `items`
+    }
 ];
 
 export const CASES = ALL_CASES.filter((c) => !c.locked);
