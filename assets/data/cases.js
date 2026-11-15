@@ -81,8 +81,8 @@ const ALL_CASES = [
         image: "./assets/img/cases/legendaire.webp",
         description: "Une sélection aux chances très rares.",
         items: [
-            { id: "pierre", name: "Pierre runique", icon: "🪨", rarity: "common", weight: 42 },
-            { id: "plume", name: "Plume céleste", icon: "🪶", rarity: "uncommon", weight: 30 },
+            { id: "pierrerunique", name: "Pierre runique", icon: "🪨", rarity: "common", weight: 42 },
+            { id: "plumeceleste", name: "Plume céleste", icon: "🪶", rarity: "uncommon", weight: 30 },
             { id: "orbe", name: "Orbe lunaire", icon: "🔮", rarity: "rare", weight: 19 },
             { id: "phoenix", name: "Flamme du phénix", icon: "🔥", rarity: "epic", weight: 7 },
             { id: "relique", name: "Relique éternelle", icon: "🏺", rarity: "legendary", weight: 1 },
@@ -97,7 +97,7 @@ const ALL_CASES = [
         items: [
             { id: "debout", name: "Debout", icon: "🏹", rarity: "common", weight: 35 },
             { id: "croix", name: "Croix", icon: "⚔️", rarity: "uncommon", weight: 20 },
-            { id: "chaise", name: "Chaise", icon: "🪑", rarity: "uncommon", weight: 20 },
+            { id: "surchaise", name: "Chaise", icon: "🪑", rarity: "uncommon", weight: 20 },
             { id: "genoux", name: "A genoux", icon: "🛡️", rarity: "rare", weight: 13 },
             { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic", weight: 6 },
         ],
