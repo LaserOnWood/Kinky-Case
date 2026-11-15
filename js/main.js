@@ -315,7 +315,7 @@ async function opencase() {
     const wins = boxes.map((b) => chooseWeighted(b.items));
     const windows = [...document.querySelectorAll("#reels .roulette-window")];
     // Durées échelonnées pour un effet de révélation une par une.
-    const durations = boxes.map((_, i) => (boxes.length === 1 ? 6100 : 4800 + i * 1400));
+    const durations = boxes.map((_, i) => SPIN_DURATION_MS + i * 1000);
 
     try {
         await Promise.all(windows.map((w, i) => spinReel(w, boxes[i], wins[i], durations[i])));
