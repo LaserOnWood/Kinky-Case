@@ -625,6 +625,18 @@ NB : !important nécessaire tant que la carte garde son style inline dans index.
   --bs-table-border-color: var(--line);
 }
 
+/* Groupes par rareté : en-tête (taux de la rareté), puis la part de chaque objet. */
+.odds-group-row th {
+  padding-top: 0.6rem;
+  border-bottom: 0;
+}
+.odds-item-row td:first-child {
+  padding-left: 1.25rem;
+}
+.odds-item-row td:last-child {
+  font-variant-numeric: tabular-nums;
+}
+
 /* ==========================================================================
    9. Mobile
    ========================================================================== */

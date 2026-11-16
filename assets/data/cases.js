@@ -9,22 +9,28 @@ export const RARITIES = {
     legendary: { label: "Légendaire" },
 };
 
-// weight = poids relatif. La probabilité affichée vaut weight / somme des poids de la caisse.
+// Probabilités : chaque caisse définit un poids par RARETÉ (rarityWeights). Ils sont relatifs :
+// la chance d'une rareté vaut son poids / somme des poids des raretés présentes dans la caisse
+// (une rareté sans objet est ignorée et les autres sont renormalisées).
+// Les objets d'une même rareté se partagent à parts égales le taux de leur rareté ;
+// un champ optionnel `share` (1 par défaut) permet une répartition inégale à l'intérieur d'une rareté.
+// Voir js/odds.js pour le calcul, le tirage et le formatage.
 const ALL_CASES = [
     {
         id: "zonecorp",
         name: "Caisse Mystère",
         image: "./assets/img/cases/mystere.webp",
         description: "Un assortiment de surprises.",
+        rarityWeights: { common: 60, uncommon: 28, epic: 10, legendary: 2 },
         items: [
-            { id: "fesses", name: "Fesses", icon: "💎", rarity: "common", weight: 20 },
-            { id: "cuisses", name: "Cuisses", icon: "🪙", rarity: "common", weight: 20 },
-            { id: "dos", name: "Dos", icon: "🎭", rarity: "common", weight: 20 },
-            { id: "torse", name: "Torse", icon: "👑", rarity: "uncommon", weight: 14 },
-            { id: "bras", name: "Bras", icon: "👑", rarity: "uncommon", weight: 14 },
-            { id: "pieds", name: "Pieds", icon: "🪵", rarity: "epic", weight: 5 },
-            { id: "mains", name: "Mains", icon: "👑", rarity: "epic", weight: 5 },
-            { id: "genitales", name: "Genitales", icon: "👑", rarity: "legendary", weight: 2 },
+            { id: "fesses", name: "Fesses", icon: "💎", rarity: "common" },
+            { id: "cuisses", name: "Cuisses", icon: "🪙", rarity: "common" },
+            { id: "dos", name: "Dos", icon: "🎭", rarity: "common" },
+            { id: "torse", name: "Torse", icon: "👑", rarity: "uncommon" },
+            { id: "bras", name: "Bras", icon: "👑", rarity: "uncommon" },
+            { id: "pieds", name: "Pieds", icon: "🪵", rarity: "epic" },
+            { id: "mains", name: "Mains", icon: "👑", rarity: "epic" },
+            { id: "genitales", name: "Genitales", icon: "👑", rarity: "legendary" },
         ],
     },
     {
@@ -32,19 +38,20 @@ const ALL_CASES = [
         name: "Caisse Royale",
         image: "./assets/img/cases/royale.webp",
         description: "Des objets précieux et raffinés.",
+        rarityWeights: { common: 70, uncommon: 25, epic: 3.5, legendary: 1.5 },
         items: [
-            { id: "paddle", name: "Paddle", icon: "🔰", rarity: "common", weight: 14 },
-            { id: "cane", name: "Cane", icon: "📿", rarity: "common", weight: 14 },
-            { id: "couteau", name: "Couteau", icon: "🔪", rarity: "common", weight: 14 },
-            { id: "martinet", name: "Martinet", icon: "🔷", rarity: "common", weight: 14 },
-            { id: "cravache", name: "Cravache", icon: "📿", rarity: "common", weight: 14 },
-            { id: "griffe", name: "Griffe", icon: "🔪", rarity: "uncommon", weight: 5 },
-            { id: "plume", name: "Plume", icon: "🪶", rarity: "uncommon", weight: 5 },
-            { id: "pince", name: "Pince", icon: "🔗", rarity: "uncommon", weight: 5 },
-            { id: "fouet", name: "Fouet", icon: "⚜️", rarity: "uncommon", weight: 5 },
-            { id: "roulette", name: "Roulette", icon: "👑", rarity: "uncommon", weight: 5 },
-            { id: "sansaccessoire", name: "Sans accessoire", icon: "🪞", rarity: "epic", weight: 3.5 },
-            { id: "auchoix", name: "Au choix", icon: "🤲", rarity: "legendary", weight: 1.5 },
+            { id: "paddle", name: "Paddle", icon: "🔰", rarity: "common" },
+            { id: "cane", name: "Cane", icon: "📿", rarity: "common" },
+            { id: "couteau", name: "Couteau", icon: "🔪", rarity: "common" },
+            { id: "martinet", name: "Martinet", icon: "🔷", rarity: "common" },
+            { id: "cravache", name: "Cravache", icon: "📿", rarity: "common" },
+            { id: "griffe", name: "Griffe", icon: "🔪", rarity: "uncommon" },
+            { id: "plume", name: "Plume", icon: "🪶", rarity: "uncommon" },
+            { id: "pince", name: "Pince", icon: "🔗", rarity: "uncommon" },
+            { id: "fouet", name: "Fouet", icon: "⚜️", rarity: "uncommon" },
+            { id: "roulette", name: "Roulette", icon: "👑", rarity: "uncommon" },
+            { id: "sansaccessoire", name: "Sans accessoire", icon: "🪞", rarity: "epic" },
+            { id: "auchoix", name: "Au choix", icon: "🤲", rarity: "legendary" },
         ],
     },
     {
@@ -52,13 +59,14 @@ const ALL_CASES = [
         name: "Caisse Tech",
         image: "./assets/img/cases/tech.webp",
         description: "Artefacts et curiosités futuristes.",
+        rarityWeights: { common: 58, rare: 34, epic: 6, legendary: 2 },
         items: [
-            { id: "20", name: "20", icon: "💠", rarity: "common", weight: 29 },
-            { id: "30", name: "30", icon: "💎", rarity: "common", weight: 29 },
-            { id: "5", name: "5", icon: "▦", rarity: "rare", weight: 17 },
-            { id: "50", name: "50", icon: "🔋", rarity: "rare", weight: 17 },
-            { id: "100", name: "100", icon: "🛸", rarity: "epic", weight: 6 },
-            { id: "150", name: "150", icon: "💥", rarity: "legendary", weight: 2 },
+            { id: "20", name: "20", icon: "💠", rarity: "common" },
+            { id: "30", name: "30", icon: "💎", rarity: "common" },
+            { id: "5", name: "5", icon: "▦", rarity: "rare" },
+            { id: "50", name: "50", icon: "🔋", rarity: "rare" },
+            { id: "100", name: "100", icon: "🛸", rarity: "epic" },
+            { id: "150", name: "150", icon: "💥", rarity: "legendary" },
         ],
     },
     {
@@ -67,11 +75,12 @@ const ALL_CASES = [
         locked: true,
         image: "./assets/img/cases/angelique.webp",
         description: "Une caisse au contenu unique.",
+        rarityWeights: { common: 100 },
         items: [
-            { id: "pilori", name: "Pilori", icon: "🪑", rarity: "common", weight: 20 },
-            { id: "banc", name: "Banc", icon: "🛋️", rarity: "common", weight: 20 },
-            { id: "chaise", name: "Chaise", icon: "🪑", rarity: "common", weight: 20 },
-            { id: "table", name: "Table", icon: "🛋️", rarity: "common", weight: 20 },
+            { id: "pilori", name: "Pilori", icon: "🪑", rarity: "common" },
+            { id: "banc", name: "Banc", icon: "🛋️", rarity: "common" },
+            { id: "chaise", name: "Chaise", icon: "🪑", rarity: "common" },
+            { id: "table", name: "Table", icon: "🛋️", rarity: "common" },
         ],
     },
     {
@@ -80,12 +89,13 @@ const ALL_CASES = [
         locked: true,
         image: "./assets/img/cases/legendaire.webp",
         description: "Une sélection aux chances très rares.",
+        rarityWeights: { common: 42, uncommon: 30, rare: 19, epic: 7, legendary: 1 },
         items: [
-            { id: "pierrerunique", name: "Pierre runique", icon: "🪨", rarity: "common", weight: 42 },
-            { id: "plumeceleste", name: "Plume céleste", icon: "🪶", rarity: "uncommon", weight: 30 },
-            { id: "orbe", name: "Orbe lunaire", icon: "🔮", rarity: "rare", weight: 19 },
-            { id: "phoenix", name: "Flamme du phénix", icon: "🔥", rarity: "epic", weight: 7 },
-            { id: "relique", name: "Relique éternelle", icon: "🏺", rarity: "legendary", weight: 1 },
+            { id: "pierrerunique", name: "Pierre runique", icon: "🪨", rarity: "common" },
+            { id: "plumeceleste", name: "Plume céleste", icon: "🪶", rarity: "uncommon" },
+            { id: "orbe", name: "Orbe lunaire", icon: "🔮", rarity: "rare" },
+            { id: "phoenix", name: "Flamme du phénix", icon: "🔥", rarity: "epic" },
+            { id: "relique", name: "Relique éternelle", icon: "🏺", rarity: "legendary" },
         ],
     },
     {
@@ -94,12 +104,13 @@ const ALL_CASES = [
         locked: true,
         image: "./assets/img/cases/mythique.webp",
         description: "Une caisse contenant des objets uniques.",
+        rarityWeights: { common: 35, uncommon: 40, rare: 13, epic: 6 },
         items: [
-            { id: "debout", name: "Debout", icon: "🏹", rarity: "common", weight: 35 },
-            { id: "croix", name: "Croix", icon: "⚔️", rarity: "uncommon", weight: 20 },
-            { id: "surchaise", name: "Chaise", icon: "🪑", rarity: "uncommon", weight: 20 },
-            { id: "genoux", name: "A genoux", icon: "🛡️", rarity: "rare", weight: 13 },
-            { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic", weight: 6 },
+            { id: "debout", name: "Debout", icon: "🏹", rarity: "common" },
+            { id: "croix", name: "Croix", icon: "⚔️", rarity: "uncommon" },
+            { id: "surchaise", name: "Chaise", icon: "🪑", rarity: "uncommon" },
+            { id: "genoux", name: "A genoux", icon: "🛡️", rarity: "rare" },
+            { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic" },
         ],
     },
     {

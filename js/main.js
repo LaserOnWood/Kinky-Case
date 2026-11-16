@@ -1,4 +1,5 @@
 import { RARITIES, CASES, LOCKED_CASES } from "../assets/data/cases.js";
+import { drawItem, formatPercent, rarityGroups, validateCases } from "./odds.js";
 
 const MAX_COUNT = 1_000_000_000;
 const MAX_HISTORY = 60;
@@ -17,7 +18,6 @@ const caseSize = (c) => subCases(c).reduce((s, b) => s + b.items.length, 0);
 
 // ---- Formatage (la date est stockée en timestamp, formatée uniquement à l'affichage)
 const dateFormat = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "medium" });
-const percentFormat = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 const formatDate = (ts) => (ts ? dateFormat.format(ts) : "Date inconnue");
 
 // ---- Chargement / nettoyage des données locales
@@ -103,16 +103,6 @@ function showToast(message) {
     if (window.bootstrap?.Toast) window.bootstrap.Toast.getOrCreateInstance($("toast")).show();
 }
 
-function chooseWeighted(items) {
-    const total = items.reduce((s, x) => s + x.weight, 0);
-    let r = Math.random() * total;
-    for (const item of items) {
-        r -= item.weight;
-        if (r < 0) return item;
-    }
-    return items[items.length - 1];
-}
-
 // ---- Rendu
 function rendercases() {
     const lockedCards = LOCKED_CASES.map(
@@ -171,21 +161,27 @@ function renderSelected() {
     $("reels").classList.toggle("is-bundle", boxes.length > 1);
 }
 
+// Toujours le même format, même pour un objet seul dans sa rareté :
+// une ligne d'en-tête (taux de la rareté), puis la part de chaque objet.
+function oddsRows(group) {
+    const header = `<tr class="odds-group-row ${group.rarity}"><th><span class="rarity m-0">${RARITIES[group.rarity].label}</span></th><th class="text-end">${formatPercent(group.percent)}</th></tr>`;
+    const rows = group.items
+        .map(({ item, percent }) => `<tr class="odds-item-row ${group.rarity}"><td>${item.icon} ${item.name}</td><td class="text-end">${formatPercent(percent)}</td></tr>`)
+        .join("");
+    return header + rows;
+}
+
 function renderOdds(box) {
     $("odds-title").textContent = box.name;
     $("odds-content").innerHTML = subCases(box)
-        .map((sub) => {
-            const total = sub.items.reduce((s, i) => s + i.weight, 0);
-            const rows = sub.items
-                .map((i) => `<tr class="${i.rarity}"><td>${i.icon} ${i.name}</td><td><span class="rarity m-0">${RARITIES[i.rarity].label}</span></td><td class="text-end">${percentFormat.format((i.weight / total) * 100)} %</td></tr>`)
-                .join("");
-            return `<div class="mb-3" data-theme="${sub.id}">
+        .map(
+            (sub) => `<div class="mb-3" data-theme="${sub.id}">
   ${box.bundle ? `<div class="eyebrow mb-2">${sub.name}</div>` : ""}
   <table class="table table-sm align-middle mb-0 odds-table">
-    <thead><tr><th>Objet</th><th>Rareté</th><th class="text-end">Chance</th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table></div>`;
-        })
+    <thead><tr><th>Objet</th><th class="text-end">Chance</th></tr></thead>
+    <tbody>${rarityGroups(sub).map(oddsRows).join("")}</tbody>
+  </table></div>`,
+        )
         .join("");
 }
 
@@ -312,7 +308,7 @@ async function opencase() {
     // Tous les gains sont tirés avant l'animation : elle ne fait que les révéler.
     const caseAtOpening = selectedcase;
     const boxes = subCases(caseAtOpening);
-    const wins = boxes.map((b) => chooseWeighted(b.items));
+    const wins = boxes.map(drawItem);
     const windows = [...document.querySelectorAll("#reels .roulette-window")];
     // Durées échelonnées pour un effet de révélation une par une.
     const durations = boxes.map((_, i) => SPIN_DURATION_MS + i * 1000);
@@ -387,7 +383,8 @@ $("reset-btn").addEventListener("click", () => {
     if (!saved) showToast("Réinitialisation impossible : vos données ont été conservées.");
 });
 
+validateCases([...CASES, ...LOCKED_CASES]);
 rendercases();
 renderSelected();
 renderCollection();
-renderHistory();
+renderHistory();    
