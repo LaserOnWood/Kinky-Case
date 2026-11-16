@@ -70,25 +70,10 @@ const ALL_CASES = [
         ],
     },
     {
-        id: "mobilier",
-        name: "Caisse Angelique",
-        locked: true,
-        image: "./assets/img/cases/angelique.webp",
-        description: "Une caisse au contenu unique.",
-        rarityWeights: { common: 100 },
-        items: [
-            { id: "pilori", name: "Pilori", icon: "🪑", rarity: "common" },
-            { id: "banc", name: "Banc", icon: "🛋️", rarity: "common" },
-            { id: "chaise", name: "Chaise", icon: "🪑", rarity: "common" },
-            { id: "table", name: "Table", icon: "🛋️", rarity: "common" },
-        ],
-    },
-    {
         id: "bonusmalus",
         name: "Caisse Légendaire",
-        locked: true,
-        image: "./assets/img/cases/legendaire.webp",
-        description: "Une sélection aux chances très rares.",
+        image: "./assets/img/cases/bonusmalus.webp",
+        description: "Une sélection de chance ou de malchance.",
         rarityWeights: { common: 42, uncommon: 30, rare: 19, epic: 7, legendary: 1 },
         items: [
             { id: "pierrerunique", name: "Pierre runique", icon: "🪨", rarity: "common" },
@@ -96,6 +81,31 @@ const ALL_CASES = [
             { id: "orbe", name: "Orbe lunaire", icon: "🔮", rarity: "rare" },
             { id: "phoenix", name: "Flamme du phénix", icon: "🔥", rarity: "epic" },
             { id: "relique", name: "Relique éternelle", icon: "🏺", rarity: "legendary" },
+        ],
+    },
+    {
+        id: "enfer",
+        name: "Caisse de L'Enfer",
+        description: "Lot qui contient les caisses Mystere + Royale + Tech + Légendaire, le tout tirées en même temps.",
+        image: "assets/img/cases/enfer.webp",
+        bundle: ["zonecorp", "accessoires", "coups", "bonusmalus"], // pas de `items`
+    },
+    {
+        locked: true,
+        id: "mobilier",
+        name: "Caisse Angelique",
+        image: "./assets/img/cases/angelique.webp",
+        description: "Une caisse au contenu unique.",
+        rarityWeights: { common: 100 },
+        items: [
+            { id: "balançoire", name: "Balançoire", icon: "🪢", rarity: "common" },
+            { id: "bancAFessée", name: "Banc à fessée", icon: "🛋️", rarity: "common" },
+            { id: "bancAContrainte", name: "Banc à contrainte", icon: "🅱️🔗", rarity: "common" },
+            { id: "carcan", name: "Carcan", icon: "🪢", rarity: "common" },
+            { id: "croixStAndre", name: "Croix de Saint-André", icon: "❌", rarity: "common" },
+            { id: "chaise", name: "Chaise", icon: "🪑", rarity: "common" },
+            { id: "pilori", name: "Pilori", icon: "🅿️", rarity: "common" },
+            { id: "table", name: "Table", icon: "🍽️", rarity: "common" },
         ],
     },
     {
@@ -116,9 +126,10 @@ const ALL_CASES = [
     {
         id: "enfer",
         name: "Caisse de L'Enfer",
+        locked: true,
         description: "Lot Royale + Angélique + Mythique, tirées en même temps.",
         image: "assets/img/cases/enfer.webp",
-        bundle: ["zonecorp", "accessoires", "coups"], // pas de `items`
+        bundle: ["zonecorp", "accessoires", "coups", "mobilier"], // pas de `items`
     }
 ];
 
