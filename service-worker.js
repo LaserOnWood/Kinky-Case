@@ -1,11 +1,11 @@
-const CACHE_NAME = "kinky-case-v1.2";
+const CACHE_NAME = "kinky-case-v1.4";
 const BASE_URL = new URL("./", self.registration.scope);
 const APP_SHELL = [
   "./",
   "./index.html",
   "./css/style.css",
   "./js/main.js",
-  "./data/cases.js",
+  "./js/odds.js",
   "./assets/icons/favicon.png",
   "./assets/data/cases.js",
   "./assets/img/cases/mystere.webp",
@@ -74,6 +74,28 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Code et styles : réseau d'abord (toujours à jour, revalidé même si le navigateur a une copie HTTP),
+  // cache en secours hors ligne. Sinon on retrouve un ancien design après une mise à jour.
+  if (["style", "script", "manifest"].includes(request.destination)) {
+    event.respondWith(
+      fetch(request, { cache: "no-cache" })
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(async () => {
+          const cached = await caches.match(request);
+          if (cached) return cached;
+          throw new Error("Hors ligne et fichier absent du cache : " + request.url);
+        })
+    );
+    return;
+  }
+
+  // Images et autres fichiers statiques : cache d'abord (rapide, ils changent rarement).
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
