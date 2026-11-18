@@ -106,14 +106,14 @@ function showToast(message) {
 // ---- Rendu
 function rendercases() {
     const lockedCards = LOCKED_CASES.map(
-        (c) => `<div class="col-6 col-md-4"><article class="case-card locked" aria-disabled="true" data-theme="${c.id}">
+        (c) => `<div class="col-4 col-md-3"><article class="case-card locked" aria-disabled="true" data-theme="${c.id}">
  <div class="case-visual"><img src="${c.image}" alt="" loading="lazy"><span class="case-lock" aria-hidden="true">🔒</span></div>
  <div class="fw-semibold mb-2">Caisse secrète</div>
  <div class="small subtle">Bientôt disponible. Son contenu reste secret.</div></article></div>`,
     ).join("");
 
     $("case-grid").innerHTML = CASES.map(
-        (c) => `<div class="col-6 col-md-4"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-id="${c.id}" data-theme="${c.id}">
+        (c) => `<div class="col-4 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-id="${c.id}" data-theme="${c.id}">
  <div class="case-visual">
   <img src="${c.image}" alt="Illustration ${c.name}" loading="lazy">
   <button type="button" class="odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
