@@ -120,7 +120,7 @@ const ALL_CASES = [
     {
         id: "chatiment",
         name: "Caisse du châtiment",
-        description: "Lot Enfer + Cisse de Mobilier, tirées en meme temps",
+        description: "Lot Caisse de l'Enfer + Caisse de Mobilier, tirées en meme temps",
         image: "assets/img/cases/angelique.webp",
         bundle: ["zonecorp", "accessoires", "coups", "bonusmalus", "mobilier"], // pas de `items`
     },
