@@ -92,9 +92,18 @@ const ALL_CASES = [
     },
     {
         locked: true,
+        id: "test",
+        name: "Caisse Test",
+        image: "./assets/img/cases/mathematique.webp",
+        description: "Une caisse pour tester les probabilités.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
+    },
+    {
         id: "mobilier",
-        name: "Caisse Angelique",
-        image: "./assets/img/cases/angelique.webp",
+        name: "Caisse de Mobilier",
+        image: "./assets/img/cases/mobilier.png",
         description: "Une caisse au contenu unique.",
         rarityWeights: { common: 100 },
         items: [
@@ -107,6 +116,13 @@ const ALL_CASES = [
             { id: "pilori", name: "Pilori", icon: "🅿️", rarity: "common" },
             { id: "table", name: "Table", icon: "🍽️", rarity: "common" },
         ],
+    },
+    {
+        id: "chatiment",
+        name: "Caisse du châtiment",
+        description: "Lot Enfer + Cisse de Mobilier, tirées en meme temps",
+        image: "assets/img/cases/angelique.webp",
+        bundle: ["zonecorp", "accessoires", "coups", "bonusmalus", "mobilier"], // pas de `items`
     },
     {
         id: "position",
@@ -122,14 +138,6 @@ const ALL_CASES = [
             { id: "genoux", name: "A genoux", icon: "🛡️", rarity: "rare" },
             { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic" },
         ],
-    },
-    {
-        id: "enfer",
-        name: "Caisse de L'Enfer",
-        locked: true,
-        description: "Lot Royale + Angélique + Mythique, tirées en même temps.",
-        image: "assets/img/cases/enfer.webp",
-        bundle: ["zonecorp", "accessoires", "coups", "mobilier"], // pas de `items`
     }
 ];
 
