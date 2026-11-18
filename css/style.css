@@ -79,16 +79,22 @@
 }
 [data-theme="bonusmalus"] {
   --case-accent: #36eb36;
-  --case-accent-2: #F00000;
-}
-[data-theme="position"] {
-  --case-accent: #e9e2d0;
-}
-[data-theme="mobilier"] {
-  --case-accent: #f0c45f;
+  --case-accent-2: #f00000;
 }
 [data-theme="enfer"] {
   --case-accent: #da5d23;
+}
+[data-theme="mobilier"] {
+  --case-accent: #e9b53d;
+}
+[data-theme="chatiment"] {
+  --case-accent: #d3cec3;
+}
+[data-theme="position"] {
+  --case-accent: #9895a5;
+}
+[data-theme="courage"] {
+  --case-accent: #f0c45f;
 }
 
 /* Dérivés de l'accent, recalculés sur chaque élément thémé. */
