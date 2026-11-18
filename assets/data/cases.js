@@ -23,14 +23,14 @@ const ALL_CASES = [
         description: "Un assortiment de surprises.",
         rarityWeights: { common: 60, uncommon: 28, epic: 10, legendary: 2 },
         items: [
-            { id: "fesses", name: "Fesses", icon: "💎", rarity: "common" },
-            { id: "cuisses", name: "Cuisses", icon: "🪙", rarity: "common" },
+            { id: "fesses", name: "Fesses", icon: "🍑", rarity: "common" },
+            { id: "cuisses", name: "Cuisses", icon: "🦵", rarity: "common" },
             { id: "dos", name: "Dos", icon: "🎭", rarity: "common" },
             { id: "torse", name: "Torse", icon: "👑", rarity: "uncommon" },
-            { id: "bras", name: "Bras", icon: "👑", rarity: "uncommon" },
-            { id: "pieds", name: "Pieds", icon: "🪵", rarity: "epic" },
-            { id: "mains", name: "Mains", icon: "👑", rarity: "epic" },
-            { id: "genitales", name: "Genitales", icon: "👑", rarity: "legendary" },
+            { id: "bras", name: "Bras", icon: "💪", rarity: "uncommon" },
+            { id: "pieds", name: "Pieds", icon: "🦶", rarity: "epic" },
+            { id: "mains", name: "Mains", icon: "✋", rarity: "epic" },
+            { id: "genitales", name: "Genitales", icon: "🌶️🌹", rarity: "legendary" },
         ],
     },
     {
@@ -42,15 +42,15 @@ const ALL_CASES = [
         items: [
             { id: "paddle", name: "Paddle", icon: "🔰", rarity: "common" },
             { id: "cane", name: "Cane", icon: "📿", rarity: "common" },
-            { id: "couteau", name: "Couteau", icon: "🔪", rarity: "common" },
+            { id: "couteau", name: "Couteau", icon: "🗡️", rarity: "common" },
             { id: "martinet", name: "Martinet", icon: "🔷", rarity: "common" },
             { id: "cravache", name: "Cravache", icon: "📿", rarity: "common" },
-            { id: "griffe", name: "Griffe", icon: "🔪", rarity: "uncommon" },
+            { id: "griffe", name: "Griffe", icon: "🔱", rarity: "uncommon" },
             { id: "plume", name: "Plume", icon: "🪶", rarity: "uncommon" },
             { id: "pince", name: "Pince", icon: "🔗", rarity: "uncommon" },
             { id: "fouet", name: "Fouet", icon: "⚜️", rarity: "uncommon" },
-            { id: "roulette", name: "Roulette", icon: "👑", rarity: "uncommon" },
-            { id: "sansaccessoire", name: "Sans accessoire", icon: "🪞", rarity: "epic" },
+            { id: "roulette", name: "Roulette", icon: "⚙️", rarity: "uncommon" },
+            { id: "sansaccessoire", name: "Sans accessoire", icon: "🚫", rarity: "epic" },
             { id: "auchoix", name: "Au choix", icon: "🤲", rarity: "legendary" },
         ],
     },
@@ -58,13 +58,13 @@ const ALL_CASES = [
         id: "coups",
         name: "Caisse de la Sentence",
         image: "./assets/img/cases/sentence.png",
-        description: "Artefacts et curiosités futuristes.",
+        description: "Une caisse qui marque l'esprit.",
         rarityWeights: { common: 58, rare: 34, epic: 6, legendary: 2 },
         items: [
-            { id: "20", name: "20", icon: "💠", rarity: "common" },
-            { id: "30", name: "30", icon: "💎", rarity: "common" },
-            { id: "5", name: "5", icon: "▦", rarity: "rare" },
-            { id: "50", name: "50", icon: "🔋", rarity: "rare" },
+            { id: "20", name: "20", icon: "2️⃣0️⃣", rarity: "common" },
+            { id: "30", name: "30", icon: "3️⃣0️⃣", rarity: "common" },
+            { id: "5", name: "5", icon: "5️⃣", rarity: "rare" },
+            { id: "50", name: "50", icon: "5️⃣0️⃣", rarity: "rare" },
             { id: "100", name: "100", icon: "🛸", rarity: "epic" },
             { id: "150", name: "150", icon: "💥", rarity: "legendary" },
         ],
@@ -91,16 +91,6 @@ const ALL_CASES = [
         bundle: ["zonecorp", "accessoires", "coups", "bonusmalus"], // pas de `items`
     },
     {
-        locked: true,
-        id: "test",
-        name: "Caisse Test",
-        image: "./assets/img/cases/mathematique.webp",
-        description: "Une caisse pour tester les probabilités.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
-        items: [
-        ]
-    },
-    {
         id: "mobilier",
         name: "Caisse de Mobilier",
         image: "./assets/img/cases/mobilier.png",
@@ -125,10 +115,25 @@ const ALL_CASES = [
         bundle: ["zonecorp", "accessoires", "coups", "bonusmalus", "mobilier"], // pas de `items`
     },
     {
+        id: "courage",
+        name: "Caisse de Courage",
+        image: "./assets/img/cases/tech.webp",
+        locked: true,
+        description: "Une caisse contenant des objets inspirants.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+            { id: "epaule", name: "Epaule", icon: "🛡️", rarity: "common" },
+            { id: "coeur", name: "Coeur", icon: "❤️", rarity: "uncommon" },
+            { id: "main", name: "Main", icon: "✋", rarity: "rare" },
+            { id: "esprit", name: "Esprit", icon: "🧠", rarity: "epic" },
+            { id: "âme", name: "Âme", icon: "👻", rarity: "legendary" },
+        ],
+    },
+    {
         id: "position",
         name: "Caisse Spéciale",
         locked: true,
-        image: "./assets/img/cases/mythique.webp",
+        image: "./assets/img/cases/boisclassique.png",
         description: "Une caisse contenant des objets uniques.",
         rarityWeights: { common: 35, uncommon: 40, rare: 13, epic: 6 },
         items: [
@@ -138,7 +143,17 @@ const ALL_CASES = [
             { id: "genoux", name: "A genoux", icon: "🛡️", rarity: "rare" },
             { id: "quatrepattes", name: "A quatre pattes", icon: "💍", rarity: "epic" },
         ],
-    }
+    },
+    {
+        locked: true,
+        id: "test",
+        name: "Caisse Test",
+        image: "./assets/img/cases/mythique.webp",
+        description: "Une caisse pour tester les probabilités.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
+    },
 ];
 
 export const CASES = ALL_CASES.filter((c) => !c.locked);
