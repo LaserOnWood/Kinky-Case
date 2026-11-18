@@ -56,8 +56,8 @@ const ALL_CASES = [
     },
     {
         id: "coups",
-        name: "Caisse Tech",
-        image: "./assets/img/cases/tech.webp",
+        name: "Caisse de la Sentence",
+        image: "./assets/img/cases/sentence.png",
         description: "Artefacts et curiosités futuristes.",
         rarityWeights: { common: 58, rare: 34, epic: 6, legendary: 2 },
         items: [
@@ -86,7 +86,7 @@ const ALL_CASES = [
     {
         id: "enfer",
         name: "Caisse de L'Enfer",
-        description: "Lot qui contient les caisses Mystere + Royale + Tech + Légendaire, le tout tirées en même temps.",
+        description: "Lot qui contient les quatres caisses précédentes, le tout tirées en même temps.",
         image: "assets/img/cases/enfer.webp",
         bundle: ["zonecorp", "accessoires", "coups", "bonusmalus"], // pas de `items`
     },
