@@ -4,6 +4,8 @@ import { drawItem, formatPercent, rarityGroups, validateCases } from "./odds.js"
 const MAX_COUNT = 1_000_000_000;
 const MAX_HISTORY = 60;
 const VISIBLE_HISTORY = 12;
+const MAX_DATE_MS = 8.64e15;
+const STORAGE_LOCK_NAME = "kinky-case-data";
 
 const SPIN_DURATION_MS = 9000; // durée de la roulette, à ajuster en cas de besoin (animation CSS + JS)
 
@@ -19,6 +21,8 @@ const caseSize = (c) => subCases(c).reduce((s, b) => s + b.items.length, 0);
 // ---- Formatage (la date est stockée en timestamp, formatée uniquement à l'affichage)
 const dateFormat = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "medium" });
 const formatDate = (ts) => (ts ? dateFormat.format(ts) : "Date inconnue");
+const isSupportedTimestamp = (ts) =>
+    Number.isFinite(ts) && ts > 0 && ts <= MAX_DATE_MS && Number.isFinite(new Date(ts).getTime());
 
 // ---- Chargement / nettoyage des données locales
 function loadStoredJSON(key, fallback) {
@@ -39,7 +43,7 @@ function sanitizeInventory(raw) {
         const id = storedId === " sceptre" ? "sceptre" : storedId;
         if (ITEM_BY_ID.has(id) && Number.isSafeInteger(count) && count > 0 && count <= MAX_COUNT) {
             const combined = (clean[id] || 0) + count;
-            if (combined <= MAX_COUNT) clean[id] = combined;
+            clean[id] = Math.min(MAX_COUNT, combined);
         }
     }
     return clean;
@@ -54,7 +58,7 @@ function normalizeEntry(entry) {
         itemId,
         caseId,
         bundleId: CASE_BY_ID.get(bundleId)?.bundle ? bundleId : undefined,
-        ts: Number.isFinite(ts) && ts > 0 ? ts : null,
+        ts: isSupportedTimestamp(ts) ? ts : null,
     };
 }
 
@@ -65,10 +69,18 @@ function sanitizeHistory(raw) {
 
 let inventory = sanitizeInventory(loadStoredJSON("loot_inventory", {}));
 let history = sanitizeHistory(loadStoredJSON("loot_history", []));
+let pendingOpenings = [];
 let selectedcase = CASES[0];
 let busy = false;
 
-function save() {
+function readStoredState() {
+    return {
+        inventory: sanitizeInventory(loadStoredJSON("loot_inventory", {})),
+        history: sanitizeHistory(loadStoredJSON("loot_history", [])),
+    };
+}
+
+function saveState(nextInventory, nextHistory) {
     let previousInventory;
     let previousHistory;
     let snapshotComplete = false;
@@ -77,8 +89,8 @@ function save() {
         previousHistory = localStorage.getItem("loot_history");
         snapshotComplete = true;
 
-        localStorage.setItem("loot_inventory", JSON.stringify(inventory));
-        localStorage.setItem("loot_history", JSON.stringify(history));
+        localStorage.setItem("loot_inventory", JSON.stringify(nextInventory));
+        localStorage.setItem("loot_history", JSON.stringify(nextHistory));
         return true;
     } catch (error) {
         // Si la seconde écriture échoue, on tente de restaurer la paire précédente.
@@ -97,6 +109,26 @@ function save() {
     }
 }
 
+async function withStorageLock(callback) {
+    if (typeof navigator.locks?.request === "function") {
+        return navigator.locks.request(STORAGE_LOCK_NAME, { mode: "exclusive" }, callback);
+    }
+    // Le repli garde les opérations synchrones, mais ne peut pas sérialiser plusieurs onglets.
+    return callback();
+}
+
+async function mutateStoredState(mutator, { keepChangesOnFailure = true } = {}) {
+    return withStorageLock(() => {
+        const current = readStoredState();
+        const next = mutator(current);
+        const saved = saveState(next.inventory, next.history);
+        const shown = saved || keepChangesOnFailure ? next : current;
+        inventory = shown.inventory;
+        history = shown.history;
+        return saved;
+    });
+}
+
 function showToast(message) {
     const el = $("toast-message");
     if (el) el.textContent = message;
@@ -113,24 +145,20 @@ function rendercases() {
     ).join("");
 
     $("case-grid").innerHTML = CASES.map(
-        (c) => `<div class="col-4 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-id="${c.id}" data-theme="${c.id}">
- <div class="case-visual">
-  <img src="${c.image}" alt="Illustration ${c.name}" loading="lazy">
-  <button type="button" class="odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
-  <span class="case-count" title="${caseSize(c)} objets" aria-label="${caseSize(c)} objets">${caseSize(c)}</span>
- </div>
- <div class="fw-semibold mb-2">${c.name}</div>
- <div class="small subtle">${c.description}</div></article></div>`,
+        (c) => `<div class="col-4 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-theme="${c.id}">
+ <button type="button" class="case-select" data-id="${c.id}" aria-pressed="${c.id === selectedcase.id}">
+  <span class="visually-hidden">Sélectionner la caisse </span>
+  <span class="case-visual">
+   <img src="${c.image}" alt="" loading="lazy">
+   <span class="case-count" aria-hidden="true">${caseSize(c)}</span>
+  </span>
+  <span class="fw-semibold mb-2 d-block">${c.name}</span>
+  <span class="small subtle d-block">${c.description}</span>
+ </button>
+ <button type="button" class="odds-btn case-odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
+ </article></div>`,
     ).join("") + lockedCards;
     document.querySelector(".opening-header").dataset.theme = selectedcase.id;
-    document.querySelectorAll(".case-card:not(.locked)").forEach((el) =>
-        el.addEventListener("click", (event) => {
-            if (busy || event.target.closest(".odds-btn")) return;
-            selectedcase = CASE_BY_ID.get(el.dataset.id);
-            rendercases();
-            renderSelected();
-        }),
-    );
     $("case-count-label").textContent = `${CASES.length} disponibles`;
 }
 
@@ -275,6 +303,14 @@ function spinReel(windowEl, box, win, duration) {
         const windowRect = windowEl.getBoundingClientRect();
         const cardRect = track.children[targetIndex].getBoundingClientRect();
         const finalX = windowRect.left + windowEl.clientWidth / 2 - (cardRect.left + cardRect.width / 2);
+        const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+        if (reduceMotion || duration <= 0) {
+            track.style.transition = "none";
+            track.style.transform = `translateX(${finalX}px)`;
+            track.children[targetIndex]?.classList.add("winner");
+            resolve();
+            return;
+        }
         requestAnimationFrame(() =>
             requestAnimationFrame(() => {
                 track.style.transition = `transform ${duration}ms cubic-bezier(.055,.72,.12,1)`;
@@ -311,26 +347,41 @@ async function opencase() {
     const wins = boxes.map(drawItem);
     const windows = [...document.querySelectorAll("#reels .roulette-window")];
     // Durées échelonnées pour un effet de révélation une par une.
-    const durations = boxes.map((_, i) => SPIN_DURATION_MS + i * 1000);
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const durations = boxes.map((_, i) => (reduceMotion ? 0 : SPIN_DURATION_MS + i * 1000));
 
     try {
-        await Promise.all(windows.map((w, i) => spinReel(w, boxes[i], wins[i], durations[i])));
-
         const now = Date.now();
-        wins.forEach((win) => (inventory[win.id] = (inventory[win.id] || 0) + 1));
-        history.unshift(
-            ...wins.map((win, i) => ({
-                itemId: win.id,
-                caseId: boxes[i].id,
-                bundleId: caseAtOpening.bundle ? caseAtOpening.id : undefined,
-                ts: now,
-            })),
-        );
-        history = history.slice(0, MAX_HISTORY);
-
-        const saved = save(); // une seule sauvegarde pour tout le lot
+        pendingOpenings.push({
+            wins,
+            boxes,
+            bundleId: caseAtOpening.bundle ? caseAtOpening.id : undefined,
+            ts: isSupportedTimestamp(now) ? now : null,
+        });
+        const openingsToPersist = [...pendingOpenings];
+        const saved = await mutateStoredState(({ inventory: currentInventory, history: currentHistory }) => {
+            const nextInventory = { ...currentInventory };
+            let nextHistory = currentHistory;
+            for (const opening of openingsToPersist) {
+                opening.wins.forEach((win) => {
+                    nextInventory[win.id] = Math.min(MAX_COUNT, (nextInventory[win.id] || 0) + 1);
+                });
+                const entries = opening.wins.map((win, i) => ({
+                    itemId: win.id,
+                    caseId: opening.boxes[i].id,
+                    bundleId: opening.bundleId,
+                    ts: opening.ts,
+                }));
+                nextHistory = [...entries, ...nextHistory].slice(0, MAX_HISTORY);
+            }
+            return { inventory: nextInventory, history: nextHistory };
+        });
+        if (saved) pendingOpenings = [];
         renderCollection();
         renderHistory();
+
+        await Promise.all(windows.map((w, i) => spinReel(w, boxes[i], wins[i], durations[i])));
+
         renderResult(wins);
 
         const plural = wins.length > 1;
@@ -345,7 +396,7 @@ async function opencase() {
     } catch (error) {
         console.error("Une erreur est survenue à la fin de l'ouverture.", error);
         $("opening-hint").textContent =
-            "Les gains ont été attribués en mémoire, mais leur affichage ou sauvegarde a rencontré une erreur.";
+            "L'ouverture n'a pas pu être finalisée. Vérifiez l'historique et la collection avant de réessayer.";
     } finally {
         $("open-btn").disabled = false;
         $("reset-btn").disabled = false;
@@ -355,36 +406,69 @@ async function opencase() {
 
 // ---- Événements
 $("open-btn").addEventListener("click", opencase);
+$("case-grid").addEventListener("click", (event) => {
+    const button = event.target.closest("button.case-select");
+    if (!button || busy) return;
+    const nextCase = CASE_BY_ID.get(button.dataset.id);
+    if (!nextCase) return;
+    const keepFocus = document.activeElement === button;
+    selectedcase = nextCase;
+    rendercases();
+    renderSelected();
+    if (keepFocus) {
+        [...document.querySelectorAll("button.case-select")]
+            .find((candidate) => candidate.dataset.id === nextCase.id)
+            ?.focus({ preventScroll: true });
+    }
+});
 $("odds-modal").addEventListener("show.bs.modal", (event) => {
     const box = CASE_BY_ID.get(event.relatedTarget?.dataset.caseId) ?? selectedcase;
     renderOdds(box);
 });
-$("reset-btn").addEventListener("click", () => {
+$("reset-btn").addEventListener("click", async () => {
     if (busy) return;
     if (!confirm("Effacer la collection et l'historique enregistrés sur cet appareil ?")) return;
 
-    const previousInventory = inventory;
-    const previousHistory = history;
-    inventory = {};
-    history = [];
+    busy = true;
+    $("open-btn").disabled = true;
+    $("reset-btn").disabled = true;
+    try {
+        const saved = await mutateStoredState(() => ({ inventory: {}, history: [] }), { keepChangesOnFailure: false });
+        if (saved) pendingOpenings = [];
+        renderCollection();
+        renderHistory();
+        renderSelected();
 
-    const saved = save();
-    if (!saved) {
-        inventory = previousInventory;
-        history = previousHistory;
+        $("opening-hint").textContent = saved
+            ? "Collection et historique réinitialisés."
+            : "Réinitialisation annulée : impossible de sauvegarder la modification.";
+        if (!saved) showToast("Réinitialisation impossible : vos données ont été conservées.");
+    } catch (error) {
+        console.error("La réinitialisation n'a pas pu être effectuée.", error);
+        $("opening-hint").textContent = "Réinitialisation impossible : vos données ont été conservées.";
+    } finally {
+        $("open-btn").disabled = false;
+        $("reset-btn").disabled = false;
+        busy = false;
     }
+});
+
+window.addEventListener("storage", (event) => {
+    if (event.key !== null && event.key !== "loot_inventory" && event.key !== "loot_history") return;
+    ({ inventory, history } = readStoredState());
     renderCollection();
     renderHistory();
-    renderSelected();
-
-    $("opening-hint").textContent = saved
-        ? "Collection et historique réinitialisés."
-        : "Réinitialisation annulée : impossible de sauvegarder la modification.";
-    if (!saved) showToast("Réinitialisation impossible : vos données ont été conservées.");
 });
+
+if (typeof navigator.locks?.request !== "function") {
+    $("storage-sync-note").hidden = false;
+}
+
+$("nav").addEventListener("shown.bs.collapse", () => $("nav-toggle").setAttribute("aria-expanded", "true"));
+$("nav").addEventListener("hidden.bs.collapse", () => $("nav-toggle").setAttribute("aria-expanded", "false"));
 
 validateCases([...CASES, ...LOCKED_CASES]);
 rendercases();
 renderSelected();
 renderCollection();
-renderHistory();    
+renderHistory();

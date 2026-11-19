@@ -1,0 +1,17 @@
+{
+  "name": "kinky-case",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "npm run test:unit && npm run test:browser",
+    "test:unit": "node --test tests/unit/*.test.js",
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1"
+  }
+}
