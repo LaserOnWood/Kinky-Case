@@ -315,12 +315,6 @@ body {
   outline: 3px solid var(--case-accent);
   outline-offset: 2px;
 }
-.case-card > .case-odds-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 3;
-}
 .case-card:hover {
   border-color: var(--case-accent);
   box-shadow:
@@ -400,6 +394,19 @@ body {
   object-position: center;
   filter: drop-shadow(0 8px 12px #0009);
 }
+.case-visual .case-visual-select {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+.case-visual .case-visual-select:focus-visible {
+  outline-offset: -3px;
+}
 
 /* Badges dans l'image : « % » en haut à droite, nombre d'objets en bas à droite */
 .case-visual .odds-btn,
@@ -410,6 +417,7 @@ body {
 }
 .case-visual .odds-btn {
   top: 2px;
+  z-index: 3;
 }
 .case-count {
   bottom: 2px;

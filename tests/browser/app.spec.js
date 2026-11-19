@@ -34,6 +34,31 @@ test("les caisses sont sélectionnables au clavier et annoncent leur état", asy
   await expect(page.locator('#case-grid .case-select[data-id="zonecorp"]')).toHaveAttribute("aria-pressed", "true");
 });
 
+test("le bouton des probabilités reste ancré au coin supérieur droit du cadre image", async ({ page }) => {
+  await openApplication(page);
+  for (const width of [390, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    const geometry = await page.locator('#case-grid [data-theme="zonecorp"] .case-visual').evaluate((frame) => {
+      const frameRect = frame.getBoundingClientRect();
+      const oddsRect = frame.querySelector(".case-odds-btn").getBoundingClientRect();
+      const countRect = frame.querySelector(".case-count").getBoundingClientRect();
+      return {
+        oddsRightInset: frameRect.right - oddsRect.right,
+        countRightInset: frameRect.right - countRect.right,
+        oddsTopInset: oddsRect.top - frameRect.top,
+        rightEdgeDifference: Math.abs(oddsRect.right - countRect.right),
+      };
+    });
+    expect(geometry.oddsRightInset).toBeCloseTo(2, 0);
+    expect(geometry.countRightInset).toBeCloseTo(2, 0);
+    expect(geometry.oddsTopInset).toBeCloseTo(2, 0);
+    expect(geometry.rightEdgeDifference).toBeLessThanOrEqual(1);
+  }
+  await page.locator('#case-grid [data-theme="zonecorp"] .case-odds-btn').click();
+  await expect(page.locator("#odds-modal")).toHaveClass(/show/);
+  await expect(page.locator("#odds-title")).toHaveText("Caisse Mystère");
+});
+
 test("les commandes et la page ne présentent pas de violation WCAG A/AA détectée par axe", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApplication(page);
