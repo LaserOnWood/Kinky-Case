@@ -146,16 +146,13 @@ function rendercases() {
 
     $("case-grid").innerHTML = CASES.map(
         (c) => `<div class="col-6 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-theme="${c.id}">
- <button type="button" class="case-select" data-id="${c.id}" aria-pressed="${c.id === selectedcase.id}">
-  <span class="visually-hidden">Sélectionner la caisse </span>
-  <span class="case-visual">
-   <img src="${c.image}" alt="" loading="lazy">
-   <span class="case-count" aria-hidden="true">${caseSize(c)}</span>
-  </span>
-  <span class="fw-semibold mb-2 d-block">${c.name}</span>
-  <span class="small subtle d-block">${c.description}</span>
- </button>
- <button type="button" class="odds-btn case-odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
+ <span class="case-visual">
+  <button type="button" class="case-select case-visual-select" data-id="${c.id}" aria-pressed="${c.id === selectedcase.id}"><span class="visually-hidden">Sélectionner la caisse ${c.name}</span><img src="${c.image}" alt="" loading="lazy"></button>
+  <span class="case-count" aria-hidden="true">${caseSize(c)}</span>
+  <button type="button" class="odds-btn case-odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
+ </span>
+ <div class="fw-semibold mb-2">${c.name}</div>
+ <div class="small subtle">${c.description}</div>
  </article></div>`,
     ).join("") + lockedCards;
     document.querySelector(".opening-header").dataset.theme = selectedcase.id;
