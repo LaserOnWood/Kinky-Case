@@ -57,7 +57,7 @@ const ALL_CASES = [
     {
         id: "coups",
         name: "Caisse de la Sentence",
-        image: "./assets/img/cases/sentence.png",
+        image: "./assets/img/cases/sentence.webp",
         description: "Une caisse qui marque l'esprit.",
         rarityWeights: { common: 58, rare: 34, epic: 6, legendary: 2 },
         items: [
@@ -93,7 +93,7 @@ const ALL_CASES = [
     {
         id: "mobilier",
         name: "Caisse de Mobilier",
-        image: "./assets/img/cases/mobilier.png",
+        image: "./assets/img/cases/mobilier.webp",
         description: "Une caisse au contenu unique.",
         rarityWeights: { common: 100 },
         items: [
@@ -133,7 +133,7 @@ const ALL_CASES = [
         id: "position",
         name: "Caisse Spéciale",
         locked: true,
-        image: "./assets/img/cases/boisclassique.png",
+        image: "./assets/img/cases/boisclassique.webp",
         description: "Une caisse contenant des objets uniques.",
         rarityWeights: { common: 35, uncommon: 40, rare: 13, epic: 6 },
         items: [
