@@ -231,6 +231,8 @@ function renderCollection() {
 function renderHistory() {
     const container = $("history-list");
     container.replaceChildren();
+    // Résumé visible même quand la section est repliée.
+    $("history-summary").textContent = `${history.length} résultat${history.length > 1 ? "s" : ""}`;
     if (!history.length) {
         const empty = document.createElement("div");
         empty.className = "empty";
@@ -460,6 +462,18 @@ window.addEventListener("storage", (event) => {
 if (typeof navigator.locks?.request !== "function") {
     $("storage-sync-note").hidden = false;
 }
+
+// Les sections Historique et Collection sont repliées par défaut : un lien de navigation (ou une URL
+// avec #historique / #collection) la déplie, sinon on arriverait sur un titre sans contenu.
+function expandSection(hash) {
+    if (!/^#[\w-]+$/.test(hash)) return;
+    const body = document.querySelector(`${hash} > .collapse`);
+    if (body) window.bootstrap?.Collapse.getOrCreateInstance(body, { toggle: false }).show();
+}
+document.querySelectorAll('a.nav-link[href^="#"]').forEach((link) =>
+    link.addEventListener("click", () => expandSection(link.getAttribute("href"))),
+);
+expandSection(location.hash);
 
 $("nav").addEventListener("shown.bs.collapse", () => $("nav-toggle").setAttribute("aria-expanded", "true"));
 $("nav").addEventListener("hidden.bs.collapse", () => $("nav-toggle").setAttribute("aria-expanded", "false"));

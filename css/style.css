@@ -646,7 +646,8 @@ NB : !important nécessaire tant que la carte garde son style inline dans index.
 /* ==========================================================================
    7. Collection & historique
    ========================================================================== */
-#collection-summary {
+#collection-summary,
+#history-summary {
   text-align: right;
 }
 
@@ -656,6 +657,42 @@ NB : !important nécessaire tant que la carte garde son style inline dans index.
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
+}
+
+/* Titre de section repliable (historique, collection) : un bouton qui a l'allure d'un titre.
+   Bootstrap lui ajoute .collapsed quand la section est repliée et gère aria-expanded. */
+.section-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.section-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+.section-toggle-icon {
+  width: 0.5em;
+  height: 0.5em;
+  margin-top: -0.15em;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(225deg); /* chevron vers le haut : section dépliée */
+  transition: transform 0.2s ease;
+}
+.section-toggle.collapsed .section-toggle-icon {
+  margin-top: -0.25em;
+  transform: rotate(45deg); /* chevron vers le bas : section repliée */
+}
+.section-toggle:hover .section-toggle-icon {
+  border-color: var(--text);
 }
 
 /* Pastille d'icône (collection + historique) */
@@ -748,7 +785,8 @@ NB : !important nécessaire tant que la carte garde son style inline dans index.
     height: 120px;
   }
 
-  #collection-summary {
+  #collection-summary,
+  #history-summary {
     max-width: 58%;
   }
 
