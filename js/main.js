@@ -138,14 +138,14 @@ function showToast(message) {
 // ---- Rendu
 function rendercases() {
     const lockedCards = LOCKED_CASES.map(
-        (c) => `<div class="col-4 col-md-3"><article class="case-card locked" aria-disabled="true" data-theme="${c.id}">
+        (c) => `<div class="col-6 col-md-3"><article class="case-card locked" aria-disabled="true" data-theme="${c.id}">
  <div class="case-visual"><img src="${c.image}" alt="" loading="lazy"><span class="case-lock" aria-hidden="true">🔒</span></div>
  <div class="fw-semibold mb-2">Caisse secrète</div>
  <div class="small subtle">Bientôt disponible. Son contenu reste secret.</div></article></div>`,
     ).join("");
 
     $("case-grid").innerHTML = CASES.map(
-        (c) => `<div class="col-4 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-theme="${c.id}">
+        (c) => `<div class="col-6 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-theme="${c.id}">
  <button type="button" class="case-select" data-id="${c.id}" aria-pressed="${c.id === selectedcase.id}">
   <span class="visually-hidden">Sélectionner la caisse </span>
   <span class="case-visual">
