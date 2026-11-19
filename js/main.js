@@ -463,6 +463,15 @@ if (typeof navigator.locks?.request !== "function") {
     $("storage-sync-note").hidden = false;
 }
 
+// ---- Navigation par ancres
+// La barre est sticky : on mesure sa hauteur (menu mobile fermé) pour que les ancres s'arrêtent
+// SOUS elle. Le CSS s'en sert : html { scroll-padding-top: var(--nav-offset) }.
+function updateNavOffset() {
+    const menu = $("nav");
+    if (menu.classList.contains("show") || menu.classList.contains("collapsing")) return; // menu mobile ouvert : on garde la mesure « fermée »
+    document.documentElement.style.setProperty("--nav-offset", `${document.querySelector(".navbar").offsetHeight}px`);
+}
+
 // Les sections Historique et Collection sont repliées par défaut : un lien de navigation (ou une URL
 // avec #historique / #collection) la déplie, sinon on arriverait sur un titre sans contenu.
 function expandSection(hash) {
@@ -470,16 +479,75 @@ function expandSection(hash) {
     const body = document.querySelector(`${hash} > .collapse`);
     if (body) window.bootstrap?.Collapse.getOrCreateInstance(body, { toggle: false }).show();
 }
-document.querySelectorAll('a.nav-link[href^="#"]').forEach((link) =>
-    link.addEventListener("click", () => expandSection(link.getAttribute("href"))),
+
+// Lien actif : la dernière section dont le haut est passé sous la barre. En bas de page, une section
+// courte (la collection repliée) ne peut pas atteindre la barre : c'est alors la dernière qui est active.
+const navLinks = [...document.querySelectorAll('#nav a.nav-link[href^="#"]')];
+const navSections = navLinks.map((link) => document.querySelector(link.getAttribute("href")));
+let clickedLink = null; // lien cliqué : reste actif jusqu'à ce que la personne fasse défiler elle-même
+
+function updateActiveLink() {
+    const offset = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav-offset")) || 72;
+    let current = 0;
+    navSections.forEach((section, i) => {
+        if (section && section.getBoundingClientRect().top <= offset + 24) current = i;
+    });
+    if (clickedLink !== null) current = clickedLink;
+    else if (window.scrollY > 0 && window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        current = navLinks.length - 1;
+    }
+    navLinks.forEach((link, i) => {
+        link.classList.toggle("active", i === current);
+        if (i === current) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+    });
+}
+
+let activeUpdateQueued = false;
+function queueActiveUpdate() {
+    if (activeUpdateQueued) return;
+    activeUpdateQueued = true;
+    requestAnimationFrame(() => {
+        activeUpdateQueued = false;
+        updateActiveLink();
+    });
+}
+
+navLinks.forEach((link, i) =>
+    link.addEventListener("click", () => {
+        expandSection(link.getAttribute("href"));
+        clickedLink = i;
+        updateActiveLink();
+        // Menu mobile : on le referme, sinon il reste ouvert par-dessus la section.
+        if ($("nav").classList.contains("show")) {
+            window.bootstrap?.Collapse.getOrCreateInstance($("nav"), { toggle: false }).hide();
+        }
+    }),
 );
+["wheel", "touchstart", "pointerdown", "keydown"].forEach((type) =>
+    window.addEventListener(type, () => { clickedLink = null; }, { passive: true }),
+);
+window.addEventListener("scroll", queueActiveUpdate, { passive: true });
+window.addEventListener("resize", () => {
+    updateNavOffset();
+    queueActiveUpdate();
+});
+window.addEventListener("load", () => {
+    updateNavOffset();
+    updateActiveLink();
+});
 expandSection(location.hash);
 
 $("nav").addEventListener("shown.bs.collapse", () => $("nav-toggle").setAttribute("aria-expanded", "true"));
-$("nav").addEventListener("hidden.bs.collapse", () => $("nav-toggle").setAttribute("aria-expanded", "false"));
+$("nav").addEventListener("hidden.bs.collapse", () => {
+    $("nav-toggle").setAttribute("aria-expanded", "false");
+    updateNavOffset();
+});
 
 validateCases([...CASES, ...LOCKED_CASES]);
 rendercases();
 renderSelected();
 renderCollection();
 renderHistory();
+updateNavOffset();
+updateActiveLink();

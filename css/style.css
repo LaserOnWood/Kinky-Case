@@ -118,6 +118,12 @@ body {
     sans-serif;
 }
 
+/* Ancres : la barre est sticky, les sections s'arrêtent sous elle (--nav-offset est mesurée par main.js ;
+   72px en attendant la mesure). */
+html {
+  scroll-padding-top: calc(var(--nav-offset, 72px) + 12px);
+}
+
 .subtle {
   color: var(--muted);
 }
