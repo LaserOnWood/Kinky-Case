@@ -117,7 +117,7 @@ const ALL_CASES = [
     {
         id: "courage",
         name: "Caisse de Courage",
-        image: "./assets/img/cases/tech.webp",
+        image: "./assets/img/cases/rainbow.webp",
         locked: true,
         description: "Une caisse contenant des objets inspirants.",
         rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
