@@ -405,9 +405,11 @@ async function opencase() {
 
 // ---- Événements
 $("open-btn").addEventListener("click", opencase);
+// Toute la carte est cliquable à la souris ; le bouton reste l'élément accessible (clavier, lecteur d'écran).
 $("case-grid").addEventListener("click", (event) => {
-    const button = event.target.closest("button.case-select");
-    if (!button || busy) return;
+    if (busy || event.target.closest(".odds-btn")) return;
+    const button = event.target.closest(".case-card:not(.locked)")?.querySelector("button.case-select");
+    if (!button) return;
     const nextCase = CASE_BY_ID.get(button.dataset.id);
     if (!nextCase) return;
     const keepFocus = document.activeElement === button;
