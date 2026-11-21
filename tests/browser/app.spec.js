@@ -34,6 +34,28 @@ test("les caisses sont sélectionnables au clavier et annoncent leur état", asy
   await expect(page.locator('#case-grid .case-select[data-id="zonecorp"]')).toHaveAttribute("aria-pressed", "true");
 });
 
+test("la sélection fait défiler jusqu'à la roulette sans la lancer, même avec les animations réduites", async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    reducedMotion: "reduce",
+  });
+  const page = await context.newPage();
+  try {
+    await openApplication(page);
+    await page.locator('#case-grid .case-select[data-id="accessoires"]').click();
+    await expect(page.locator("#selected-title")).toHaveText("Caisse Royale");
+    await expect(page.getByRole("button", { name: /Ouvrir la caisse/ })).toBeEnabled();
+    await expect.poll(() => page.evaluate(() => {
+      const navBottom = document.querySelector(".navbar").getBoundingClientRect().bottom;
+      const reelsTop = document.querySelector("#reels").getBoundingClientRect().top;
+      return window.scrollY > 0 && reelsTop >= navBottom && reelsTop <= navBottom + 32;
+    })).toBe(true);
+    await expect(page.locator("#result-list .result-card")).toHaveCount(0);
+  } finally {
+    await context.close();
+  }
+});
+
 test("le bouton des probabilités reste ancré au coin supérieur droit du cadre image", async ({ page }) => {
   await openApplication(page);
   for (const width of [390, 768, 1280]) {

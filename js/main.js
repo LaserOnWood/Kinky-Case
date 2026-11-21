@@ -404,6 +404,14 @@ async function opencase() {
 }
 
 // ---- Événements
+function scrollToReels() {
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    $("reels").scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+    });
+}
+
 $("open-btn").addEventListener("click", opencase);
 // Toute la carte est cliquable à la souris ; le bouton reste l'élément accessible (clavier, lecteur d'écran).
 $("case-grid").addEventListener("click", (event) => {
@@ -421,6 +429,7 @@ $("case-grid").addEventListener("click", (event) => {
             .find((candidate) => candidate.dataset.id === nextCase.id)
             ?.focus({ preventScroll: true });
     }
+    scrollToReels();
 });
 $("odds-modal").addEventListener("show.bs.modal", (event) => {
     const box = CASE_BY_ID.get(event.relatedTarget?.dataset.caseId) ?? selectedcase;
