@@ -405,7 +405,7 @@ async function opencase() {
 
 // ---- Événements
 function scrollToReels() {
-    requestAnimationFrame(() => alignAnchorBelowNavbar($("reels")));
+    requestAnimationFrame(() => alignAnchorBelowNavbar($("opening")));
 }
 
 $("open-btn").addEventListener("click", opencase);
