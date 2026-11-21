@@ -405,11 +405,7 @@ async function opencase() {
 
 // ---- Événements
 function scrollToReels() {
-    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    $("reels").scrollIntoView({
-        behavior: reduceMotion ? "auto" : "smooth",
-        block: "start",
-    });
+    requestAnimationFrame(() => alignAnchorBelowNavbar($("reels")));
 }
 
 $("open-btn").addEventListener("click", opencase);

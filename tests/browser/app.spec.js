@@ -48,7 +48,8 @@ test("la sélection fait défiler jusqu'à la roulette sans la lancer, même ave
     await expect.poll(() => page.evaluate(() => {
       const navBottom = document.querySelector(".navbar").getBoundingClientRect().bottom;
       const reelsTop = document.querySelector("#reels").getBoundingClientRect().top;
-      return window.scrollY > 0 && reelsTop >= navBottom && reelsTop <= navBottom + 32;
+      const offset = reelsTop - navBottom;
+      return window.scrollY > 0 && offset >= 10 && offset <= 24;
     })).toBe(true);
     await expect(page.locator("#result-list .result-card")).toHaveCount(0);
   } finally {
