@@ -514,6 +514,14 @@ function updateActiveLink() {
     });
 }
 
+function alignAnchorBelowNavbar(target) {
+    if (!target) return;
+    const navbar = document.querySelector(".navbar");
+    const offset = target.getBoundingClientRect().top - navbar.getBoundingClientRect().bottom - 16;
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    window.scrollBy({ top: offset, behavior: reduceMotion ? "auto" : "smooth" });
+}
+
 let activeUpdateQueued = false;
 function queueActiveUpdate() {
     if (activeUpdateQueued) return;
@@ -526,12 +534,20 @@ function queueActiveUpdate() {
 
 navLinks.forEach((link, i) =>
     link.addEventListener("click", () => {
-        expandSection(link.getAttribute("href"));
+        const hash = link.getAttribute("href");
+        const target = document.querySelector(hash);
+        expandSection(hash);
         clickedLink = i;
         updateActiveLink();
         // Menu mobile : on le referme, sinon il reste ouvert par-dessus la section.
         if ($("nav").classList.contains("show")) {
+            $("nav").addEventListener("hidden.bs.collapse", () => {
+                updateNavOffset();
+                requestAnimationFrame(() => alignAnchorBelowNavbar(target));
+            }, { once: true });
             window.bootstrap?.Collapse.getOrCreateInstance($("nav"), { toggle: false }).hide();
+        } else {
+            requestAnimationFrame(() => alignAnchorBelowNavbar(target));
         }
     }),
 );

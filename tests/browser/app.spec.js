@@ -56,6 +56,26 @@ test("la sélection fait défiler jusqu'à la roulette sans la lancer, même ave
   }
 });
 
+test("les ancres du menu mobile restent visibles sous la navbar après sa fermeture", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApplication(page);
+  await page.getByRole("button", { name: "Basculer le menu de navigation" }).click();
+  await page.locator('#nav a[href="#caisses"]').click();
+
+  await expect(page.locator("#nav")).not.toHaveClass(/show|collapsing/);
+  await expect(page).toHaveURL(/#caisses$/);
+  await expect.poll(() => page.evaluate(() => {
+    const navBottom = document.querySelector(".navbar").getBoundingClientRect().bottom;
+    const targetTop = document.querySelector("#caisses").getBoundingClientRect().top;
+    return targetTop - navBottom;
+  })).toBeGreaterThanOrEqual(10);
+  await expect.poll(() => page.evaluate(() => {
+    const navBottom = document.querySelector(".navbar").getBoundingClientRect().bottom;
+    const targetTop = document.querySelector("#caisses").getBoundingClientRect().top;
+    return targetTop - navBottom;
+  })).toBeLessThanOrEqual(24);
+});
+
 test("le bouton des probabilités reste ancré au coin supérieur droit du cadre image", async ({ page }) => {
   await openApplication(page);
   for (const width of [390, 768, 1280]) {
