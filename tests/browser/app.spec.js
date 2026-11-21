@@ -129,6 +129,29 @@ test("le gain est sauvegardé avant la fin de l’animation et survit au recharg
   await expect(page.locator("#history-list .history-row")).toHaveCount(1);
 });
 
+test("la collection et l'historique attendent l'affichage du résultat", async ({ page }) => {
+  await openApplication(page);
+  await page.getByRole("button", { name: /Ouvrir la caisse/ }).click();
+  await page.waitForFunction(() => {
+    const inventory = JSON.parse(localStorage.getItem("loot_inventory") || "{}");
+    const history = JSON.parse(localStorage.getItem("loot_history") || "[]");
+    return Object.values(inventory).reduce((sum, count) => sum + count, 0) === 1 && history.length === 1;
+  }, null, { timeout: 2_000 });
+
+  const track = page.locator("#reels .track").first();
+  await expect(track).toHaveCSS("transition-property", "transform");
+  await expect(page.locator("#result")).toHaveClass(/d-none/);
+  await expect(page.locator("#collection-summary")).toContainText("0 exemplaire(s)");
+  await expect(page.locator("#history-list .history-row")).toHaveCount(0);
+
+  await track.evaluate((element) => {
+    element.dispatchEvent(new TransitionEvent("transitionend", { bubbles: true, propertyName: "transform" }));
+  });
+  await expect(page.locator("#result")).not.toHaveClass(/d-none/);
+  await expect(page.locator("#collection-summary")).toContainText("1 exemplaire(s)");
+  await expect(page.locator("#history-list .history-row")).toHaveCount(1);
+});
+
 test("un échec temporaire de stockage est annulé puis retenté avec le gain suivant", async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: "reduce" });
   const page = await context.newPage();

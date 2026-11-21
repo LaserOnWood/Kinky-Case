@@ -1,5 +1,5 @@
 // Incrémente cette version à chaque mise à jour du shell précaché.
-const CACHE_NAME = "kinky-case-v1.5.7";
+const CACHE_NAME = "kinky-case-v1.5.8";
 const CACHE_PREFIX = "kinky-case-";
 const APP_BASE_URL = new URL("./", self.registration.scope);
 

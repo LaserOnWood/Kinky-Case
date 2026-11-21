@@ -376,12 +376,12 @@ async function opencase() {
             return { inventory: nextInventory, history: nextHistory };
         });
         if (saved) pendingOpenings = [];
-        renderCollection();
-        renderHistory();
 
         await Promise.all(windows.map((w, i) => spinReel(w, boxes[i], wins[i], durations[i])));
 
         renderResult(wins);
+        renderCollection();
+        renderHistory();
 
         const plural = wins.length > 1;
         $("opening-hint").textContent = saved
