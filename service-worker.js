@@ -30,6 +30,7 @@ const APP_SHELL_PATHS = [
   "./assets/img/cases/stellaire.webp",
   "./assets/img/cases/ocean.webp",
   "./assets/img/cases/vampire.webp",
+  "./assets/img/cases/egypte.webp",
   "./vendor/bootstrap-5.3.3/bootstrap.min.css",
   "./vendor/bootstrap-5.3.3/bootstrap.bundle.min.js"
 ];
