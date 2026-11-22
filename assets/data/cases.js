@@ -145,15 +145,87 @@ const ALL_CASES = [
         ],
     },
     {
+        id: "ocean",
+        name: "Caisse Océanique",
         locked: true,
-        id: "test",
-        name: "Caisse Test",
-        image: "./assets/img/cases/mythique.webp",
-        description: "Une caisse pour tester les probabilités.",
+        hidden: true,
+        image: "./assets/img/cases/ocean.webp",
+        description: "Une caisse contenant des objets oceaniques.",
         rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
         items: [
         ]
     },
+    {
+        id: "egypte",
+        name: "Caisse Égyptienne",
+        locked: true,
+        hidden: true,
+        image: "./assets/img/cases/egypte.webp",
+        description: "Une caisse contenant des objets égyptiens.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
+    },
+    {
+        id: "mythique",
+        name: "Caisse Mythique",
+        locked: true,
+        hidden: true,
+        image: "./assets/img/cases/mythique.webp",
+        description: "Une caisse contenant des objets mythiques.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
+    },
+    {
+        id: "parchemin",
+        name: "Caisse du Parchemin",
+        locked: true,
+        hidden: true,
+        image: "./assets/img/cases/parchemin.webp",
+        description: "Une caisse contenant des objets anciens.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
+    },
+    {
+        id: "legendaire",
+        name: "Caisse Légendaire",
+        locked: true,
+        hidden: true,
+        image: "./assets/img/cases/legendaire.webp",
+        description: "Une caisse contenant des objets légendaires.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
+    },
+    {
+        locked: true,
+        id: "vampire",
+        name: "Caisse Vampire",
+        hidden: true,
+        image: "./assets/img/cases/vampire.webp",
+        description: "Une caisse contenant des objets vampiriques.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
+    },
+    {
+        id: "stellaire",
+        name: "Caisse Stellaire",
+        locked: true,
+        hidden: true,
+        image: "./assets/img/cases/stellaire.webp",
+        description: "Une caisse contenant des objets stellaires.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+            { id: "etoile", name: "Étoile", icon: "⭐", rarity: "common" },
+            { id: "planete", name: "Planète", icon: "🪐", rarity: "uncommon" },
+            { id: "galaxie", name: "Galaxie", icon: "🌌", rarity: "rare" },
+            { id: "univers", name: "Univers", icon: "🌍", rarity: "epic" },
+            { id: "cosmos", name: "Cosmos", icon: "🌠", rarity: "legendary" },
+        ]
+    }
 ];
 
 export const CASES = ALL_CASES.filter((c) => !c.locked);
