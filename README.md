@@ -2,27 +2,32 @@
 
 **Ouvre des caisses. Découvre des récompenses. Construis ta collection.**
 
-Kinky-Case est un mini-jeu privé et gratuit d'ouverture de caisses virtuelles. Les ouvertures sont gratuites et illimitées; il n'y a ni compte joueur ni achat intégré.
+Kinky-Case est un mini-jeu web gratuit d'ouverture de caisses virtuelles. Il fonctionne dans le navigateur, sans compte ni achat intégré. Les récompenses sont virtuelles et n'ont aucune valeur réelle ou échangeable.
 
-## Fonctionnalités
+## Fonctionnalités disponibles
 
-- **Sept caisses ouvrables** : cinq caisses à contenu individuel et deux lots qui ouvrent plusieurs caisses en une fois.
-- **39 récompenses distinctes** réparties sur cinq niveaux de rareté.
-- **Probabilités visibles** : les pourcentages affichés sont calculés à partir des mêmes poids que le tirage.
-- **Collection et historique** conservés localement sur l'appareil utilisé.
-- **Application web installable** avec précache des ressources essentielles pour un usage hors ligne après une première installation réussie.
-- **Coffres verrouillés** : Courage, Spéciale et Test sont des emplacements de contenu futur, et ne peuvent pas encore être ouverts.
+- **Sept entrées visibles par défaut** : cinq caisses simples et deux lots. La Caisse de l'Enfer ouvre quatre caisses simples ; la Caisse du Châtiment en ouvre cinq.
+- **39 récompenses disponibles au départ**, réparties sur cinq niveaux de rareté.
+- **Probabilités consultables** pour les caisses ouvrables. Les pourcentages sont calculés à partir des mêmes poids que le tirage ; les récompenses d'une même rareté se partagent son taux selon leurs parts.
+- **Résultat décidé avant la roulette** : le tirage est effectué et sauvegardé avant la fin de l'animation ; celle-ci ne détermine pas le gain.
+- **Collection et historique locaux** : les ouvertures et déblocages sont enregistrés dans le `LocalStorage` de l'appareil utilisé, sans synchronisation ni sauvegarde serveur. Jusqu'à 60 entrées d'historique sont conservées et les 12 plus récentes sont affichées.
+- **PWA installable** avec précache des ressources essentielles pour un usage hors ligne après une installation initiale réussie.
 
-Les lots disponibles sont la **Caisse de l'Enfer** (quatre caisses) et la **Caisse du Châtiment** (cinq caisses). Le catalogue de référence est `assets/data/cases.js`; le calcul des probabilités et le tirage sont dans `js/odds.js`.
+### Caisses cachées et verrouillées
+
+Sept caisses cachées sont définies dans le catalogue. Une caisse cachée peut être rendue visible en ajoutant son identifiant à l'URL, sous la forme `?unlock=<id>` ; le déblocage est conservé localement dans le navigateur. La Caisse Spéciale (`position`) et la Caisse Stellaire (`stellaire`) disposent chacune de cinq récompenses définies. Les cinq autres entrées cachées n'ont pas encore d'objets renseignés et ne sont pas prêtes à être ouvertes.
+
+La Caisse de Courage et la Caisse Océanique sont, elles, explicitement verrouillées et ne peuvent pas être ouvertes depuis l'interface actuelle.
+
+Le catalogue et les définitions des caisses sont dans `assets/data/cases.js`. Les calculs de probabilités et le tirage sont dans `js/odds.js` ; l'interface, les ouvertures et la persistance sont gérées par `js/main.js`.
 
 ## Données et limites
 
-- La collection et l'historique sont stockés dans le `LocalStorage` du navigateur. Ils ne sont ni synchronisés entre appareils ni sauvegardés sur un serveur.
-- Les données sont enregistrées avant l'animation de révélation; celle-ci ne détermine pas le résultat.
-- Les navigateurs qui proposent Web Locks sérialisent les écritures entre onglets du même site. Sans cette API, l'application affiche un avertissement et il vaut mieux éviter les modifications simultanées depuis plusieurs onglets.
-- Effacer les données du navigateur peut supprimer la collection et l'historique. Le bouton « Réinitialiser les données locales » efface ces deux éléments après confirmation.
-- Le mode hors ligne dépend du cache du navigateur et de l'installation initiale du service worker. Les mises à jour de l'application remplacent le cache précédent.
-- Les tirages ont lieu côté navigateur; ils ne conviennent pas à des récompenses ayant une valeur réelle ou échangeable.
+- La collection, l'historique et les caisses débloquées sont propres au navigateur et à l'appareil utilisés ; aucune donnée n'est synchronisée ni sauvegardée sur un serveur.
+- Les navigateurs qui prennent en charge Web Locks sérialisent les écritures entre onglets du même site. Sans cette API, l'application affiche un avertissement et il vaut mieux éviter les modifications simultanées depuis plusieurs onglets.
+- Effacer les données du navigateur peut supprimer la collection, l'historique et les déblocages. Le bouton « Réinitialiser les données locales » efface la collection et l'historique après confirmation.
+- Le mode hors ligne dépend de l'installation initiale réussie du service worker et de son cache local. Les mises à jour de l'application remplacent le cache précédent.
+- Les tirages sont effectués côté navigateur et ne conviennent pas à des récompenses ayant une valeur réelle ou échangeable.
 
 ## Lancer localement
 
@@ -36,7 +41,7 @@ Puis ouvrir <http://localhost:8000/>. Un serveur local est nécessaire pour les 
 
 ## Tests
 
-Les tests unitaires vérifient le catalogue, les probabilités et le précache PWA. Les tests navigateur couvrent le clavier, l'accessibilité, la persistance avant animation, la réduction des animations, la synchronisation entre onglets et les données locales aux limites.
+Les tests unitaires couvrent le catalogue, les lots, les probabilités et le précache PWA. Les tests navigateur couvrent notamment la navigation au clavier, l'accessibilité, les ouvertures et leur persistance, la réduction des animations, la synchronisation entre onglets et le fonctionnement hors ligne. Le workflow GitHub Actions lance la suite sur Node.js 22 avec Chromium.
 
 Prérequis : Node.js 22 ou plus récent, Python 3 et Chromium (ou installer Chromium via Playwright).
 
@@ -54,8 +59,8 @@ CHROMIUM_PATH=/usr/bin/chromium npm run test:browser
 
 ## Technologies
 
-HTML5, CSS3, JavaScript natif (modules ES), Bootstrap 5.3.3 auto-hébergé, LocalStorage, Service Worker et Playwright pour les tests navigateur.
+HTML5, CSS3, JavaScript natif (modules ES), Bootstrap 5.3.3 auto-hébergé, `LocalStorage`, service worker, Playwright et GitHub Actions.
 
 ## À propos
 
-Projet personnel et privé, développé pour le divertissement et la collection de récompenses virtuelles. Kinky-Case est un projet indépendant, non affilié à Valve, Counter-Strike ou CS2.
+Projet personnel indépendant, conçu pour le divertissement autour de récompenses virtuelles. Kinky-Case n'est affilié ni à Valve, ni à Counter-Strike, ni à CS2.
