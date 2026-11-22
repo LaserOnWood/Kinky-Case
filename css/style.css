@@ -68,12 +68,9 @@
 }
 
 /* Accent automatique (extrait de l'image) ; les thèmes ci-dessous le surchargent. */
-[data-theme] {
-  --case-accent: var(--auto-accent, var(--accent));
-}
-
 /* Dérivés de l'accent, recalculés sur chaque élément thémé. */
 [data-theme] {
+  --case-accent: var(--auto-accent, var(--accent));
   --case-border: color-mix(in srgb, var(--case-accent) 50%, transparent);
 }
 
@@ -249,7 +246,6 @@ html {
   position: relative;
   height: 100%;
   padding: 18px;
-  overflow: hidden;
   cursor: pointer;
   background: linear-gradient(145deg, var(--card), #121419);
   border: 1px solid color-mix(in srgb, var(--case-accent) 38%, var(--line));
@@ -260,6 +256,7 @@ html {
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   background:
     radial-gradient(
       ellipse at 12% 28%,
@@ -268,11 +265,7 @@ html {
     ),
     radial-gradient(
       ellipse at 88% 28%,
-      color-mix(
-        in srgb,
-        var(--case-accent-2, var(--case-accent)) 38%,
-        transparent
-      ),
+      color-mix(in srgb, var(--case-accent) 38%, transparent),
       transparent 62%
     );
   opacity: 0.8;
@@ -296,43 +289,29 @@ html {
   outline: 3px solid var(--case-accent);
   outline-offset: 2px;
 }
-.case-card:hover {
-  border-color: var(--case-accent);
+.case-card:hover,
+.case-card.selected {
   box-shadow:
     -14px 0 36px -10px color-mix(in srgb, var(--case-accent) 45%, transparent),
-    14px 0 36px -10px
-      color-mix(
-        in srgb,
-        var(--case-accent-2, var(--case-accent)) 45%,
-        transparent
-      );
+    14px 0 36px -10px color-mix(in srgb, var(--case-accent) 45%, transparent);
+}
+.case-card:hover {
+  border-color: var(--case-accent);
   transform: translateY(-4px);
 }
 .case-card.selected {
-  /* Bordure transparente : l'anneau en dégradé (::after) la recouvre exactement */
+  /* Bordure transparente : l'anneau (::after) la recouvre exactement */
   border-color: transparent;
-  box-shadow:
-    -14px 0 36px -10px color-mix(in srgb, var(--case-accent) 45%, transparent),
-    14px 0 36px -10px
-      color-mix(
-        in srgb,
-        var(--case-accent-2, var(--case-accent)) 45%,
-        transparent
-      );
 }
 
-/* Anneau en dégradé : un cadre de 2px, découpé dans un fond dégradé */
+/* Anneau de sélection : un cadre de 2px découpé dans un fond uni */
 .case-card.selected::after {
   content: "";
   position: absolute;
   inset: -1px; /* recouvre la bordure de 1px : même rayon que la carte */
   padding: 2px;
   border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    var(--case-accent),
-    var(--case-accent-2, var(--case-accent))
-  );
+  background: var(--case-accent);
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -356,7 +335,6 @@ html {
   aspect-ratio: 4 / 3;
   margin: 0 auto 16px;
   padding: 5px;
-  overflow: hidden;
   border-radius: var(--radius-md);
   background: radial-gradient(
     circle at 50% 55%,
@@ -378,11 +356,7 @@ html {
   position: absolute;
   inset: 0;
   z-index: 1;
-  width: 100%;
   height: 100%;
-  padding: 0;
-  background: transparent;
-  border: 0;
 }
 .case-visual .case-visual-select:focus-visible {
   outline-offset: -3px;
@@ -476,7 +450,6 @@ html {
   );
   border: 1px solid color-mix(in srgb, var(--case-accent) 48%, var(--line));
   border-radius: var(--radius-lg);
-  box-shadow: inset 3px 0 var(--case-accent);
   transition:
     border-color 0.25s,
     background 0.25s;
@@ -605,13 +578,7 @@ html {
   color: #e8e9ed;
 }
 
-/* Résultat
-NB : !important nécessaire tant que la carte garde son style inline dans index.html. Voir la note de migration (classe .result-card). */
-#result .result-reveal {
-  border-color: var(--rarity) !important;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--rarity) 17%, transparent);
-  animation: reward-pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
+/* Résultat : voir .result-card / .result-reveal en fin de fichier. */
 @keyframes reward-pop {
   from {
     opacity: 0;
@@ -851,14 +818,15 @@ NB : !important nécessaire tant que la carte garde son style inline dans index.
 }
 
 /* ===== Ambilight ===== */
+/* Couche 1 : image floutée, vive. */
 .case-visual::before {
   content: "";
   position: absolute;
-  inset: 8%;
+  inset: 4%;
   z-index: 0;
   background: var(--img) center / contain no-repeat;
-  filter: blur(18px) saturate(1.8);
-  opacity: 0.6;
+  filter: blur(14px) saturate(2.2) brightness(1.15);
+  opacity: 0.85;
   transition: opacity 0.3s;
   pointer-events: none;
 }
@@ -878,15 +846,6 @@ NB : !important nécessaire tant que la carte garde son style inline dans index.
 }
 .roulette-window.glow {
   border-color: var(--glow);
-  box-shadow: 0 0 50px color-mix(in srgb, var(--glow) 40%, transparent);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .case-visual::before,
-  .roulette-window,
-  .case-card {
-    transition: none;
-  }
 }
 
 /* ===== Ambilight v2 : halo qui déborde, lueur de page, lueur de roulette selon la rareté ===== */
@@ -920,25 +879,12 @@ body::before {
     );
 }
 
-/* Le halo peut déborder de la carte et du cadre image. */
-.case-card,
-.case-visual {
-  overflow: visible;
-}
-.case-card::before {
-  border-radius: inherit;
-}
+/* Le halo déborde de la carte et du cadre image (pas d'overflow:hidden). */
 .case-card:hover,
 .case-card.selected {
   z-index: 2;
 }
 
-/* Couche 1 : image floutée, plus vive. */
-.case-visual::before {
-  inset: 4%;
-  filter: blur(14px) saturate(2.2) brightness(1.15);
-  opacity: 0.85;
-}
 /* Couche 2 : large lueur diffuse autour de la caisse. */
 .case-visual::after {
   content: "";
@@ -1014,10 +960,5 @@ body::before {
 @media (max-width: 575px) {
   .case-visual::before {
     filter: blur(10px) saturate(2);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    transition: none;
   }
 }
