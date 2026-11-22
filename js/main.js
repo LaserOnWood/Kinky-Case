@@ -189,7 +189,35 @@ function sanitizeHistory(raw) {
 let inventory = sanitizeInventory(loadStoredJSON("loot_inventory", {}));
 let history = sanitizeHistory(loadStoredJSON("loot_history", []));
 let pendingOpenings = [];
-let selectedcase = CASES[0];
+
+// ---- Caisses cachées (hidden) : absentes de l'affichage tant qu'elles ne sont pas débloquées.
+const UNLOCKED_KEY = "loot_unlocked";
+const unlocked = new Set(
+    [].concat(loadStoredJSON(UNLOCKED_KEY, [])).filter((id) => CASE_BY_ID.get(id)?.hidden),
+);
+const isVisible = (c) => !c.hidden || unlocked.has(c.id);
+const visibleCases = () => CASES.filter(isVisible);
+const visibleItemCount = () => visibleCases().reduce((s, c) => s + (c.items?.length ?? 0), 0);
+
+function unlockCase(id) {
+    const c = CASE_BY_ID.get(id);
+    if (!c?.hidden || unlocked.has(id)) return false;
+    unlocked.add(id);
+    try {
+        localStorage.setItem(UNLOCKED_KEY, JSON.stringify([...unlocked]));
+    } catch (error) {
+        console.error("Impossible de sauvegarder les caisses débloquées.", error);
+    }
+    return true;
+}
+
+// Déblocage via ?unlock=<id> ; l'URL est nettoyée ensuite.
+const wanted = new URLSearchParams(location.search).get("unlock");
+if (wanted) {
+    if (unlockCase(wanted)) showToast("Une caisse secrète a été débloquée !");
+    window.history.replaceState(null, "", location.pathname + location.hash);
+}
+let selectedcase = visibleCases()[0];
 let busy = false;
 
 function readStoredState() {
@@ -263,7 +291,7 @@ function rendercases() {
  <div class="small subtle">Bientôt disponible. Son contenu reste secret.</div></article></div>`,
     ).join("");
 
-    $("case-grid").innerHTML = CASES.map(
+    $("case-grid").innerHTML = visibleCases().map(
         (c) => `<div class="col-6 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-theme="${c.id}">
  <span class="case-visual" style="--img:url('${c.image}')">
   <button type="button" class="case-select case-visual-select" data-id="${c.id}" aria-pressed="${c.id === selectedcase.id}"><span class="visually-hidden">Sélectionner la caisse ${c.name}</span><img src="${c.image}" alt="" loading="lazy"></button>
@@ -275,7 +303,7 @@ function rendercases() {
  </article></div>`,
     ).join("") + lockedCards;
     document.querySelector(".opening-header").dataset.theme = selectedcase.id;
-    $("case-count-label").textContent = `${CASES.length} disponibles`;
+    $("case-count-label").textContent = `${visibleCases().length} disponibles`;
     applyAutoAccents();
 }
 
@@ -336,7 +364,7 @@ function renderOdds(box) {
 function renderCollection() {
     const entries = Object.entries(inventory).filter(([id, count]) => count > 0 && ITEM_BY_ID.has(id));
     const totalCopies = entries.reduce((sum, [, count]) => sum + count, 0);
-    $("nav-count").textContent = `(${entries.length}/${ALL_ITEMS.length})`;
+    $("nav-count").textContent = `(${entries.length}/${visibleItemCount()})`;
     $("collection-summary").textContent = `${entries.length} objet(s) découvert(s) · ${totalCopies} exemplaire(s)`;
     if (!entries.length) {
         $("collection-grid").innerHTML =
