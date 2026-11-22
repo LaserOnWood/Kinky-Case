@@ -132,7 +132,7 @@ const ALL_CASES = [
     {
         id: "position",
         name: "Caisse Spéciale",
-        locked: true,
+        hidden: true,
         image: "./assets/img/cases/boisclassique.webp",
         description: "Une caisse contenant des objets uniques.",
         rarityWeights: { common: 35, uncommon: 40, rare: 13, epic: 6 },
@@ -148,7 +148,6 @@ const ALL_CASES = [
         id: "ocean",
         name: "Caisse Océanique",
         locked: true,
-        hidden: true,
         image: "./assets/img/cases/ocean.webp",
         description: "Une caisse contenant des objets oceaniques.",
         rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
@@ -158,7 +157,6 @@ const ALL_CASES = [
     {
         id: "egypte",
         name: "Caisse Égyptienne",
-        locked: true,
         hidden: true,
         image: "./assets/img/cases/egypte.webp",
         description: "Une caisse contenant des objets égyptiens.",
@@ -169,7 +167,6 @@ const ALL_CASES = [
     {
         id: "mythique",
         name: "Caisse Mythique",
-        locked: true,
         hidden: true,
         image: "./assets/img/cases/mythique.webp",
         description: "Une caisse contenant des objets mythiques.",
@@ -180,7 +177,6 @@ const ALL_CASES = [
     {
         id: "parchemin",
         name: "Caisse du Parchemin",
-        locked: true,
         hidden: true,
         image: "./assets/img/cases/parchemin.webp",
         description: "Une caisse contenant des objets anciens.",
@@ -191,7 +187,6 @@ const ALL_CASES = [
     {
         id: "legendaire",
         name: "Caisse Légendaire",
-        locked: true,
         hidden: true,
         image: "./assets/img/cases/legendaire.webp",
         description: "Une caisse contenant des objets légendaires.",
@@ -200,7 +195,6 @@ const ALL_CASES = [
         ]
     },
     {
-        locked: true,
         id: "vampire",
         name: "Caisse Vampire",
         hidden: true,
@@ -213,7 +207,6 @@ const ALL_CASES = [
     {
         id: "stellaire",
         name: "Caisse Stellaire",
-        locked: true,
         hidden: true,
         image: "./assets/img/cases/stellaire.webp",
         description: "Une caisse contenant des objets stellaires.",
