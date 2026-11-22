@@ -27,6 +27,9 @@ const APP_SHELL_PATHS = [
   "./assets/img/cases/boisclassique.webp",
   "./assets/img/cases/mythique.webp",
   "./assets/img/cases/rainbow.webp",
+  "./assets/img/cases/stellaire.webp",
+  "./assets/img/cases/ocean.webp",
+  "./assets/img/cases/vampire.webp",
   "./vendor/bootstrap-5.3.3/bootstrap.min.css",
   "./vendor/bootstrap-5.3.3/bootstrap.bundle.min.js"
 ];
