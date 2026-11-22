@@ -309,12 +309,8 @@ html {
   transform: translateY(-4px);
 }
 .case-card.selected {
-  /* Fine bordure de repli, à mi-chemin entre les deux couleurs */
-  border-color: color-mix(
-    in srgb,
-    var(--case-accent),
-    var(--case-accent-2, var(--case-accent))
-  );
+  /* Bordure transparente : l'anneau en dégradé (::after) la recouvre exactement */
+  border-color: transparent;
   box-shadow:
     -14px 0 36px -10px color-mix(in srgb, var(--case-accent) 45%, transparent),
     14px 0 36px -10px
@@ -329,7 +325,7 @@ html {
 .case-card.selected::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -1px; /* recouvre la bordure de 1px : même rayon que la carte */
   padding: 2px;
   border-radius: inherit;
   background: linear-gradient(
