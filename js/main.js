@@ -35,9 +35,14 @@ function rgbToHsl(r, g, b) {
     return [h, s, l];
 }
 
-// Teinte la plus présente (pondérée par saturation et luminosité), puis rendue vive :
-// une moyenne de toutes les couleurs donnerait un marron terne.
-function dominantColor(img) {
+const HUE_BUCKETS = 12;
+const hueDistance = (a, b) => {
+    const d = Math.abs(a - b) % 360;
+    return Math.min(d, 360 - d);
+};
+
+// Histogramme des teintes d'une image (pondéré par saturation et luminosité).
+function colorHistogram(img) {
     try {
         const size = 32;
         const c = document.createElement("canvas");
@@ -45,7 +50,7 @@ function dominantColor(img) {
         const ctx = c.getContext("2d", { willReadFrequently: true });
         ctx.drawImage(img, 0, 0, size, size);
         const d = ctx.getImageData(0, 0, size, size).data;
-        const buckets = Array.from({ length: 12 }, () => ({ w: 0, r: 0, g: 0, b: 0 }));
+        const buckets = Array.from({ length: HUE_BUCKETS }, () => ({ w: 0, r: 0, g: 0, b: 0 }));
         for (let i = 0; i < d.length; i += 4) {
             const r = d[i], g = d[i + 1], b = d[i + 2];
             if (d[i + 3] < 128) continue; // transparence
@@ -53,18 +58,62 @@ function dominantColor(img) {
             const min = Math.min(r, g, b);
             if (max < 50 || max - min < 30) continue; // noir / gris / blanc
             const w = (max - min) * max;
-            const k = buckets[Math.floor(rgbToHsl(r, g, b)[0] / 30) % 12];
+            const k = buckets[Math.floor(rgbToHsl(r, g, b)[0] / (360 / HUE_BUCKETS)) % HUE_BUCKETS];
             k.w += w; k.r += r * w; k.g += g * w; k.b += b * w;
         }
-        const best = buckets.reduce((a, b) => (b.w > a.w ? b : a));
-        if (!best.w) return null;
-        const [h, s, l] = rgbToHsl(best.r / best.w, best.g / best.w, best.b / best.w);
-        const sat = Math.round(Math.max(s, 0.7) * 100);
-        const lig = Math.round(Math.min(Math.max(l, 0.5), 0.62) * 100);
-        return `hsl(${Math.round(h)} ${sat}% ${lig}%)`;
+        return buckets;
     } catch {
         return null; // canvas bloqué (ex. ouverture en file://) : on garde l'accent par défaut
     }
+}
+
+// Couleur vive à partir d'une moyenne RGB.
+function boostColor(r, g, b) {
+    const [h, s, l] = rgbToHsl(r, g, b);
+    const sat = Math.round(Math.max(s, 0.7) * 100);
+    const lig = Math.round(Math.min(Math.max(l, 0.5), 0.62) * 100);
+    return { h, css: `hsl(${Math.round(h)} ${sat}% ${lig}%)` };
+}
+
+// Choisit pour chaque caisse la teinte la plus DISTINCTIVE : une teinte présente dans presque
+// toutes les caisses (ex. le doré des ornements) compte peu (pondération de type TF-IDF).
+// Les caisses les plus caractéristiques choisissent en premier, les suivantes évitent
+// (en douceur) les teintes déjà prises.
+function pickAccents(entries) {
+    const list = entries.filter((e) => e.hist);
+    const N = list.length;
+    const shares = list.map(({ hist }) => {
+        const total = hist.reduce((sum, k) => sum + k.w, 0) || 1;
+        return hist.map((k) => k.w / total);
+    });
+    const idf = Array.from({ length: HUE_BUCKETS }, (_, k) => {
+        const df = shares.filter((s) => s[k] > 0.04).length;
+        return Math.log((N + 1) / (df + 1)) + 0.1;
+    });
+    const scored = list.map((e, i) => ({ ...e, score: shares[i].map((s, k) => s * idf[k]) }));
+    scored.sort((a, b) => Math.max(...b.score) - Math.max(...a.score));
+
+    const taken = [];
+    const result = new Map();
+    for (const { id, hist, score } of scored) {
+        let best = null;
+        let bestScore = -1;
+        hist.forEach((k, i) => {
+            if (!k.w) return;
+            const color = boostColor(k.r / k.w, k.g / k.w, k.b / k.w);
+            let s = score[i];
+            for (const h of taken) s *= Math.sqrt(Math.min(1, hueDistance(color.h, h) / 25));
+            if (s > bestScore) {
+                bestScore = s;
+                best = color;
+            }
+        });
+        if (best) {
+            result.set(id, best.css);
+            taken.push(best.h);
+        }
+    }
+    return result;
 }
 
 // La lueur de fond de la page suit la couleur de la caisse sélectionnée.
@@ -663,15 +712,22 @@ renderHistory();
 updateNavOffset();
 updateActiveLink();
 
-// Extraction des couleurs une fois les images chargées, puis réapplication.
-CASES.forEach((c) => {
-    const img = new Image();
-    img.onload = () => {
-        const col = dominantColor(img);
-        if (col) {
-            autoAccent.set(c.id, col);
-            applyAutoAccents();
-        }
-    };
-    img.src = c.image;
+// Extraction des couleurs une fois TOUTES les images chargées (le choix compare les caisses entre elles).
+// Pour forcer une couleur, ajoute `accent: "#3b82f6"` à la caisse dans cases.js.
+Promise.all(
+    CASES.map(
+        (c) =>
+            new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve({ id: c.id, hist: colorHistogram(img) });
+                img.onerror = () => resolve({ id: c.id, hist: null });
+                img.src = c.image;
+            }),
+    ),
+).then((entries) => {
+    pickAccents(entries).forEach((col, id) => autoAccent.set(id, col));
+    CASES.forEach((c) => {
+        if (c.accent) autoAccent.set(c.id, c.accent);
+    });
+    applyAutoAccents();
 });
