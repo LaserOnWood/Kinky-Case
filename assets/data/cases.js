@@ -19,7 +19,7 @@ const ALL_CASES = [
     {
         id: "zonecorp",
         name: "Caisse Mystère",
-        image: "./assets/img/cases/mystere.webp",
+        image: "./assets/img/cases/amethyste.webp",
         description: "Un assortiment de surprises.",
         rarityWeights: { common: 60, uncommon: 28, epic: 10, legendary: 2 },
         items: [
@@ -113,6 +113,36 @@ const ALL_CASES = [
         description: "Lot Caisse de l'Enfer + Caisse de Mobilier, tirées en meme temps",
         image: "assets/img/cases/angelique.webp",
         bundle: ["zonecorp", "accessoires", "coups", "bonusmalus", "mobilier"], // pas de `items`
+    },
+    {
+        hidden: true,
+        id: "biohazard",
+        name: "Caisse Biohazard",
+        image: "./assets/img/cases/biohazard.webp",
+        description: "Une caisse contenant des objets dangereux.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
+    },
+    {
+        hidden: true,
+        id: "laveNain",
+        name: "Caisse Lave Nain",
+        image: "./assets/img/cases/laveNain.webp",
+        description: "Une caisse contenant des objets en lave.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
+    },
+    {
+        hidden: true,
+        id: "pierreMaudite",
+        name: "Caisse Pierre Maudite",
+        image: "./assets/img/cases/pierreMaudite.webp",
+        description: "Une caisse contenant des objets en pierre maudite.",
+        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        items: [
+        ]
     },
     {
         id: "courage",
