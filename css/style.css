@@ -72,36 +72,6 @@
   --case-accent: var(--auto-accent, var(--accent));
 }
 
-/*
-[data-theme="zonecorp"] {
-  --case-accent: #8449f3;
-}
-[data-theme="accessoires"] {
-  --case-accent: #d8b45e;
-}
-[data-theme="coups"] {
-  --case-accent: #f46cad;
-}
-[data-theme="bonusmalus"] {
-  --case-accent: #36eb36;
-  --case-accent-2: #f00000;
-}
-[data-theme="enfer"] {
-  --case-accent: #da5d23;
-}
-[data-theme="mobilier"] {
-  --case-accent: #355099;
-}
-[data-theme="chatiment"] {
-  --case-accent: #d3cec3;
-}
-[data-theme="position"] {
-  --case-accent: #9895a5;
-}
-[data-theme="courage"] {
-  --case-accent: #f0c45f;
-}
-
 /* Dérivés de l'accent, recalculés sur chaque élément thémé. */
 [data-theme] {
   --case-border: color-mix(in srgb, var(--case-accent) 50%, transparent);
@@ -942,8 +912,16 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(60% 45% at 50% 0%, color-mix(in srgb, var(--page-accent) 28%, transparent), transparent 70%),
-    radial-gradient(40% 35% at 90% 100%, color-mix(in srgb, var(--page-accent) 14%, transparent), transparent 70%);
+    radial-gradient(
+      60% 45% at 50% 0%,
+      color-mix(in srgb, var(--page-accent) 28%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 35% at 90% 100%,
+      color-mix(in srgb, var(--page-accent) 14%, transparent),
+      transparent 70%
+    );
 }
 
 /* Le halo peut déborder de la carte et du cadre image. */
@@ -971,7 +949,11 @@ body::before {
   position: absolute;
   inset: -10%;
   z-index: -1;
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--case-accent) 60%, transparent), transparent);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--case-accent) 60%, transparent),
+    transparent
+  );
   opacity: 0.55;
   transition: opacity 0.3s;
   pointer-events: none;
