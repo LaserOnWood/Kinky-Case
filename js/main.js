@@ -14,6 +14,76 @@ const ITEM_BY_ID = new Map(ALL_ITEMS.map((i) => [i.id, i]));
 const CASE_BY_ID = new Map(CASES.map((c) => [c.id, c]));
 const $ = (id) => document.getElementById(id);
 
+// ---- Ambilight : couleur dominante de chaque caisse (mise en cache par id)
+const autoAccent = new Map();
+
+function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    const d = max - min;
+    let h = 0;
+    let s = 0;
+    if (d) {
+        s = d / (1 - Math.abs(2 * l - 1));
+        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+        h *= 60;
+    }
+    return [h, s, l];
+}
+
+// Teinte la plus présente (pondérée par saturation et luminosité), puis rendue vive :
+// une moyenne de toutes les couleurs donnerait un marron terne.
+function dominantColor(img) {
+    try {
+        const size = 32;
+        const c = document.createElement("canvas");
+        c.width = c.height = size;
+        const ctx = c.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0, size, size);
+        const d = ctx.getImageData(0, 0, size, size).data;
+        const buckets = Array.from({ length: 12 }, () => ({ w: 0, r: 0, g: 0, b: 0 }));
+        for (let i = 0; i < d.length; i += 4) {
+            const r = d[i], g = d[i + 1], b = d[i + 2];
+            if (d[i + 3] < 128) continue; // transparence
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            if (max < 50 || max - min < 30) continue; // noir / gris / blanc
+            const w = (max - min) * max;
+            const k = buckets[Math.floor(rgbToHsl(r, g, b)[0] / 30) % 12];
+            k.w += w; k.r += r * w; k.g += g * w; k.b += b * w;
+        }
+        const best = buckets.reduce((a, b) => (b.w > a.w ? b : a));
+        if (!best.w) return null;
+        const [h, s, l] = rgbToHsl(best.r / best.w, best.g / best.w, best.b / best.w);
+        const sat = Math.round(Math.max(s, 0.7) * 100);
+        const lig = Math.round(Math.min(Math.max(l, 0.5), 0.62) * 100);
+        return `hsl(${Math.round(h)} ${sat}% ${lig}%)`;
+    } catch {
+        return null; // canvas bloqué (ex. ouverture en file://) : on garde l'accent par défaut
+    }
+}
+
+// La lueur de fond de la page suit la couleur de la caisse sélectionnée.
+function syncPageAccent() {
+    const showcase = $("selected-case-showcase");
+    if (!showcase) return;
+    const col = getComputedStyle(showcase).getPropertyValue("--case-accent").trim();
+    if (col) document.documentElement.style.setProperty("--page-accent", col);
+}
+
+// Pose --auto-accent sur chaque élément [data-theme] dont la couleur est connue.
+function applyAutoAccents() {
+    document.querySelectorAll("[data-theme]").forEach((el) => {
+        const col = autoAccent.get(el.dataset.theme);
+        if (col) el.style.setProperty("--auto-accent", col);
+    });
+    syncPageAccent();
+}
+
 // Une caisse normale = 1 roulette ; un lot = 1 roulette par sous-caisse.
 const subCases = (c) => (c.bundle ? c.bundle.map((id) => CASE_BY_ID.get(id)).filter(Boolean) : [c]);
 const caseSize = (c) => subCases(c).reduce((s, b) => s + b.items.length, 0);
@@ -146,7 +216,7 @@ function rendercases() {
 
     $("case-grid").innerHTML = CASES.map(
         (c) => `<div class="col-6 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-theme="${c.id}">
- <span class="case-visual">
+ <span class="case-visual" style="--img:url('${c.image}')">
   <button type="button" class="case-select case-visual-select" data-id="${c.id}" aria-pressed="${c.id === selectedcase.id}"><span class="visually-hidden">Sélectionner la caisse ${c.name}</span><img src="${c.image}" alt="" loading="lazy"></button>
   <span class="case-count" aria-hidden="true">${caseSize(c)}</span>
   <button type="button" class="odds-btn case-odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
@@ -157,6 +227,7 @@ function rendercases() {
     ).join("") + lockedCards;
     document.querySelector(".opening-header").dataset.theme = selectedcase.id;
     $("case-count-label").textContent = `${CASES.length} disponibles`;
+    applyAutoAccents();
 }
 
 function itemCard(item) {
@@ -175,6 +246,7 @@ function renderSelected() {
     const img = $("selected-case-image");
     img.src = selectedcase.image;
     img.alt = `Illustration ${selectedcase.name}`;
+    img.closest(".case-visual").style.setProperty("--img", `url('${selectedcase.image}')`);
     $("selected-case-name").textContent = selectedcase.name;
     $("selected-case-description").textContent = selectedcase.description;
     $("result").className = "mt-4 d-none";
@@ -184,6 +256,7 @@ function renderSelected() {
             : "Le résultat est déterminé avant l'animation.";
     $("reels").innerHTML = boxes.map(reelMarkup).join("");
     $("reels").classList.toggle("is-bundle", boxes.length > 1);
+    applyAutoAccents();
 }
 
 // Toujours le même format, même pour un objet seul dans sa rareté :
@@ -208,6 +281,7 @@ function renderOdds(box) {
   </table></div>`,
         )
         .join("");
+    applyAutoAccents();
 }
 
 function renderCollection() {
@@ -284,9 +358,23 @@ function renderResult(wins) {
 }
 
 // ---- Ouverture
+// Met en valeur l'objet gagnant et colore la lueur de la roulette selon sa rareté.
+function markWinner(windowEl, track, index) {
+    const winnerEl = track.children[index];
+    if (!winnerEl) return;
+    winnerEl.classList.add("winner");
+    const rarity = Object.keys(RARITIES).find((key) => winnerEl.classList.contains(key));
+    if (rarity) windowEl.dataset.rarity = rarity; // la lueur est plus forte pour les raretés élevées
+    const rarityColor = getComputedStyle(winnerEl).getPropertyValue("--rarity").trim();
+    if (rarityColor) windowEl.style.setProperty("--glow", rarityColor);
+    windowEl.classList.add("glow");
+}
+
 // Fait tourner UNE roulette ; la promesse se résout quand elle est arrêtée.
 function spinReel(windowEl, box, win, duration) {
     return new Promise((resolve) => {
+        windowEl.classList.remove("glow");
+        delete windowEl.dataset.rarity;
         const track = windowEl.querySelector(".track");
         const targetIndex = 29;
         const sequence = Array.from(
@@ -306,7 +394,7 @@ function spinReel(windowEl, box, win, duration) {
         if (reduceMotion || duration <= 0) {
             track.style.transition = "none";
             track.style.transform = `translateX(${finalX}px)`;
-            track.children[targetIndex]?.classList.add("winner");
+            markWinner(windowEl, track, targetIndex);
             resolve();
             return;
         }
@@ -322,7 +410,7 @@ function spinReel(windowEl, box, win, duration) {
             if (finished) return;
             finished = true;
             track.removeEventListener("transitionend", onTransitionEnd);
-            track.children[targetIndex]?.classList.add("winner");
+            markWinner(windowEl, track, targetIndex);
             resolve();
         };
         const onTransitionEnd = (event) => {
@@ -574,3 +662,16 @@ renderCollection();
 renderHistory();
 updateNavOffset();
 updateActiveLink();
+
+// Extraction des couleurs une fois les images chargées, puis réapplication.
+CASES.forEach((c) => {
+    const img = new Image();
+    img.onload = () => {
+        const col = dominantColor(img);
+        if (col) {
+            autoAccent.set(c.id, col);
+            applyAutoAccents();
+        }
+    };
+    img.src = c.image;
+});
