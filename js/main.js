@@ -6,6 +6,8 @@ const MAX_HISTORY = 60;
 const VISIBLE_HISTORY = 12;
 const MAX_DATE_MS = 8.64e15;
 const STORAGE_LOCK_NAME = "kinky-case-data";
+const INVENTORY_KEY = "loot_inventory";
+const HISTORY_KEY = "loot_history";
 
 const SPIN_DURATION_MS = 9000; // durée de la roulette, à ajuster en cas de besoin (animation CSS + JS)
 
@@ -13,6 +15,7 @@ const ALL_ITEMS = CASES.flatMap((c) => c.items ?? []); // les lots n'ont pas d'i
 const ITEM_BY_ID = new Map(ALL_ITEMS.map((i) => [i.id, i]));
 const CASE_BY_ID = new Map(CASES.map((c) => [c.id, c]));
 const $ = (id) => document.getElementById(id);
+const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 // ---- Ambilight : couleur dominante de chaque caisse (mise en cache par id)
 const autoAccent = new Map();
@@ -157,9 +160,7 @@ function loadStoredJSON(key, fallback) {
 function sanitizeInventory(raw) {
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
     const clean = {};
-    for (const [storedId, count] of Object.entries(raw)) {
-        // Collections sauvegardées avant la correction de l'identifiant "sceptre".
-        const id = storedId === " sceptre" ? "sceptre" : storedId;
+    for (const [id, count] of Object.entries(raw)) {
         if (ITEM_BY_ID.has(id) && Number.isSafeInteger(count) && count > 0 && count <= MAX_COUNT) {
             const combined = (clean[id] || 0) + count;
             clean[id] = Math.min(MAX_COUNT, combined);
@@ -186,8 +187,8 @@ function sanitizeHistory(raw) {
     return raw.map(normalizeEntry).filter(Boolean).slice(0, MAX_HISTORY);
 }
 
-let inventory = sanitizeInventory(loadStoredJSON("loot_inventory", {}));
-let history = sanitizeHistory(loadStoredJSON("loot_history", []));
+let inventory = sanitizeInventory(loadStoredJSON(INVENTORY_KEY, {}));
+let history = sanitizeHistory(loadStoredJSON(HISTORY_KEY, []));
 let pendingOpenings = [];
 
 // ---- Caisses cachées (hidden) : absentes de l'affichage tant qu'elles ne sont pas débloquées.
@@ -222,8 +223,8 @@ let busy = false;
 
 function readStoredState() {
     return {
-        inventory: sanitizeInventory(loadStoredJSON("loot_inventory", {})),
-        history: sanitizeHistory(loadStoredJSON("loot_history", [])),
+        inventory: sanitizeInventory(loadStoredJSON(INVENTORY_KEY, {})),
+        history: sanitizeHistory(loadStoredJSON(HISTORY_KEY, [])),
     };
 }
 
@@ -232,21 +233,21 @@ function saveState(nextInventory, nextHistory) {
     let previousHistory;
     let snapshotComplete = false;
     try {
-        previousInventory = localStorage.getItem("loot_inventory");
-        previousHistory = localStorage.getItem("loot_history");
+        previousInventory = localStorage.getItem(INVENTORY_KEY);
+        previousHistory = localStorage.getItem(HISTORY_KEY);
         snapshotComplete = true;
 
-        localStorage.setItem("loot_inventory", JSON.stringify(nextInventory));
-        localStorage.setItem("loot_history", JSON.stringify(nextHistory));
+        localStorage.setItem(INVENTORY_KEY, JSON.stringify(nextInventory));
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(nextHistory));
         return true;
     } catch (error) {
         // Si la seconde écriture échoue, on tente de restaurer la paire précédente.
         if (snapshotComplete) {
             try {
-                if (previousInventory === null) localStorage.removeItem("loot_inventory");
-                else localStorage.setItem("loot_inventory", previousInventory);
-                if (previousHistory === null) localStorage.removeItem("loot_history");
-                else localStorage.setItem("loot_history", previousHistory);
+                if (previousInventory === null) localStorage.removeItem(INVENTORY_KEY);
+                else localStorage.setItem(INVENTORY_KEY, previousInventory);
+                if (previousHistory === null) localStorage.removeItem(HISTORY_KEY);
+                else localStorage.setItem(HISTORY_KEY, previousHistory);
             } catch (rollbackError) {
                 console.error("Impossible de restaurer les anciennes données locales.", rollbackError);
             }
@@ -291,19 +292,20 @@ function rendercases() {
  <div class="small subtle">Bientôt disponible. Son contenu reste secret.</div></article></div>`,
     ).join("");
 
-    $("case-grid").innerHTML = visibleCases().map(
+    const cases = visibleCases();
+    $("case-grid").innerHTML = cases.map(
         (c) => `<div class="col-6 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-theme="${c.id}">
  <span class="case-visual" style="--img:url('${c.image}')">
   <button type="button" class="case-select case-visual-select" data-id="${c.id}" aria-pressed="${c.id === selectedcase.id}"><span class="visually-hidden">Sélectionner la caisse ${c.name}</span><img src="${c.image}" alt="" loading="lazy"></button>
   <span class="case-count" aria-hidden="true">${caseSize(c)}</span>
-  <button type="button" class="odds-btn case-odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
+  <button type="button" class="odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
  </span>
  <div class="fw-semibold mb-2">${c.name}</div>
  <div class="small subtle">${c.description}</div>
  </article></div>`,
     ).join("") + lockedCards;
     document.querySelector(".opening-header").dataset.theme = selectedcase.id;
-    $("case-count-label").textContent = `${visibleCases().length} disponibles`;
+    $("case-count-label").textContent = `${cases.length} disponibles`;
     applyAutoAccents();
 }
 
@@ -436,12 +438,11 @@ function renderResult(wins) {
 
 // ---- Ouverture
 // Met en valeur l'objet gagnant et colore la lueur de la roulette selon sa rareté.
-function markWinner(windowEl, track, index) {
+function markWinner(windowEl, track, index, rarity) {
     const winnerEl = track.children[index];
     if (!winnerEl) return;
     winnerEl.classList.add("winner");
-    const rarity = Object.keys(RARITIES).find((key) => winnerEl.classList.contains(key));
-    if (rarity) windowEl.dataset.rarity = rarity; // la lueur est plus forte pour les raretés élevées
+    windowEl.dataset.rarity = rarity; // la lueur est plus forte pour les raretés élevées
     const rarityColor = getComputedStyle(winnerEl).getPropertyValue("--rarity").trim();
     if (rarityColor) windowEl.style.setProperty("--glow", rarityColor);
     windowEl.classList.add("glow");
@@ -467,11 +468,10 @@ function spinReel(windowEl, box, win, duration) {
         const windowRect = windowEl.getBoundingClientRect();
         const cardRect = track.children[targetIndex].getBoundingClientRect();
         const finalX = windowRect.left + windowEl.clientWidth / 2 - (cardRect.left + cardRect.width / 2);
-        const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-        if (reduceMotion || duration <= 0) {
+        if (duration <= 0) { // mouvement réduit : opencase passe une durée nulle
             track.style.transition = "none";
             track.style.transform = `translateX(${finalX}px)`;
-            markWinner(windowEl, track, targetIndex);
+            markWinner(windowEl, track, targetIndex, win.rarity);
             resolve();
             return;
         }
@@ -487,7 +487,7 @@ function spinReel(windowEl, box, win, duration) {
             if (finished) return;
             finished = true;
             track.removeEventListener("transitionend", onTransitionEnd);
-            markWinner(windowEl, track, targetIndex);
+            markWinner(windowEl, track, targetIndex, win.rarity);
             resolve();
         };
         const onTransitionEnd = (event) => {
@@ -511,7 +511,7 @@ async function opencase() {
     const wins = boxes.map(drawItem);
     const windows = [...document.querySelectorAll("#reels .roulette-window")];
     // Durées échelonnées pour un effet de révélation une par une.
-    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = prefersReducedMotion();
     const durations = boxes.map((_, i) => (reduceMotion ? 0 : SPIN_DURATION_MS + i * 1000));
 
     try {
@@ -625,7 +625,7 @@ $("reset-btn").addEventListener("click", async () => {
 });
 
 window.addEventListener("storage", (event) => {
-    if (event.key !== null && event.key !== "loot_inventory" && event.key !== "loot_history") return;
+    if (event.key !== null && event.key !== INVENTORY_KEY && event.key !== HISTORY_KEY) return;
     ({ inventory, history } = readStoredState());
     renderCollection();
     renderHistory();
@@ -679,8 +679,7 @@ function alignAnchorBelowNavbar(target) {
     if (!target) return;
     const navbar = document.querySelector(".navbar");
     const offset = target.getBoundingClientRect().top - navbar.getBoundingClientRect().bottom - 16;
-    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    window.scrollBy({ top: offset, behavior: reduceMotion ? "auto" : "smooth" });
+    window.scrollBy({ top: offset, behavior: prefersReducedMotion() ? "auto" : "smooth" });
 }
 
 let activeUpdateQueued = false;
