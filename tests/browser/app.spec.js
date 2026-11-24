@@ -33,7 +33,7 @@ test("une caisse cachée sans récompenses ne peut pas être débloquée par URL
   await expect(page).not.toHaveURL(/unlock=biohazard/);
 });
 
-test("l'ouverture de Bonus/Malus ignore les objets sans rareté dans la roulette", async ({ browser }) => {
+test("Bonus/Malus garde l’objet sans rareté hors roulette et affiche la description seulement au résultat", async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: "reduce" });
   const page = await context.newPage();
   const consoleErrors = [];
@@ -44,6 +44,9 @@ test("l'ouverture de Bonus/Malus ignore les objets sans rareté dans la roulette
   try {
     await openApplication(page);
     await page.locator('#case-grid .case-select[data-id="bonusmalus"]').click();
+    const description = "Ouvre une nouvelle fois la Caisse de la Sentence.";
+    await expect(page.locator("#case-grid")).not.toContainText(description);
+    await expect(page.locator("#reels")).not.toContainText(description);
     await page.evaluate(() => {
       Math.random = () => 0.6;
     });
@@ -52,6 +55,10 @@ test("l'ouverture de Bonus/Malus ignore les objets sans rareté dans la roulette
     await expect(page.locator("#result")).not.toHaveClass(/d-none/);
     await expect(page.locator("#opening-hint")).toContainText("Récompense ajoutée à votre collection");
     await expect(page.locator("#reels .reel-item").filter({ hasText: "Relance la Caisse Mystère" })).toHaveCount(0);
+    await expect(page.locator("#result-list .result-description")).toHaveText(description);
+    await expect(page.locator("#reels")).not.toContainText(description);
+    await expect(page.locator("#case-grid")).not.toContainText(description);
+    await expect(page.locator("#history-list")).not.toContainText(description);
     expect(consoleErrors).toEqual([]);
   } finally {
     await context.close();

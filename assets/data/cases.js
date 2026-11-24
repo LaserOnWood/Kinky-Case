@@ -89,7 +89,7 @@ const ALL_CASES = [
             { id: "boucheBaillon", name: "La bouche et couverte/baîlonner", icon: "🙊", rarity: "common" },
             { id: "mainsMenotte", name: "Les mains sont liées", icon: "🤲", rarity: "common" },
             { id: "relanceBonusMalus", name: "Relance la Caisse Légendaire", icon: "🍀", rarity: "common" },
-            { id: "relanceNombre", name: "Relance la Caisse de la Sentence", icon: "💯", rarity: "common" },
+            { id: "relanceNombre", name: "Relance la Caisse de la Sentence", icon: "💯", rarity: "common", resultDescription: "Ouvre une nouvelle fois la Caisse de la Sentence." },
             { id: "relanceAccessoire", name: "Relance la Caisse Mystère", icon: "❓", rarity: "" },
             { id: "topCompteur", name: "Le Dom compte les coups", icon: "💬", rarity: "common" },
             { id: "botCompteur", name: "Le sub compte les coups", icon: "🗨️", rarity: "common" },

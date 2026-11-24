@@ -810,6 +810,11 @@ html {
   border-radius: 14px;
   box-shadow: 0 0 28px color-mix(in srgb, var(--rarity) 17%, transparent);
 }
+.result-description {
+  max-width: 34rem;
+  margin-inline: auto;
+  line-height: 1.45;
+}
 .reward-icon-lg {
   font-size: 3rem;
 }

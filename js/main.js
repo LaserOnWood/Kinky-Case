@@ -437,6 +437,7 @@ function renderResult(wins) {
             (win, i) => `<div class="col-12 col-sm"><div class="result-card ${win.rarity} result-reveal" style="animation-delay:${i * 0.15}s">
   <div class="reward-icon-lg">${win.icon}</div>
   <div class="fw-semibold mt-1">${win.name}</div>
+  ${typeof win.resultDescription === "string" && win.resultDescription.trim() ? `<p class="result-description small subtle mt-2 mb-0">${win.resultDescription.trim()}</p>` : ""}
   <div class="rarity">${RARITIES[win.rarity].label}</div></div></div>`,
         )
         .join("");

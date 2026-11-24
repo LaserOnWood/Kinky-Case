@@ -57,6 +57,14 @@ test("la relance de la Caisse Mystère reste hors du tirage tant qu'elle n'a pas
   assert.ok(!rarityGroups(bonusmalus).some((group) => group.items.some(({ item }) => item.id === mysteryReroll.id)));
 });
 
+test("resultDescription est facultatif sur les récompenses", () => {
+  const bonusmalus = CASES.find((box) => box.id === "bonusmalus");
+  const describedReward = bonusmalus.items.find((item) => item.id === "relanceNombre");
+  const regularReward = bonusmalus.items.find((item) => item.id === "changeMain");
+  assert.equal(describedReward.resultDescription, "Ouvre une nouvelle fois la Caisse de la Sentence.");
+  assert.equal(regularReward.resultDescription, undefined);
+});
+
 test("les lots ne référencent que des caisses simples existantes", () => {
   const caseById = new Map(CASES.map((box) => [box.id, box]));
   const bundles = CASES.filter((box) => Array.isArray(box.bundle));
