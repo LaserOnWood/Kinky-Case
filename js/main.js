@@ -194,7 +194,10 @@ let pendingOpenings = [];
 // ---- Caisses cachées (hidden) : absentes de l'affichage tant qu'elles ne sont pas débloquées.
 const UNLOCKED_KEY = "loot_unlocked";
 const unlocked = new Set(
-    [].concat(loadStoredJSON(UNLOCKED_KEY, [])).filter((id) => CASE_BY_ID.get(id)?.hidden),
+    [].concat(loadStoredJSON(UNLOCKED_KEY, [])).filter((id) => {
+        const box = CASE_BY_ID.get(id);
+        return box?.hidden && Array.isArray(box.items) && box.items.length > 0;
+    }),
 );
 const isVisible = (c) => !c.hidden || unlocked.has(c.id);
 const visibleCases = () => CASES.filter(isVisible);
@@ -202,7 +205,7 @@ const visibleItemCount = () => visibleCases().reduce((s, c) => s + (c.items?.len
 
 function unlockCase(id) {
     const c = CASE_BY_ID.get(id);
-    if (!c?.hidden || unlocked.has(id)) return false;
+    if (!c?.hidden || !Array.isArray(c.items) || c.items.length === 0 || unlocked.has(id)) return false;
     unlocked.add(id);
     try {
         localStorage.setItem(UNLOCKED_KEY, JSON.stringify([...unlocked]));
@@ -459,9 +462,10 @@ function spinReel(windowEl, box, win, duration) {
         delete windowEl.dataset.rarity;
         const track = windowEl.querySelector(".track");
         const targetIndex = 29;
+        const reelItems = rarityGroups(box).flatMap((group) => group.items.map(({ item }) => item));
         const sequence = Array.from(
             { length: 35 },
-            () => box.items[Math.floor(Math.random() * box.items.length)],
+            () => reelItems[Math.floor(Math.random() * reelItems.length)],
         );
         sequence[targetIndex] = win;
         track.innerHTML = sequence.map(itemCard).join("");
@@ -574,7 +578,7 @@ async function opencase() {
 
 // ---- Événements
 function scrollToReels() {
-    requestAnimationFrame(() => alignAnchorBelowNavbar($("opening")));
+    requestAnimationFrame(() => alignAnchorBelowNavbar($("reels")));
 }
 
 $("open-btn").addEventListener("click", opencase);
@@ -661,6 +665,7 @@ function expandSection(hash) {
 const navLinks = [...document.querySelectorAll('#nav a.nav-link[href^="#"]')];
 const navSections = navLinks.map((link) => document.querySelector(link.getAttribute("href")));
 let clickedLink = null; // lien cliqué : reste actif jusqu'à ce que la personne fasse défiler elle-même
+let navOpening = false;
 
 function updateActiveLink() {
     const offset = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav-offset")) || 72;
@@ -703,13 +708,19 @@ navLinks.forEach((link, i) =>
         expandSection(hash);
         clickedLink = i;
         updateActiveLink();
-        // Menu mobile : on le referme, sinon il reste ouvert par-dessus la section.
-        if ($("nav").classList.contains("show")) {
-            $("nav").addEventListener("hidden.bs.collapse", () => {
-                updateNavOffset();
-                requestAnimationFrame(() => alignAnchorBelowNavbar(target));
-            }, { once: true });
-            window.bootstrap?.Collapse.getOrCreateInstance($("nav"), { toggle: false }).hide();
+        // Menu mobile : le lien peut être cliqué avant la fin de sa transition d'ouverture.
+        const menu = $("nav");
+        const collapse = window.bootstrap?.Collapse.getOrCreateInstance(menu, { toggle: false });
+        const alignAfterClose = () => {
+            updateNavOffset();
+            requestAnimationFrame(() => alignAnchorBelowNavbar(target));
+        };
+        if (menu.classList.contains("show")) {
+            menu.addEventListener("hidden.bs.collapse", alignAfterClose, { once: true });
+            collapse?.hide();
+        } else if (menu.classList.contains("collapsing") && navOpening) {
+            menu.addEventListener("hidden.bs.collapse", alignAfterClose, { once: true });
+            menu.addEventListener("shown.bs.collapse", () => collapse?.hide(), { once: true });
         } else {
             requestAnimationFrame(() => alignAnchorBelowNavbar(target));
         }
@@ -729,7 +740,12 @@ window.addEventListener("load", () => {
 });
 expandSection(location.hash);
 
-$("nav").addEventListener("shown.bs.collapse", () => $("nav-toggle").setAttribute("aria-expanded", "true"));
+$("nav").addEventListener("show.bs.collapse", () => { navOpening = true; });
+$("nav").addEventListener("hide.bs.collapse", () => { navOpening = false; });
+$("nav").addEventListener("shown.bs.collapse", () => {
+    navOpening = false;
+    $("nav-toggle").setAttribute("aria-expanded", "true");
+});
 $("nav").addEventListener("hidden.bs.collapse", () => {
     $("nav-toggle").setAttribute("aria-expanded", "false");
     updateNavOffset();

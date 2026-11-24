@@ -27,6 +27,37 @@ test("les images des halos de caisses ne génèrent pas de 404", async ({ page }
   expect(missingCaseImages).toEqual([]);
 });
 
+test("une caisse cachée sans récompenses ne peut pas être débloquée par URL", async ({ page }) => {
+  await page.goto("/?unlock=biohazard");
+  await expect(page.locator('#case-grid .case-select[data-id="biohazard"]')).toHaveCount(0);
+  await expect(page).not.toHaveURL(/unlock=biohazard/);
+});
+
+test("l'ouverture de Bonus/Malus ignore les objets sans rareté dans la roulette", async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: "reduce" });
+  const page = await context.newPage();
+  const consoleErrors = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+
+  try {
+    await openApplication(page);
+    await page.locator('#case-grid .case-select[data-id="bonusmalus"]').click();
+    await page.evaluate(() => {
+      Math.random = () => 0.6;
+    });
+    await page.getByRole("button", { name: /Ouvrir la caisse/ }).click();
+
+    await expect(page.locator("#result")).not.toHaveClass(/d-none/);
+    await expect(page.locator("#opening-hint")).toContainText("Récompense ajoutée à votre collection");
+    await expect(page.locator("#reels .reel-item").filter({ hasText: "Relance la Caisse Mystère" })).toHaveCount(0);
+    expect(consoleErrors).toEqual([]);
+  } finally {
+    await context.close();
+  }
+});
+
 test("les caisses sont sélectionnables au clavier et annoncent leur état", async ({ page }) => {
   await openApplication(page);
   const mystery = page.locator('#case-grid .case-select[data-id="zonecorp"]');
@@ -103,7 +134,7 @@ test("le bouton des probabilités reste ancré au coin supérieur droit du cadre
     await page.setViewportSize({ width, height: 900 });
     const geometry = await page.locator('#case-grid [data-theme="zonecorp"] .case-visual').evaluate((frame) => {
       const frameRect = frame.getBoundingClientRect();
-      const oddsRect = frame.querySelector(".case-odds-btn").getBoundingClientRect();
+      const oddsRect = frame.querySelector(".odds-btn").getBoundingClientRect();
       const countRect = frame.querySelector(".case-count").getBoundingClientRect();
       return {
         oddsRightInset: frameRect.right - oddsRect.right,
@@ -117,7 +148,7 @@ test("le bouton des probabilités reste ancré au coin supérieur droit du cadre
     expect(geometry.oddsTopInset).toBeCloseTo(2, 0);
     expect(geometry.rightEdgeDifference).toBeLessThanOrEqual(1);
   }
-  await page.locator('#case-grid [data-theme="zonecorp"] .case-odds-btn').click();
+  await page.locator('#case-grid [data-theme="zonecorp"] .odds-btn').click();
   await expect(page.locator("#odds-modal")).toHaveClass(/show/);
   await expect(page.locator("#odds-title")).toHaveText("Caisse Mystère");
 });

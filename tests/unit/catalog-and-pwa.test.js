@@ -18,21 +18,25 @@ function sum(values) {
   return values.reduce((total, value) => total + value, 0);
 }
 
-test("les caisses ouvrables et leurs objets ont des identifiants uniques", () => {
-  assert.equal(CASES.length, 7);
-  const caseIds = CASES.map((box) => box.id);
+test("les caisses du catalogue et leurs objets ont des identifiants uniques", () => {
+  const allCases = CASES.concat(LOCKED_CASES);
+  const visibleCases = CASES.filter((box) => !box.hidden);
+  assert.equal(CASES.length, 17);
+  assert.equal(visibleCases.length, 7);
+  assert.equal(visibleCases.reduce((count, box) => count + (box.items?.length ?? 0), 0), 58);
+  const caseIds = allCases.map((box) => box.id);
   assert.equal(new Set(caseIds).size, caseIds.length);
 
-  const items = CASES.flatMap((box) => box.items ?? []);
-  assert.equal(items.length, 39);
+  const items = allCases.flatMap((box) => box.items ?? []);
+  assert.equal(items.length, 73);
   assert.equal(new Set(items.map((item) => item.id)).size, items.length);
-  assert.equal(LOCKED_CASES.length, 3);
+  assert.equal(LOCKED_CASES.length, 2);
   assert.ok(LOCKED_CASES.every((box) => box.locked));
 });
 
 test("chaque caisse à objets tire et affiche une distribution totale de 100 %", () => {
-  const itemCases = CASES.filter((box) => Array.isArray(box.items));
-  assert.equal(itemCases.length, 5);
+  const itemCases = CASES.filter((box) => Array.isArray(box.items) && box.items.length > 0);
+  assert.equal(itemCases.length, 7);
 
   for (const box of itemCases) {
     const groups = rarityGroups(box);
@@ -44,6 +48,13 @@ test("chaque caisse à objets tire et affiche une distribution totale de 100 %",
     );
     assert.ok(groups.every((group) => group.items.length > 0));
   }
+});
+
+test("la relance de la Caisse Mystère reste hors du tirage tant qu'elle n'a pas de rareté", () => {
+  const bonusmalus = CASES.find((box) => box.id === "bonusmalus");
+  const mysteryReroll = bonusmalus.items.find((item) => item.id === "relanceAccessoire");
+  assert.equal(mysteryReroll.rarity, "");
+  assert.ok(!rarityGroups(bonusmalus).some((group) => group.items.some(({ item }) => item.id === mysteryReroll.id)));
 });
 
 test("les lots ne référencent que des caisses simples existantes", () => {
@@ -59,7 +70,7 @@ test("les lots ne référencent que des caisses simples existantes", () => {
   }
 });
 
-test("la validation du catalogue actif ne produit aucun avertissement", () => {
+test("la validation du catalogue ne signale que la récompense Bonus/Malus sans rareté", () => {
   const warnings = [];
   const originalWarn = console.warn;
   console.warn = (...args) => warnings.push(args.join(" "));
@@ -68,7 +79,8 @@ test("la validation du catalogue actif ne produit aucun avertissement", () => {
   } finally {
     console.warn = originalWarn;
   }
-  assert.deepEqual(warnings, []);
+  assert.equal(warnings.length, 1);
+  assert.match(warnings[0], /« bonusmalus » : « Relance la Caisse Mystère » \(\) n'a pas de poids de rareté, il ne sortira jamais\./);
 });
 
 test("le précache ne contient que des fichiers locaux existants, sans URL de dossier", () => {

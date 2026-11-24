@@ -7,7 +7,7 @@ Kinky-Case est un mini-jeu web gratuit d'ouverture de caisses virtuelles. Il fon
 ## Fonctionnalités disponibles
 
 - **Sept entrées visibles par défaut** : cinq caisses simples et deux lots. La Caisse de l'Enfer ouvre quatre caisses simples ; la Caisse du Châtiment en ouvre cinq.
-- **39 récompenses disponibles au départ**, réparties sur cinq niveaux de rareté.
+- **58 entrées de récompenses définies au départ**, réparties sur cinq niveaux de rareté. « Relance la Caisse Mystère » dans Bonus/Malus n'a pas encore de rareté et reste exclue du tirage.
 - **Probabilités consultables** pour les caisses ouvrables. Les pourcentages sont calculés à partir des mêmes poids que le tirage ; les récompenses d'une même rareté se partagent son taux selon leurs parts.
 - **Résultat décidé avant la roulette** : le tirage est effectué et sauvegardé avant la fin de l'animation ; celle-ci ne détermine pas le gain.
 - **Collection et historique locaux** : les ouvertures et déblocages sont enregistrés dans le `LocalStorage` de l'appareil utilisé, sans synchronisation ni sauvegarde serveur. Jusqu'à 60 entrées d'historique sont conservées et les 12 plus récentes sont affichées.
@@ -15,7 +15,7 @@ Kinky-Case est un mini-jeu web gratuit d'ouverture de caisses virtuelles. Il fon
 
 ### Caisses cachées et verrouillées
 
-Sept caisses cachées sont définies dans le catalogue. Une caisse cachée peut être rendue visible en ajoutant son identifiant à l'URL, sous la forme `?unlock=<id>` ; le déblocage est conservé localement dans le navigateur. La Caisse Spéciale (`position`) et la Caisse Stellaire (`stellaire`) disposent chacune de cinq récompenses définies. Les cinq autres entrées cachées n'ont pas encore d'objets renseignés et ne sont pas prêtes à être ouvertes.
+Dix caisses cachées sont définies dans le catalogue. Une caisse cachée dotée de récompenses peut être rendue visible en ajoutant son identifiant à l'URL, sous la forme `?unlock=<id>` ; le déblocage est conservé localement dans le navigateur. La Caisse Spéciale (`position`) et la Caisse Stellaire (`stellaire`) disposent chacune de cinq récompenses définies. Les huit autres entrées cachées n'ont pas encore d'objets renseignés et ne sont pas prêtes à être ouvertes.
 
 La Caisse de Courage et la Caisse Océanique sont, elles, explicitement verrouillées et ne peuvent pas être ouvertes depuis l'interface actuelle.
 

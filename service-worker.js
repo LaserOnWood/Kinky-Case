@@ -1,5 +1,5 @@
 // Incrémente cette version à chaque mise à jour du shell précaché.
-const CACHE_NAME = "kinky-case-v1.7";
+const CACHE_NAME = "kinky-case-v1.8";
 const CACHE_PREFIX = "kinky-case-";
 const APP_BASE_URL = new URL("./", self.registration.scope);
 
@@ -22,10 +22,15 @@ const APP_SHELL_PATHS = [
   "./assets/img/cases/bonusmalus.webp",
   "./assets/img/cases/enfer.webp",
   "./assets/img/cases/angelique.webp",
+  "./assets/img/cases/biohazard.webp",
+  "./assets/img/cases/laveNain.webp",
+  "./assets/img/cases/pierreMaudite.webp",
   "./assets/img/cases/mobilier.webp",
   "./assets/img/cases/tech.webp",
   "./assets/img/cases/boisclassique.webp",
   "./assets/img/cases/mythique.webp",
+  "./assets/img/cases/parchemin.webp",
+  "./assets/img/cases/legendaire.webp",
   "./assets/img/cases/rainbow.webp",
   "./assets/img/cases/stellaire.webp",
   "./assets/img/cases/ocean.webp",
