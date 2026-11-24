@@ -284,6 +284,10 @@ function showToast(message) {
 }
 
 // ---- Rendu
+function imageBackgroundValue(imagePath) {
+    return `url('${new URL(imagePath, document.baseURI).href}')`;
+}
+
 function rendercases() {
     const lockedCards = LOCKED_CASES.map(
         (c) => `<div class="col-6 col-md-3"><article class="case-card locked" aria-disabled="true" data-theme="${c.id}">
@@ -295,7 +299,7 @@ function rendercases() {
     const cases = visibleCases();
     $("case-grid").innerHTML = cases.map(
         (c) => `<div class="col-6 col-md-3"><article class="case-card ${c.id === selectedcase.id ? "selected" : ""}" data-theme="${c.id}">
- <span class="case-visual" style="--img:url('${c.image}')">
+ <span class="case-visual" style="--img:${imageBackgroundValue(c.image)}">
   <button type="button" class="case-select case-visual-select" data-id="${c.id}" aria-pressed="${c.id === selectedcase.id}"><span class="visually-hidden">Sélectionner la caisse ${c.name}</span><img src="${c.image}" alt="" loading="lazy"></button>
   <span class="case-count" aria-hidden="true">${caseSize(c)}</span>
   <button type="button" class="odds-btn" data-bs-toggle="modal" data-bs-target="#odds-modal" data-case-id="${c.id}" aria-label="Probabilités : ${c.name}" title="Probabilités">%</button>
@@ -325,7 +329,7 @@ function renderSelected() {
     const img = $("selected-case-image");
     img.src = selectedcase.image;
     img.alt = `Illustration ${selectedcase.name}`;
-    img.closest(".case-visual").style.setProperty("--img", `url('${selectedcase.image}')`);
+    img.closest(".case-visual").style.setProperty("--img", imageBackgroundValue(selectedcase.image));
     $("selected-case-name").textContent = selectedcase.name;
     $("selected-case-description").textContent = selectedcase.description;
     $("result").className = "mt-4 d-none";

@@ -7,6 +7,26 @@ async function openApplication(page) {
   await expect(page.locator("#selected-title")).toBeVisible();
 }
 
+test("les images des halos de caisses ne génèrent pas de 404", async ({ page }) => {
+  const missingCaseImages = [];
+  page.on("response", (response) => {
+    const pathname = new URL(response.url()).pathname;
+    if (/\/assets\/img\/cases\/[^/]+\.webp$/i.test(pathname) && response.status() === 404) {
+      missingCaseImages.push(pathname);
+    }
+  });
+
+  await openApplication(page);
+  await page.waitForLoadState("networkidle");
+
+  const backgrounds = await page.locator("#case-grid .case-visual").evaluateAll((frames) =>
+    frames.map((frame) => getComputedStyle(frame, "::before").backgroundImage),
+  );
+  expect(backgrounds.filter((background) => background !== "none")).toHaveLength(7);
+  expect(backgrounds.join(" ")).not.toContain("/css/assets/");
+  expect(missingCaseImages).toEqual([]);
+});
+
 test("les caisses sont sélectionnables au clavier et annoncent leur état", async ({ page }) => {
   await openApplication(page);
   const mystery = page.locator('#case-grid .case-select[data-id="zonecorp"]');
