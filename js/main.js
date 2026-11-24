@@ -462,13 +462,21 @@ function spinReel(windowEl, box, win, duration) {
         windowEl.classList.remove("glow");
         delete windowEl.dataset.rarity;
         const track = windowEl.querySelector(".track");
-        const targetIndex = 29;
         const reelItems = rarityGroups(box).flatMap((group) => group.items.map(({ item }) => item));
-        const sequence = Array.from(
-            { length: 35 },
-            () => reelItems[Math.floor(Math.random() * reelItems.length)],
-        );
+        // L'animation présente chaque autre gain; le vrai gagnant a déjà été tiré.
+        const sequence = reelItems.filter((item) => item.id !== win.id);
+        for (let i = sequence.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
+        }
+        const targetIndex = Math.max(29, sequence.length + 7);
+        while (sequence.length < targetIndex) {
+            sequence.push(reelItems[Math.floor(Math.random() * reelItems.length)]);
+        }
         sequence[targetIndex] = win;
+        while (sequence.length < targetIndex + 6) {
+            sequence.push(reelItems[Math.floor(Math.random() * reelItems.length)]);
+        }
         track.innerHTML = sequence.map(itemCard).join("");
         track.style.transition = "none";
         track.style.transform = "translateX(0px)";
