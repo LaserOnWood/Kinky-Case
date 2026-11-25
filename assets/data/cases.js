@@ -197,7 +197,8 @@ const ALL_CASES = [
             { id: "15min", name: "15 Minutes", icon: "😳", rarity: "common" },
             { id: "30min", name: "30 Minutes", icon: "🤤", rarity: "common" },
             { id: "45min", name: "45 Minutes", icon: "🥵", rarity: "common" },
-            { id: "60min", name: "60 Minutes", icon: "😵", rarity: "common" },]
+            { id: "60min", name: "60 Minutes", icon: "😵", rarity: "common" },
+        ]
     },
     {
         id: "tentacule",
