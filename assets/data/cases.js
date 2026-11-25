@@ -134,51 +134,6 @@ const ALL_CASES = [
         bundle: ["zonecorp", "accessoires", "coups", "bonusmalus", "mobilier"], // pas de `items`
     },
     {
-        hidden: true,
-        id: "biohazard",
-        name: "Caisse Biohazard",
-        image: "./assets/img/cases/biohazard.webp",
-        description: "Une caisse contenant des objets dangereux.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
-        items: [
-        ]
-    },
-    {
-        hidden: true,
-        id: "laveNain",
-        name: "Caisse Lave Nain",
-        image: "./assets/img/cases/laveNain.webp",
-        description: "Une caisse contenant des objets en lave.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
-        items: [
-        ]
-    },
-    {
-        hidden: true,
-        id: "pierreMaudite",
-        name: "Caisse Pierre Maudite",
-        image: "./assets/img/cases/pierreMaudite.webp",
-        description: "Une caisse contenant des objets en pierre maudite.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
-        items: [
-        ]
-    },
-    {
-        id: "courage",
-        name: "Caisse de Courage",
-        image: "./assets/img/cases/rainbow.webp",
-        locked: true,
-        description: "Une caisse contenant des objets inspirants.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
-        items: [
-            { id: "epaule", name: "Épaule", icon: "🛡️", rarity: "common" },
-            { id: "coeur", name: "Cœur", icon: "❤️", rarity: "uncommon" },
-            { id: "main", name: "Main", icon: "✋", rarity: "rare" },
-            { id: "esprit", name: "Esprit", icon: "🧠", rarity: "epic" },
-            { id: "ame", name: "Âme", icon: "👻", rarity: "legendary" },
-        ],
-    },
-    {
         id: "position",
         name: "Caisse Spéciale",
         hidden: true,
@@ -199,75 +154,66 @@ const ALL_CASES = [
         locked: true,
         image: "./assets/img/cases/ocean.webp",
         description: "Une caisse contenant des objets océaniques.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        rarityWeights: { common: 50 },
         items: [
+            { id: "", name: "", rarity: "common" }
         ]
     },
     {
-        id: "egypte",
-        name: "Caisse Égyptienne",
-        hidden: true,
-        image: "./assets/img/cases/egypte.webp",
-        description: "Une caisse contenant des objets égyptiens.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        locked: true,
+        id: "pierreMaudite",
+        name: "Caisse Pierre Maudite",
+        image: "./assets/img/cases/pierreMaudite.webp",
+        description: "Une caisse contenant des objets en pierre maudite.",
+        rarityWeights: { common: 50, },
         items: [
+            { id: "", name: "", rarity: "common" }
         ]
     },
     {
-        id: "mythique",
-        name: "Caisse Mythique",
-        hidden: true,
-        image: "./assets/img/cases/mythique.webp",
-        description: "Une caisse contenant des objets mythiques.",
+        id: "courage",
+        name: "Caisse de Courage",
+        image: "./assets/img/cases/rainbow.webp",
+        locked: true,
+        description: "Une caisse contenant des objets inspirants.",
         rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
         items: [
-        ]
+            { id: "epaule", name: "Épaule", icon: "🛡️", rarity: "common" },
+            { id: "coeur", name: "Cœur", icon: "❤️", rarity: "uncommon" },
+            { id: "main", name: "Main", icon: "✋", rarity: "rare" },
+            { id: "esprit", name: "Esprit", icon: "🧠", rarity: "epic" },
+            { id: "ame", name: "Âme", icon: "👻", rarity: "legendary" },
+        ],
     },
     {
-        id: "parchemin",
-        name: "Caisse du Parchemin",
-        hidden: true,
-        image: "./assets/img/cases/parchemin.webp",
-        description: "Une caisse contenant des objets anciens.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        id: "temps",
+        name: "Caisse du Temps",
+        image: "./assets/img/cases/horloge.webp",
+        locked: "true",
+        description: "Un caisse qui impose son tempo",
+        rarityWeights: { common: 100 },
         items: [
-        ]
+            { id: "05min", name: "05 Minutes", icon: "🤨", rarity: "common" },
+            { id: "15min", name: "15 Minutes", icon: "😳", rarity: "common" },
+            { id: "30min", name: "30 Minutes", icon: "🤤", rarity: "common" },
+            { id: "45min", name: "45 Minutes", icon: "🥵", rarity: "common" },
+            { id: "60min", name: "60 Minutes", icon: "😵", rarity: "common" },]
     },
     {
-        id: "legendaire",
-        name: "Caisse Légendaire",
-        hidden: true,
-        image: "./assets/img/cases/legendaire.webp",
-        description: "Une caisse contenant des objets légendaires.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
+        id: "tentacule",
+        name: "Caisse du Temps",
+        image: "./assets/img/cases/tentacule.webp",
+        locked: "true",
+        description: "Un caisse qui impose son tempo",
+        rarityWeights: { common: 100 },
         items: [
+            { id: "ovipo", name: "Gode Oviposior", icon: "🥚", rarity: "common" },
+            { id: "grinder", name: "Plaque", icon: "🐙", rarity: "common" },
+            { id: "dragon", name: "Gode Dragon", icon: "🐲", rarity: "common" },
+            { id: "???", name: "???", icon: "❔", rarity: "common" }
         ]
     },
-    {
-        id: "vampire",
-        name: "Caisse Vampire",
-        hidden: true,
-        image: "./assets/img/cases/vampire.webp",
-        description: "Une caisse contenant des objets vampiriques.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
-        items: [
-        ]
-    },
-    {
-        id: "stellaire",
-        name: "Caisse Stellaire",
-        hidden: true,
-        image: "./assets/img/cases/stellaire.webp",
-        description: "Une caisse contenant des objets stellaires.",
-        rarityWeights: { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 },
-        items: [
-            { id: "etoile", name: "Étoile", icon: "⭐", rarity: "common" },
-            { id: "planete", name: "Planète", icon: "🪐", rarity: "uncommon" },
-            { id: "galaxie", name: "Galaxie", icon: "🌌", rarity: "rare" },
-            { id: "univers", name: "Univers", icon: "🌍", rarity: "epic" },
-            { id: "cosmos", name: "Cosmos", icon: "🌠", rarity: "legendary" },
-        ]
-    }
+
 ];
 
 export const CASES = ALL_CASES.filter((c) => !c.locked);
