@@ -697,7 +697,8 @@ function alignAnchorBelowNavbar(target) {
     if (!target) return;
     const navbar = document.querySelector(".navbar");
     const offset = target.getBoundingClientRect().top - navbar.getBoundingClientRect().bottom - 16;
-    window.scrollBy({ top: offset, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    window.scrollBy({ top: offset, behavior: reduceMotion ? "auto" : "smooth" });
 }
 
 let activeUpdateQueued = false;
