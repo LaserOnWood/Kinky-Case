@@ -586,8 +586,8 @@ async function opencase() {
 }
 
 // ---- Événements
-function scrollToReels() {
-    requestAnimationFrame(() => alignAnchorBelowNavbar($("reels")));
+function scrollToOpeningHeader() {
+    requestAnimationFrame(() => alignAnchorBelowNavbar(document.querySelector(".opening-header")));
 }
 
 $("open-btn").addEventListener("click", opencase);
@@ -607,7 +607,7 @@ $("case-grid").addEventListener("click", (event) => {
             .find((candidate) => candidate.dataset.id === nextCase.id)
             ?.focus({ preventScroll: true });
     }
-    scrollToReels();
+    scrollToOpeningHeader();
 });
 $("odds-modal").addEventListener("show.bs.modal", (event) => {
     const box = CASE_BY_ID.get(event.relatedTarget?.dataset.caseId) ?? selectedcase;

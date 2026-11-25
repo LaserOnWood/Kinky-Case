@@ -92,7 +92,7 @@ test("les caisses sont sélectionnables au clavier et annoncent leur état", asy
   await expect(page.locator('#case-grid .case-select[data-id="zonecorp"]')).toHaveAttribute("aria-pressed", "true");
 });
 
-test("la sélection fait défiler jusqu'à la roulette sans la lancer, même avec les animations réduites", async ({ browser }) => {
+test("la sélection fait défiler jusqu'à l'en-tête d'ouverture sans lancer la roulette, même avec les animations réduites", async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     reducedMotion: "reduce",
@@ -105,8 +105,8 @@ test("la sélection fait défiler jusqu'à la roulette sans la lancer, même ave
     await expect(page.getByRole("button", { name: /Ouvrir la caisse/ })).toBeEnabled();
     await expect.poll(() => page.evaluate(() => {
       const navBottom = document.querySelector(".navbar").getBoundingClientRect().bottom;
-      const reelsTop = document.querySelector("#reels").getBoundingClientRect().top;
-      const offset = reelsTop - navBottom;
+      const openingHeaderTop = document.querySelector(".opening-header").getBoundingClientRect().top;
+      const offset = openingHeaderTop - navBottom;
       return window.scrollY > 0 && offset >= 10 && offset <= 24;
     })).toBe(true);
     await expect(page.locator("#result-list .result-card")).toHaveCount(0);
