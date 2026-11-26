@@ -3,8 +3,7 @@ const CACHE_NAME = "kinky-case-v2.1";
 const CACHE_PREFIX = "kinky-case-";
 const APP_BASE_URL = new URL("./", self.registration.scope);
 
-// Tous les chemins sont relatifs au scope du service worker : fonctionne aussi
-// lorsque l'application est publiée dans un sous-répertoire.
+// Tous les chemins sont relatifs au scope du service worker : fonctionne aussi lorsque l'application est publiée dans un sous-répertoire.
 const APP_SHELL_PATHS = [
   "./",
   "./index.html",
@@ -97,8 +96,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Ressources : privilégier le cache local, puis mettre en cache toute réponse
-  // réseau valide afin de rendre disponibles hors ligne les ressources découvertes.
+  // Ressources : privilégier le cache local, puis mettre en cache toute réponse réseau valide afin de rendre disponibles hors ligne les ressources découvertes.
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
     const cached = await cache.match(request);
